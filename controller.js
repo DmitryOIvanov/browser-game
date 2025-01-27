@@ -6,39 +6,52 @@ import playField from "./playField.js";
 import EnemyRoundManager from "./enemyRoundManager.js";
 import DebugEnemySpawning from "./debugEnemySpawning.js";
 
-const startButton = new CanvasTextButton(canv.width/2,canv.height/2+100,"click to play",60,new Color(false,"#fff"));
+const modeAButton = new CanvasTextButton(canv.width/2,canv.height/2+100,"Untitled Mode A",60,new Color(false,"#fff"));
+const debugModeButton = new CanvasTextButton(canv.width/2,canv.height/2+180,"Debug Mode",60,new Color(false,"#fff"));
+
+const STATE_TITLE = 0;
+const STATE_GAME = 1;
 
 const controller = {
     initialize(){
-        this.state = "TITLE";
+        this.state = STATE_TITLE;
         playField.initialize(null);
     },
 
     nextFrame(){
         fillScreen("black");
-        if(this.state == "TITLE"){
+        if(this.state == STATE_TITLE){
             ctx.textAlign = "center";
             ctx.font = "100px arial";
             ctx.fillStyle = '#fff';
             ctx.fillText("video game", canv.width/2,canv.height/2-100);
-            startButton.update();
-            startButton.draw();
+            modeAButton.update();
+            modeAButton.draw();
+            debugModeButton.update();
+            debugModeButton.draw();
             if(controls.mouse.inBounds){
                 drawDot(controls.mouse.x,controls.mouse.y)
             }
 
-            if(startButton.isPressed()){
+            if(modeAButton.isPressed() || debugModeButton.isPressed()){
                 controls.mouse.lPressed = false;
                 controls.mouse.leftHeld = false;
-                this.state = "GAME";
-                playField.initialize(new DebugEnemySpawning());
-                // playField.initialize(new EnemyRoundManager());
+                this.state = STATE_GAME;
+                if(modeAButton.isPressed()){
+                    playField.initialize(new EnemyRoundManager());
+                }else{
+                    playField.initialize(new DebugEnemySpawning());
+                }
             }
         }
-        if(this.state == "GAME"){
+        if(this.state == STATE_GAME){
+            if(controls.pressed["Escape"]){
+                this.state = STATE_TITLE;
+                return;
+            }
             playField.advanceOneFrame();
             playField.redraw();
-            if(playField.manager.concluded) this.state = "TITLE"
+            if(playField.manager.concluded) this.state = STATE_TITLE;
         }
     }
 }
