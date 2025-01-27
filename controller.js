@@ -45,6 +45,10 @@ const controller = {
             }
         }
         if(this.state == STATE_GAME){
+            if(controls.pressed["Escape"]){
+                this.state = STATE_TITLE;
+                return;
+            }
             playField.advanceOneFrame();
             playField.redraw();
             if(playField.manager.concluded) this.state = STATE_TITLE;
