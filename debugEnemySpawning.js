@@ -71,25 +71,29 @@ export default class DebugEnemySpawning {
     constructor(){
         this.concluded = false;
         this.spawnTimer = 0;
+        this.doSpawns = true;
     }
 
     timeStep(amount){
         if(controls.pressed["KeyP"]){
-            playField.addParticle(new BigExplosionParticle(300,300,100,300,60,Color.WHITE));
+            playField.addParticle(new BigExplosionParticle(300,300,Color.WHITE));
         }
+        if(controls.pressed["KeyO"]) this.doSpawns = !this.doSpawns;
 
-        this.spawnTimer -= amount;
-        while(this.spawnTimer <= 0){
-            const randNum = WEIGHT_SUM*Math.random();
-            let curProbSum = 0;
-            for(let entry of specificSpawnInfo){
-                curProbSum += entry.probWeight;
-                if(randNum < curProbSum){
-                    const generalInfo = enemySpawningInfo[entry.name];
-                    const pos = getRandomPosWithMargins(generalInfo.rad,PLAYER_CLEARANCE);
-                    generalInfo.spawn(pos.x, pos.y);
-                    this.spawnTimer += entry.cooldown;
-                    break;
+        if(this.doSpawns){
+            this.spawnTimer -= amount;
+            while(this.spawnTimer <= 0){
+                const randNum = WEIGHT_SUM*Math.random();
+                let curProbSum = 0;
+                for(let entry of specificSpawnInfo){
+                    curProbSum += entry.probWeight;
+                    if(randNum < curProbSum){
+                        const generalInfo = enemySpawningInfo[entry.name];
+                        const pos = getRandomPosWithMargins(generalInfo.rad,PLAYER_CLEARANCE);
+                        generalInfo.spawn(pos.x, pos.y);
+                        this.spawnTimer += entry.cooldown;
+                        break;
+                    }
                 }
             }
         }
