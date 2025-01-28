@@ -1,4 +1,7 @@
+import Color from "./color.js";
+import controls from "./controls.js";
 import { enemySpawningInfo, getRandomPosWithMargins } from "./enemySpawning.js";
+import BigExplosionParticle from "./particles/bigExplosionParticle.js";
 import playField from "./playField.js";
 
 const MAX_SPAWN_ATTEMPTS = 100;
@@ -73,6 +76,10 @@ export default class DebugEnemySpawning {
     }
 
     timeStep(amount){
+        if(controls.pressed["KeyP"]){
+            playField.addParticle(new BigExplosionParticle(300,300,100,300,60,Color.WHITE));
+        }
+
         this.spawnTimer -= amount;
         while(this.spawnTimer <= 0){
             const randNum = WEIGHT_SUM*Math.random();

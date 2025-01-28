@@ -26,7 +26,7 @@ export default class BigExplosionParticle{
             let t = this.timeElapsed/this.duration;
             if(t > 1) t = 1;
             let r = t*this.maxRad + 0.5*(1-t)*this.minRad
-            ctx.strokeStyle = this.color;
+            ctx.strokeStyle = this.color.getStr();
             ctx.lineWidth = (1-t)*this.minRad;
             ctx.beginPath();
             ctx.arc(this.x,this.y,r,0,2*Math.PI);
