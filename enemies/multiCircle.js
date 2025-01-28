@@ -1,3 +1,4 @@
+import Color from "../color.js";
 import { ctx } from "../drawing.js";
 import { normalizedAtan2 } from "../extraMath.js";
 import ExplodingRingParticle from "../particles/explodingRingParticle.js";
@@ -59,7 +60,7 @@ export default class MultiCircle extends AbstractBasicCircle{
         this.hitFlash = HIT_FLASH_TIME;
         if(this.hp <= 0){
             this.retired = true;
-            playField.addParticle(new ExplodingRingParticle(this.x, this.y, RAD, 2*RAD, 6, '#fff'));
+            playField.addParticle(new ExplodingRingParticle(this.x, this.y, RAD, 2*RAD, 6, Color.WHITE));
             for(let i=-3; i<=3; i+=2){
                 let newAngle = normalizedAtan2(this.vy, this.vx)+i*0.2+(Math.random()-0.5)*0.1;
                 playField.addEnemy(new SmallCircle(

@@ -1,4 +1,5 @@
 import { RegularPolygonArea } from "../areas.js";
+import Color from "../color.js";
 import { ctx } from "../drawing.js";
 import { bounceBoundify, decToZero, isInBounds, normalizeAngle } from "../extraMath.js";
 import ExplodingRingParticle from "../particles/explodingRingParticle.js";
@@ -153,7 +154,7 @@ export default class LaserShooter extends AbstractEnemy{
         this.hitFlash = HIT_FLASH_TIME;
         if(this.hp <= 0){
             this.retireSelf();
-            playField.addParticle(new ExplodingRingParticle(this.x, this.y, 1.5*RAD, 2*RAD, 6, '#fff'));
+            playField.addParticle(new ExplodingRingParticle(this.x, this.y, 1.5*RAD, 2*RAD, 6, Color.WHITE));
             return;
         }
     }

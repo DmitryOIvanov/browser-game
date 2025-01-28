@@ -1,4 +1,5 @@
 import { RegularPolygonArea } from "../areas.js";
+import Color from "../color.js";
 import { ctx } from "../drawing.js";
 import { decToZero } from "../extraMath.js";
 import ExplodingRingParticle from "../particles/explodingRingParticle.js";
@@ -46,7 +47,7 @@ export default class TowerBase extends AbstractEnemy{
         this.hitFlash = HIT_FLASH_TIME;
         if(this.hp <= 0){
             this.retired = true;
-            playField.addParticle(new ExplodingRingParticle(this.x, this.y, 1.5*RAD, 2.5*RAD, 9, '#fff'));
+            playField.addParticle(new ExplodingRingParticle(this.x, this.y, 1.5*RAD, 2.5*RAD, 9, Color.WHITE));
             return;
         }
     }

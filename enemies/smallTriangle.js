@@ -1,3 +1,4 @@
+import Color from "../color.js";
 import { ctx } from "../drawing.js";
 import ExplodingRingParticle from "../particles/explodingRingParticle.js";
 import playField from "../playField.js";
@@ -47,7 +48,7 @@ export default class SmallTriangle extends AbstractBasicTriangle{
         this.hitFlash = HIT_FLASH_TIME;
         if(this.hp <= 0){
             this.retired = true;
-            playField.addParticle(new ExplodingRingParticle(this.x, this.y, 2*RAD, 3*RAD, 6, '#fff'));
+            playField.addParticle(new ExplodingRingParticle(this.x, this.y, 2*RAD, 3*RAD, 6, Color.WHITE));
             return;
         }
         // let dx = this.x - proj.x;

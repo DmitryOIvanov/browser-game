@@ -1,3 +1,4 @@
+import Color from "../color.js";
 import { ctx } from "../drawing.js";
 import ExplodingRingParticle from "../particles/explodingRingParticle.js";
 import playField from "../playField.js";
@@ -61,7 +62,7 @@ export default class MultiTriangle extends AbstractBasicTriangle{
         this.hitFlash = HIT_FLASH_TIME;
         if(this.hp <= 0){
             this.retired = true;
-            playField.addParticle(new ExplodingRingParticle(this.x, this.y, RAD, 2*RAD, 6, '#fff'));
+            playField.addParticle(new ExplodingRingParticle(this.x, this.y, RAD, 2*RAD, 6, Color.WHITE));
             playField.addEnemy(new SmallTriangle(this.x,this.y,0,0,this.angle));
             for(let i=0; i<3; i++){
                 let launchAngle = this.angle+2*Math.PI*i/3

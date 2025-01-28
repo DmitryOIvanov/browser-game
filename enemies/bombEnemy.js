@@ -1,4 +1,5 @@
 import { CircleArea } from "../areas.js";
+import Color from "../color.js";
 import { ctx } from "../drawing.js";
 import { bounceBoundify, convergeToAngle, decToZero, isInBounds, normalizeAngle, normalizedAtan2 } from "../extraMath.js";
 import ExplodingRingParticle from "../particles/explodingRingParticle.js";
@@ -84,7 +85,7 @@ export default class BombEnemy extends AbstractEnemy{
         this.hitFlash = HIT_FLASH_TIME;
         if(this.hp <= 0){
             this.retired = true;
-            playField.addParticle(new ExplodingRingParticle(this.x, this.y, 2*RAD, 4*RAD, 6, '#fff'));
+            playField.addParticle(new ExplodingRingParticle(this.x, this.y, 2*RAD, 4*RAD, 6, Color.WHITE));
             for(let i=0; i<NUM_BULLETS; i++){
                 const angle = this.rot + 2*Math.PI*i/NUM_BULLETS;
                 playField.addEnemyProjectile(new BallEProj(

@@ -4,8 +4,6 @@ import { enemySpawningInfo, getRandomPosWithMargins } from "./enemySpawning.js";
 import BigExplosionParticle from "./particles/bigExplosionParticle.js";
 import playField from "./playField.js";
 
-const MAX_SPAWN_ATTEMPTS = 100;
-
 const specificSpawnInfo = [
     {
         name: "SmallSquare",

@@ -1,4 +1,5 @@
 import { CircleArea, ShieldedCircleArea } from "../areas.js";
+import Color from "../color.js";
 import { ctx } from "../drawing.js";
 import { bounceBoundify, decToZero, normalizeAngle, normalizeAnglePMPI, posMod } from "../extraMath.js";
 import ExplodingRingParticle from "../particles/explodingRingParticle.js";
@@ -73,11 +74,11 @@ export default class ShieldedCircle extends AbstractEnemy{
         this.hp[segID] = amount;
         if(this.hp[segID] <= 0){
             if(segID == NUM_SEGMENTS){
-                playField.addParticle(new ExplodingRingParticle(this.x, this.y, 1.5*IN_RAD, 2.5*IN_RAD, 6, '#fff'));
+                playField.addParticle(new ExplodingRingParticle(this.x, this.y, 1.5*IN_RAD, 2.5*IN_RAD, 6, Color.WHITE));
             }else{
                 let angle = 2*Math.PI*(segID+0.5)/NUM_SEGMENTS + this.rot;
                 let dist = 0.5*(MID_RAD + OUT_RAD);
-                playField.addParticle(new ExplodingRingParticle(this.x+dist*Math.cos(angle), this.y+dist*Math.sin(angle), 20, 35, 6, '#fff'));
+                playField.addParticle(new ExplodingRingParticle(this.x+dist*Math.cos(angle), this.y+dist*Math.sin(angle), 20, 35, 6, Color.WHITE));
             }
         }
     }

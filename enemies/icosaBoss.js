@@ -1,4 +1,5 @@
 import { CircleArea } from "../areas.js";
+import Color from "../color.js";
 import { decToZero, normalizeAngle } from "../extraMath.js";
 import AbstractEnemy from "./abstractEnemy.js";
 
@@ -110,7 +111,7 @@ export default class IcosaBoss extends AbstractEnemy{
         this.hitFlash = G_PARAMS.HIT_FLASH_TIME;
         if(this.hp <= 0){
             this.retired = true;
-            game.particles.push(new ExplodingRingParticle(this.x, this.y, 1.5*TowerBase.RAD, 2.5*TowerBase.RAD, 9, '#fff'));
+            game.particles.push(new ExplodingRingParticle(this.x, this.y, 1.5*TowerBase.RAD, 2.5*TowerBase.RAD, 9, Color.WHITE));
             return;
         }
     }
