@@ -33,8 +33,10 @@ class SubRing{
         if(this.retired) return;
         let portion = (this.dur-this.timeElapsed)/(this.dur-this.StableDur);
         if(portion > 1) portion = 1;
-        const r = this.rad + this.radSpeed*(1-Math.exp(-this.radSpeedDecay*this.timeElapsed))/this.radSpeedDecay;
-        let motionFactor = 1;
+        let radGrowthFactor = this.timeElapsed;
+        if(this.radSpeedDecay != 0) radGrowthFactor = (1-Math.exp(-this.radSpeedDecay*this.timeElapsed))/this.radSpeedDecay;
+        const r = this.rad + this.radSpeed*radGrowthFactor;
+        let motionFactor = this.timeElapsed;
         if(this.motionDecay != 0) motionFactor = (1-Math.exp(-this.motionDecay*this.timeElapsed))/this.motionDecay;
         ctx.strokeStyle = this.color.getStr();
         ctx.lineWidth = portion*r;
@@ -57,7 +59,25 @@ export default class BigExplosionParticle{
         this.timeElapsed = 0;
         this.retired = false;
 
-        playField.addParticle(new SubRing(300,300,2,3,0.03,100,10,0.05,60,20,Color.WHITE));
+        // Main big bubble
+        playField.addParticle(new SubRing(this.x,this.y,0,0,0,65,14,0.14,10,0,Color.WHITE));
+        // Medium bubbles
+        for(let i=0; i<8; i++){
+            const angle = 2*Math.PI*(i+Math.random())/8;
+            const vx = 12*Math.cos(angle);
+            const vy = 12*Math.sin(angle);
+            playField.addParticle(new SubRing(this.x,this.y,vx,vy,0.05,15+10*Math.random(),8+4*Math.random(),0.2,10+4*Math.random(),3+Math.random(),Color.WHITE));
+        }
+        // Small bubbles
+        for(let i=0; i<16; i++){
+            const angle = 2*Math.PI*(i+1.5*Math.random())/16;
+            const speed = 12+2*Math.random();
+            const vx = speed*Math.cos(angle);
+            const vy = speed*Math.sin(angle);
+            playField.addParticle(new SubRing(this.x,this.y,vx,vy,0.025,5+10*Math.random(),3+2*Math.random(),0.1,10+6*Math.random(),5+Math.random(),Color.WHITE));
+        }
+        // Shockwave
+        playField.addParticle(new SubRing(this.x,this.y,0,0,0,50,50,0,8,-400,Color.WHITE));
     }
 
     timeStep(amount){
