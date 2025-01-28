@@ -3,12 +3,13 @@ import { ctx } from "../drawing.js";
 import playField from "../playField.js";
 
 class SubRing{
-    constructor(x,y,vx,vy,rad,radSpeed,radSpeedDecay,dur,StableDur,color){
+    constructor(x,y,vx,vy,motionDecay,rad,radSpeed,radSpeedDecay,dur,StableDur,color){
         this.autonomous = true;
         this.x = x;
         this.y = y;
         this.vx = vx;
         this.vy = vy;
+        this.motionDecay = motionDecay;
         this.rad = rad;
         this.radSpeed = radSpeed;
         this.radSpeedDecay = radSpeedDecay;
@@ -33,10 +34,12 @@ class SubRing{
         let portion = (this.dur-this.timeElapsed)/(this.dur-this.StableDur);
         if(portion > 1) portion = 1;
         const r = this.rad + this.radSpeed*(1-Math.exp(-this.radSpeedDecay*this.timeElapsed))/this.radSpeedDecay;
+        let motionFactor = 1;
+        if(this.motionDecay != 0) motionFactor = (1-Math.exp(-this.motionDecay*this.timeElapsed))/this.motionDecay;
         ctx.strokeStyle = this.color.getStr();
         ctx.lineWidth = portion*r;
         ctx.beginPath();
-        ctx.arc(this.x+this.timeElapsed*this.vx,this.y+this.timeElapsed*this.vy,r*0.5,0,2*Math.PI);
+        ctx.arc(this.x+motionFactor*this.vx,this.y+motionFactor*this.vy,r*(1-0.5*portion),0,2*Math.PI);
         ctx.closePath();
         ctx.stroke();
     }
@@ -54,7 +57,7 @@ export default class BigExplosionParticle{
         this.timeElapsed = 0;
         this.retired = false;
 
-        playField.addParticle(new SubRing(300,300,2,3,100,10,1,60,20,Color.WHITE));
+        playField.addParticle(new SubRing(300,300,2,3,0.03,100,10,0.05,60,20,Color.WHITE));
     }
 
     timeStep(amount){
