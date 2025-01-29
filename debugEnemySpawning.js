@@ -9,59 +9,60 @@ const specificSpawnInfo = [
         name: "SmallSquare",
         probWeight: 200,
         cooldown: 30
-    },{
-        name: "SmallCircle",
-        probWeight: 200,
-        cooldown: 30
-    },{
-        name: "SmallTriangle",
-        probWeight: 200,
-        cooldown: 30
-    },{
-        name: "MultiSquare",
-        probWeight: 50,
-        cooldown: 120
-    },{
-        name: "MultiCircle",
-        probWeight: 50,
-        cooldown: 120
-    },{
-        name: "MultiTriangle",
-        probWeight: 50,
-        cooldown: 120
-    },{
-        name: "ShieldedCircle",
-        probWeight: 25,
-        cooldown: 180
-    },{
-        name: "SimpleShooter",
-        probWeight: 80,
-        cooldown: 60
-    },{
-        name: "BombEnemy",
-        probWeight: 30,
-        cooldown: 60
-    },{
-        name: "LaserShooter",
-        probWeight: 50,
-        cooldown: 60
-    },{
-        name: "ThreeShooter",
-        probWeight: 20,
-        cooldown: 120
-    },{
-        name: "FlowerTower",
-        probWeight: 10,
-        cooldown: 300
-    },{
-        name: "HeavyTower",
-        probWeight: 10,
-        cooldown: 300
-    },{
-        name: "LaserTower",
-        probWeight: 10,
-        cooldown: 300
     }
+    // ,{
+    //     name: "SmallCircle",
+    //     probWeight: 200,
+    //     cooldown: 30
+    // },{
+    //     name: "SmallTriangle",
+    //     probWeight: 200,
+    //     cooldown: 30
+    // },{
+    //     name: "MultiSquare",
+    //     probWeight: 50,
+    //     cooldown: 120
+    // },{
+    //     name: "MultiCircle",
+    //     probWeight: 50,
+    //     cooldown: 120
+    // },{
+    //     name: "MultiTriangle",
+    //     probWeight: 50,
+    //     cooldown: 120
+    // },{
+    //     name: "ShieldedCircle",
+    //     probWeight: 25,
+    //     cooldown: 180
+    // },{
+    //     name: "SimpleShooter",
+    //     probWeight: 80,
+    //     cooldown: 60
+    // },{
+    //     name: "BombEnemy",
+    //     probWeight: 30,
+    //     cooldown: 60
+    // },{
+    //     name: "LaserShooter",
+    //     probWeight: 50,
+    //     cooldown: 60
+    // },{
+    //     name: "ThreeShooter",
+    //     probWeight: 20,
+    //     cooldown: 120
+    // },{
+    //     name: "FlowerTower",
+    //     probWeight: 10,
+    //     cooldown: 300
+    // },{
+    //     name: "HeavyTower",
+    //     probWeight: 10,
+    //     cooldown: 300
+    // },{
+    //     name: "LaserTower",
+    //     probWeight: 10,
+    //     cooldown: 300
+    // }
 ];
 
 const WEIGHT_SUM = specificSpawnInfo.reduce((curSum,nextEntry)=>(curSum+nextEntry.probWeight), 0);

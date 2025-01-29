@@ -18,7 +18,6 @@ export default class AbstractBasicSquare extends AbstractEnemy{
         this.moveLen = 1;
         this.movedPortion = 0;
 
-        this.hp = this.maxHP;
         this.hitFlash = 0;
 
         this.extraVX = evx;

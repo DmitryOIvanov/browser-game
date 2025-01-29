@@ -4,7 +4,7 @@ import playField from "../playField.js";
 import PointPProj from "../projectiles/player/pointPProj.js";
 
 class PointPProjWeapon {
-    constructor(fireRate, numShots, spread, variance, speed, pierce, color){
+    constructor(fireRate, numShots, spread, variance, speed, pierce, color, attackProfileGenerator){
         this.fireRate = fireRate;
         this.numShots = numShots;
         this.spread = spread;
@@ -12,6 +12,7 @@ class PointPProjWeapon {
         this.speed = speed;
         this.color = color;
         this.pierce = pierce;
+        this.attackProfileGenerator = attackProfileGenerator;
 
         this.fireTimer = 0;
     }
@@ -32,7 +33,7 @@ class PointPProjWeapon {
                     let theta = this.spread*(i+0.5*(1-this.numShots)) + this.variance*2*(Math.random()-0.5);
                     let dx2 = coeff*(dx*Math.cos(theta) + dy*Math.sin(theta));
                     let dy2 = coeff*(dy*Math.cos(theta) - dx*Math.sin(theta));
-                    let newBullet = new PointPProj(playField.player.x, playField.player.y, dx2, dy2, this.pierce, this.color);
+                    const newBullet = new PointPProj(playField.player.x, playField.player.y, dx2, dy2, this.pierce, this.color, this.attackProfileGenerator);
                     newBullet.timeStep(-this.fireTimer);
                     playField.addPlayerProjectile(newBullet);
                 }
@@ -46,19 +47,19 @@ class PointPProjWeapon {
 
 export class MachineGunWeapon extends PointPProjWeapon {
     constructor(){
-        super(2.5,1,0,0.02,20,1,new Color(false,'#0ff')); // 24 MDPS
+        super(2.5,1,0,0.02,20,1,new Color(false,'#0ff'), ()=>({damage:200,expired:false}) );
     }
 }
 
 export class ShotgunWeapon extends PointPProjWeapon {
     constructor(){
-        super(22,9,0.1,0,20,1,new Color(false,'#ff0')); // 24.55 MDPS
+        super(22,9,0.1,0,20,1,new Color(false,'#ff0'));
     }
 }
 
 export class PierceWeapon extends PointPProjWeapon {
     constructor(){
-        super(7,1,0,0.01,20,10,new Color(false,'#67f')); // 85.71 MDPS (good luck)
+        super(7,1,0,0.01,20,10,new Color(false,'#67f'));
     }
 }
 

@@ -26,7 +26,6 @@ const BASIC_PARAMS = {
     moveLenVariance: MOVE_LEN_VARIANCE,
     accelCoeff: ACCEL_COEFF,
     targetTolerance: TARGET_TOLERANCE,
-    maxHP: MAX_HP,
     evFriction: EV_FRICTION
 };
 
@@ -35,6 +34,7 @@ export default class SmallSquare extends AbstractBasicSquare{
 
     constructor(x,y,evx,evy,initDelay){
         super(x,y,evx,evy,initDelay,BASIC_PARAMS);
+        this.defenseProfile = {hp: MAX_HP, expired: false};
     }
 
     draw(){
@@ -49,18 +49,12 @@ export default class SmallSquare extends AbstractBasicSquare{
         ctx.stroke();
     }
 
-    getHit(proj){
-        this.hp -= 1;
-        this.hitFlash = HIT_FLASH_TIME;
-        if(this.hp <= 0){
+    getHit(){
+        if(this.defenseProfile.expired){
             this.retired = true;
             playField.addParticle(new ExplodingRingParticle(this.x, this.y, 2*RAD, 3*RAD, 6, Color.WHITE));
             return;
         }
-        // let dx = this.x - proj.x;
-        // let dy = this.y - proj.y;
-        // let distCoeff = KNOCK_STRENGTH/Math.sqrt(dx*dx + dy*dy);
-        // this.extraVX += dx*distCoeff;
-        // this.extraVY += dy*distCoeff;
+        this.hitFlash = HIT_FLASH_TIME;
     }
 }

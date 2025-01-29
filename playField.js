@@ -18,6 +18,17 @@ function deleteRetirables(array){
     }
 }
 
+function attackAndDefend(attackProfile, defenseProfile){
+    if(attackProfile.damage >= defenseProfile.hp){
+        attackProfile.damage -= defenseProfile.hp;
+        defenseProfile.expired = true;
+    }else{
+        defenseProfile.hp -= attackProfile.damage;
+        attackProfile.expired = true;
+    }
+
+}
+
 const weaponGenerators = [
     ()=>(new MachineGunWeapon()),
     ()=>(new ShotgunWeapon()),
@@ -122,7 +133,8 @@ const playField = {
                     if(enemy.area.type == Area.TYPE_SINGLE){
                         if(proj.excludes[enemy.id]) continue;
                         if(intersects(proj.colSamples[step], enemy.area)){
-                            enemy.getHit(proj);
+                            attackAndDefend(proj.attackProfile, enemy.defenseProfile);
+                            enemy.getHit();
                             proj.getHit(step);
                             proj.excludes[enemy.id] = true;
                         }
