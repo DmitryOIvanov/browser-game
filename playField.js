@@ -1,4 +1,5 @@
 import { Area } from "./areas.js";
+import { attackAndDefend } from "./attackAndDefense.js";
 import Color from "./color.js";
 import controls from "./controls.js";
 import { canv, ctx } from "./drawing.js";
@@ -16,17 +17,6 @@ function deleteRetirables(array){
             i--;
         }
     }
-}
-
-function attackAndDefend(attackProfile, defenseProfile){
-    if(attackProfile.damage >= defenseProfile.hp){
-        attackProfile.damage -= defenseProfile.hp;
-        defenseProfile.expired = true;
-    }else{
-        defenseProfile.hp -= attackProfile.damage;
-        attackProfile.expired = true;
-    }
-
 }
 
 const weaponGenerators = [
@@ -136,7 +126,9 @@ const playField = {
                             attackAndDefend(proj.attackProfile, enemy.defenseProfile);
                             enemy.getHit();
                             proj.getHit(step);
-                            proj.excludes[enemy.id] = true;
+                            if(!proj.attackProfile.expired && !enemy.defenseProfile.expired){
+                                proj.excludes[enemy.id] = true;
+                            }
                         }
                     }else{
                         let partitionsHit = findMultiIntersections(enemy.area, proj.colSamples[step]);

@@ -7,14 +7,13 @@ const NUM_COL_SAMPLES = 15;
 const BOUNDING_RADIUS_COEFF = 0.5;
 
 export default class PointPProj{
-    constructor(x,y,vx,vy,pierce,color,attackProfileGenerator){
+    constructor(x,y,vx,vy,color,attackProfileGenerator){
         this.x=x; this.y=y; this.vx=vx; this.vy=vy;
         this.boundingRad = BOUNDING_RADIUS_COEFF*Math.sqrt(this.vx*this.vx + this.vy*this.vy);
         this.prevX=x; this.prevY=y;
         this.color = color;
         this.attackProfile = attackProfileGenerator();
         this.numColSamples = NUM_COL_SAMPLES;
-        this.pierce = pierce;
 
         this.colSamples = Array(NUM_COL_SAMPLES).fill(null).map(()=>(new PointArea(x,y)));
         this.boundingCircle = new CircleArea(x,y,this.boundingRad);

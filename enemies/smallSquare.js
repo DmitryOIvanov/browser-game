@@ -1,3 +1,4 @@
+import { createDefenseProfile } from "../attackAndDefense.js";
 import Color from "../color.js";
 import { ctx } from "../drawing.js";
 import ExplodingRingParticle from "../particles/explodingRingParticle.js";
@@ -34,7 +35,7 @@ export default class SmallSquare extends AbstractBasicSquare{
 
     constructor(x,y,evx,evy,initDelay){
         super(x,y,evx,evy,initDelay,BASIC_PARAMS);
-        this.defenseProfile = {hp: MAX_HP, expired: false};
+        this.defenseProfile = createDefenseProfile(MAX_HP);
     }
 
     draw(){

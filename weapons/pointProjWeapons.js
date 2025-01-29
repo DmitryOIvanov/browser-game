@@ -1,17 +1,17 @@
+import { createAttackProfile } from "../attackAndDefense.js";
 import Color from "../color.js";
 import controls from "../controls.js";
 import playField from "../playField.js";
 import PointPProj from "../projectiles/player/pointPProj.js";
 
 class PointPProjWeapon {
-    constructor(fireRate, numShots, spread, variance, speed, pierce, color, attackProfileGenerator){
+    constructor(fireRate, numShots, spread, variance, speed, color, attackProfileGenerator){
         this.fireRate = fireRate;
         this.numShots = numShots;
         this.spread = spread;
         this.variance = variance;
         this.speed = speed;
         this.color = color;
-        this.pierce = pierce;
         this.attackProfileGenerator = attackProfileGenerator;
 
         this.fireTimer = 0;
@@ -33,7 +33,7 @@ class PointPProjWeapon {
                     let theta = this.spread*(i+0.5*(1-this.numShots)) + this.variance*2*(Math.random()-0.5);
                     let dx2 = coeff*(dx*Math.cos(theta) + dy*Math.sin(theta));
                     let dy2 = coeff*(dy*Math.cos(theta) - dx*Math.sin(theta));
-                    const newBullet = new PointPProj(playField.player.x, playField.player.y, dx2, dy2, this.pierce, this.color, this.attackProfileGenerator);
+                    const newBullet = new PointPProj(playField.player.x, playField.player.y, dx2, dy2, this.color, this.attackProfileGenerator);
                     newBullet.timeStep(-this.fireTimer);
                     playField.addPlayerProjectile(newBullet);
                 }
@@ -47,7 +47,18 @@ class PointPProjWeapon {
 
 export class MachineGunWeapon extends PointPProjWeapon {
     constructor(){
-        super(2.5,1,0,0.02,20,1,new Color(false,'#0ff'), ()=>({damage:200,expired:false}) );
+        super(
+            2.5, // Fire Rate
+            1, // Number of bullets
+            0, // Fixed spread between bullets
+            0.02, // Random variance in each bullet's angle
+            20, // Bullet speed
+            new Color(false,'#0ff'), // Color
+            ()=>(createAttackProfile(
+                200, // Damage
+                3 // Overkill factor
+            ))
+        );
     }
 }
 
