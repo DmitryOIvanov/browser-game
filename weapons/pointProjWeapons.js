@@ -55,8 +55,9 @@ export class MachineGunWeapon extends PointPProjWeapon {
             20, // Bullet speed
             new Color(false,'#0ff'), // Color
             ()=>(createAttackProfile(
-                200, // Damage
-                3 // Overkill factor
+                100, // Damage
+                3, // Overkill factor
+                0 // Free hits where bullet is unaffected
             ))
         );
     }
@@ -64,18 +65,55 @@ export class MachineGunWeapon extends PointPProjWeapon {
 
 export class ShotgunWeapon extends PointPProjWeapon {
     constructor(){
-        super(22,9,0.1,0,20,1,new Color(false,'#ff0'));
+        super(
+            22, // Fire Rate
+            9, // Number of bullets
+            0.1, // Fixed spread between bullets
+            0, // Random variance in each bullet's angle
+            20, // Bullet speed
+            new Color(false,'#ff0'), // Color
+            ()=>(createAttackProfile(
+                1, // Damage
+                3, // Overkill factor
+                0 // Free hits where bullet is unaffected
+            ))
+        );
     }
 }
 
 export class PierceWeapon extends PointPProjWeapon {
     constructor(){
-        super(7,1,0,0.01,20,10,new Color(false,'#67f'));
+        super(
+            7, // Fire Rate
+            1, // Number of bullets
+            0, // Fixed spread between bullets
+            0.01, // Random variance in each bullet's angle
+            20, // Bullet speed
+            new Color(false,'#67f'), // Color
+            ()=>(createAttackProfile(
+                1, // Damage
+                3, // Overkill factor
+                9 // Free hits where bullet is unaffected
+            ))
+        );
     }
 }
 
 export class MemeWeapon1 extends PointPProjWeapon {
     constructor(){
         super(1,7,0.2,0.1,20,100,new Color(true,0));
+        super(
+            1, // Fire Rate
+            7, // Number of bullets
+            0.2, // Fixed spread between bullets
+            0.1, // Random variance in each bullet's angle
+            20, // Bullet speed
+            new Color(true,0), // Color
+            ()=>(createAttackProfile(
+                5, // Damage
+                3, // Overkill factor
+                99 // Free hits where bullet is unaffected
+            ))
+        );
     }
 }
