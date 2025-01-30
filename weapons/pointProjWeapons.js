@@ -55,7 +55,7 @@ export class MachineGunWeapon extends PointPProjWeapon {
             20, // Bullet speed
             new Color(false,'#0ff'), // Color
             ()=>(createAttackProfile(
-                100, // Damage
+                1, // Damage
                 3, // Overkill factor
                 0 // Free hits where bullet is unaffected
             ))
@@ -101,7 +101,6 @@ export class PierceWeapon extends PointPProjWeapon {
 
 export class MemeWeapon1 extends PointPProjWeapon {
     constructor(){
-        super(1,7,0.2,0.1,20,100,new Color(true,0));
         super(
             1, // Fire Rate
             7, // Number of bullets

@@ -1,19 +1,20 @@
+import { createAttackProfile } from "../attackAndDefense.js";
 import Color from "../color.js";
 import controls from "../controls.js";
 import playField from "../playField.js";
 import BallPProj from "../projectiles/player/ballPProj.js";
 
 class BallPProjWeapon {
-    constructor(fireRate, numShots, spread, variance, speed, pierce, radius, duration, color){
+    constructor(fireRate, numShots, spread, variance, speed, radius, duration, color, attackProfileGenerator){
         this.fireRate = fireRate;
         this.numShots = numShots;
         this.spread = spread;
         this.variance = variance;
         this.speed = speed;
-        this.pierce = pierce;
         this.radius = radius;
         this.duration = duration;
         this.color = color;
+        this.attackProfileGenerator = attackProfileGenerator;
 
         this.fireTimer = 0;
     }
@@ -36,7 +37,7 @@ class BallPProjWeapon {
                     let dy2 = coeff*(dy*Math.cos(theta) - dx*Math.sin(theta));
                     let newBullet = new BallPProj(
                         playField.player.x, playField.player.y, dx2, dy2,
-                        this.radius, this.pierce, this.duration, this.color);
+                        this.radius, this.duration, this.color, this.attackProfileGenerator);
                     newBullet.timeStep(-this.fireTimer);
                     playField.addPlayerProjectile(newBullet);
                 }
@@ -54,10 +55,14 @@ export class BouncyWeapon extends BallPProjWeapon {
             0.01, // spread
             0, // variance
             15, // speed
-            4, // pierce
             10, // radius
             150, // duration
-            new Color(false,'#0f0') // color
+            new Color(false,'#0f0'), // color
+            () => (createAttackProfile(
+                1, // Damage
+                3, // Overkill factor
+                3 // Free hits where bullet is unaffected
+            ))
         );
     }
 }
@@ -70,10 +75,14 @@ export class MemeWeapon3 extends BallPProjWeapon {
             0.3, // spread
             0.2, // variance
             20, // speed
-            100, // pierce
             15, // radius
             500, // duration
-            new Color(true,0) // color
+            new Color(true,0), // color
+            () => (createAttackProfile(
+                1, // Damage
+                3, // Overkill factor
+                99 // Free hits where bullet is unaffected
+            ))
         );
     }
 }

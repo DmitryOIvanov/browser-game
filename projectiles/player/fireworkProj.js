@@ -7,7 +7,7 @@ import PointPProj from "./pointPProj.js";
 export default class FireworkProj{
     static NUM_COL_SAMPLES = 5;
 
-    constructor(x,y,vx,vy,rad,dur,fragsPerRing,fragSpeed1,fragSpeed2,color){
+    constructor(x,y,vx,vy,rad,dur,fragsPerRing,fragSpeed1,fragSpeed2,color, primaryAttackProfileGenerator, secondaryAttackProfileGenerator){
         this.x=x; this.y=y; this.vx=vx; this.vy=vy;
         this.radius = rad;
         this.boundingRad = 0.5*Math.sqrt(this.vx*this.vx + this.vy*this.vy) + this.radius;
@@ -16,6 +16,8 @@ export default class FireworkProj{
         this.fragsPerRing = fragsPerRing;
         this.fragSpeed1 = fragSpeed1;
         this.fragSpeed2 = fragSpeed2;
+        this.attackProfile = primaryAttackProfileGenerator();
+        this.secondaryAttackProfileGenerator = secondaryAttackProfileGenerator;
         this.numColSamples = FireworkProj.NUM_COL_SAMPLES;
 
         this.colSamples = Array(FireworkProj.NUM_COL_SAMPLES).fill(null).map(()=>(new CircleArea(x,y,rad)));
@@ -59,12 +61,12 @@ export default class FireworkProj{
             const angle1 = 2*Math.PI*i/this.fragsPerRing + randAngleOffset;
             const vx1 = this.fragSpeed1*Math.cos(angle1);
             const vy1 = this.fragSpeed1*Math.sin(angle1);
-            const bullet1 = new PointPProj(x,y,vx1,vy1,1,this.color);
+            const bullet1 = new PointPProj(x,y,vx1,vy1,this.color,this.secondaryAttackProfileGenerator);
             playField.addPlayerProjectile(bullet1);
             const angle2 = 2*Math.PI*(i+0.5)/this.fragsPerRing + randAngleOffset;
             const vx2 = this.fragSpeed2*Math.cos(angle2);
             const vy2 = this.fragSpeed2*Math.sin(angle2);
-            const bullet2 = new PointPProj(x,y,vx2,vy2,1,this.color);
+            const bullet2 = new PointPProj(x,y,vx2,vy2,this.color,this.secondaryAttackProfileGenerator);
             playField.addPlayerProjectile(bullet2);
         }
     }

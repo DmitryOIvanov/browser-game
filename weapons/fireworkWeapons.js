@@ -1,10 +1,11 @@
+import { createAttackProfile } from "../attackAndDefense.js";
 import Color from "../color.js";
 import controls from "../controls.js";
 import playField from "../playField.js";
 import FireworkProj from "../projectiles/player/fireworkProj.js";
 
 class GeneralFireworkWeapon {
-    constructor(fireRate, numShots, spread, variance, speed1, frags, speed2, speed3, radius, duration, color){
+    constructor(fireRate, numShots, spread, variance, speed1, frags, speed2, speed3, radius, duration, color, primaryAttackProfileGenerator, secondaryAttackProfileGenerator){
         this.fireRate = fireRate;
         this.numShots = numShots;
         this.spread = spread;
@@ -16,6 +17,8 @@ class GeneralFireworkWeapon {
         this.radius = radius;
         this.duration = duration;
         this.color = color;
+        this.primaryAttackProfileGenerator = primaryAttackProfileGenerator;
+        this.secondaryAttackProfileGenerator = secondaryAttackProfileGenerator;
 
         this.fireTimer = 0;
     }
@@ -38,7 +41,7 @@ class GeneralFireworkWeapon {
                     let dy2 = coeff*(dy*Math.cos(theta) - dx*Math.sin(theta));
                     let newBullet = new FireworkProj(
                         playField.player.x, playField.player.y, dx2, dy2,
-                        this.radius, this.duration, this.frags, this.speed2, this.speed3, this.color);
+                        this.radius, this.duration, this.frags, this.speed2, this.speed3, this.color, this.primaryAttackProfileGenerator, this.secondaryAttackProfileGenerator);
                     newBullet.timeStep(-this.fireTimer);
                     playField.addPlayerProjectile(newBullet);
                 }
@@ -61,7 +64,17 @@ export class FireworkWeapon extends GeneralFireworkWeapon {
             20, // speed of ring 2
             10, // radius
             50, // duration
-            new Color(false,'#f5f') // color
+            new Color(false,'#f5f'), // color
+            () => (createAttackProfile( // Main body
+                5, // Damage
+                0, // Dummy Value
+                0  // Dummy Value
+            )),
+            () => (createAttackProfile( // Sub-bullets
+                1, // Damage
+                3, // Overkill factor
+                0 // Free hits where bullet is unaffected
+            ))
         );
     }
 }
@@ -79,7 +92,17 @@ export class MemeWeapon2 extends GeneralFireworkWeapon {
             20, // speed of ring 2
             10, // radius
             50, // duration
-            new Color(true, 0) // color
+            new Color(true, 0), // color
+            () => (createAttackProfile( // Main body
+                5, // Damage
+                0, // Dummy Value
+                0  // Dummy Value
+            )),
+            () => (createAttackProfile( // Sub-bullets
+                1, // Damage
+                3, // Overkill factor
+                0 // Free hits where bullet is unaffected
+            ))
         );
     }
 }

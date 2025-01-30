@@ -6,12 +6,12 @@ import playField from "../../playField.js";
 const NUM_COL_SAMPLES = 5;
 
 export default class BallPProj{
-    constructor(x,y,vx,vy,rad,pierce,dur,color){
+    constructor(x,y,vx,vy,rad,dur,color,attackProfileGenerator){
         this.x=x; this.y=y; this.vx=vx; this.vy=vy;
         this.radius = rad;
         this.boundingRad = 0.5*Math.sqrt(this.vx*this.vx + this.vy*this.vy) + this.radius;
         this.color = color;
-        this.pierce = pierce;
+        this.attackProfile = attackProfileGenerator();
         this.remainingTime = dur;
         this.numColSamples = NUM_COL_SAMPLES;
 
@@ -57,7 +57,6 @@ export default class BallPProj{
     }
 
     getHit(){
-        this.pierce -= 1;
-        if(this.pierce <= 0) this.retired = true;
+        if(this.attackProfile.expired) this.retired = true;
     }
 }
