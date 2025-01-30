@@ -1,3 +1,4 @@
+import { createDefenseProfile } from "../attackAndDefense.js";
 import Color from "../color.js";
 import { ctx } from "../drawing.js";
 import ExplodingRingParticle from "../particles/explodingRingParticle.js";
@@ -27,7 +28,6 @@ const BASIC_PARAMS = {
     moveLenVariance: MOVE_LEN_VARIANCE,
     accelCoeff: ACCEL_COEFF,
     targetTolerance: TARGET_TOLERANCE,
-    maxHP: MAX_HP,
     evFriction: EV_FRICTION
 };
 
@@ -36,6 +36,7 @@ export default class MultiSquare extends AbstractBasicSquare{
 
     constructor(x,y,evx,evy,initDelay){
         super(x,y,evx,evy,initDelay,BASIC_PARAMS);
+        this.defenseProfile = createDefenseProfile(MAX_HP);
     }
 
     draw(){
@@ -56,10 +57,8 @@ export default class MultiSquare extends AbstractBasicSquare{
         ctx.stroke();
     }
 
-    getHit(proj){
-        this.hp -= 1;
-        this.hitFlash = HIT_FLASH_TIME;
-        if(this.hp <= 0){
+    getHit(){
+        if(this.defenseProfile.expired){
             this.retired = true;
             playField.addParticle(new ExplodingRingParticle(this.x, this.y, RAD, 2*RAD, 10, Color.WHITE));
             const xOff = [1,-1,-1,1];
@@ -74,10 +73,6 @@ export default class MultiSquare extends AbstractBasicSquare{
             }
             return;
         }
-        // let dx = this.x - proj.x;
-        // let dy = this.y - proj.y;
-        // let distCoeff = SmallSquare.KNOCK_STRENGTH/Math.sqrt(dx*dx + dy*dy);
-        // this.extraVX += dx*distCoeff;
-        // this.extraVY += dy*distCoeff;
+        this.hitFlash = HIT_FLASH_TIME;
     }
 }

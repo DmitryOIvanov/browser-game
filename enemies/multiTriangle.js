@@ -1,3 +1,4 @@
+import { createDefenseProfile } from "../attackAndDefense.js";
 import Color from "../color.js";
 import { ctx } from "../drawing.js";
 import ExplodingRingParticle from "../particles/explodingRingParticle.js";
@@ -14,7 +15,6 @@ const EV_FRICTION = 0.2;
 const HIT_FLASH_TIME = 2;
 
 const BASIC_PARAMS = {
-    maxHP: MAX_HP,
     hitRad: HIT_RAD,
     evFriction: EV_FRICTION,
     offsetMove: 0.02,
@@ -31,6 +31,7 @@ export default class MultiTriangle extends AbstractBasicTriangle{
 
     constructor(x,y,evx,evy,initAngle){
         super(x,y,evx,evy,initAngle,BASIC_PARAMS);
+        this.defenseProfile = createDefenseProfile(MAX_HP);
     }
 
     draw(){
@@ -57,10 +58,8 @@ export default class MultiTriangle extends AbstractBasicTriangle{
         ctx.stroke();
     }
 
-    getHit(proj){
-        this.hp -= 1;
-        this.hitFlash = HIT_FLASH_TIME;
-        if(this.hp <= 0){
+    getHit(){
+        if(this.defenseProfile.expired){
             this.retired = true;
             playField.addParticle(new ExplodingRingParticle(this.x, this.y, RAD, 2*RAD, 6, Color.WHITE));
             playField.addEnemy(new SmallTriangle(this.x,this.y,0,0,this.angle));
@@ -76,10 +75,6 @@ export default class MultiTriangle extends AbstractBasicTriangle{
             }
             return;
         }
-        // let dx = this.x - proj.x;
-        // let dy = this.y - proj.y;
-        // let distCoeff = SmallSquare.KNOCK_STRENGTH/Math.sqrt(dx*dx + dy*dy);
-        // this.extraVX += dx*distCoeff;
-        // this.extraVY += dy*distCoeff;
+        this.hitFlash = HIT_FLASH_TIME;
     }
 }

@@ -34,7 +34,7 @@ export default class SmallCircle extends AbstractBasicCircle{
         ctx.stroke();
     }
 
-    getHit(proj){
+    getHit(){
         if(this.defenseProfile.expired){
             this.retired = true;
             playField.addParticle(new ExplodingRingParticle(this.x, this.y, 2*RAD, 3*RAD, 6, Color.WHITE));

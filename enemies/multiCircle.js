@@ -1,3 +1,4 @@
+import { createDefenseProfile } from "../attackAndDefense.js";
 import Color from "../color.js";
 import { ctx } from "../drawing.js";
 import { normalizedAtan2 } from "../extraMath.js";
@@ -16,7 +17,6 @@ const HIT_FLASH_TIME = 2;
 
 const BASIC_PARAMS = {
     hitRad: HIT_RAD,
-    maxHP: MAX_HP,
     evFriction: EV_FRICTION,
     regularSpeed: 4
 };
@@ -26,6 +26,7 @@ export default class MultiCircle extends AbstractBasicCircle{
 
     constructor(x,y,evx,evy,initAngle){
         super(x,y,evx,evy,initAngle,BASIC_PARAMS);
+        this.defenseProfile = createDefenseProfile(MAX_HP);
         this.rot = 2*Math.PI*Math.random();
     }
 
@@ -55,10 +56,8 @@ export default class MultiCircle extends AbstractBasicCircle{
         ctx.stroke();
     }
 
-    getHit(proj){
-        this.hp -= 1;
-        this.hitFlash = HIT_FLASH_TIME;
-        if(this.hp <= 0){
+    getHit(){
+        if(this.defenseProfile.expired){
             this.retired = true;
             playField.addParticle(new ExplodingRingParticle(this.x, this.y, RAD, 2*RAD, 6, Color.WHITE));
             for(let i=-3; i<=3; i+=2){
@@ -71,5 +70,6 @@ export default class MultiCircle extends AbstractBasicCircle{
             }
             return;
         }
+        this.hitFlash = HIT_FLASH_TIME;
     }
 }
