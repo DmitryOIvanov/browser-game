@@ -138,7 +138,8 @@ const playField = {
                                 if(proj.excludes[enemy.id]){
                                     if(proj.excludes[enemy.id][part]) continue;
                                 }
-                                enemy.getHit(proj, part);
+                                attackAndDefend(proj.attackProfile, enemy.getDefenseProfile(part));
+                                enemy.getHit(part);
                                 proj.getHit(step);
                                 if(!proj.excludes[enemy.id]) proj.excludes[enemy.id] = {};
                                 proj.excludes[enemy.id][part] = true;

@@ -189,7 +189,7 @@ export default class ShieldedCircle extends AbstractEnemy{
         // ctx.stroke();
     }
 
-    getHit(proj, segID){
+    getHit(segID){
         if(this.retired) return;
         this.setHP(segID, decToZero(this.hp[segID],1));
     }
