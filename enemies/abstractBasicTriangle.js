@@ -11,7 +11,6 @@ export default class AbstractBasicTriangle extends AbstractEnemy{
         this.x = x;
         this.y = y;
 
-        this.hp = this.maxHP;
         this.hitFlash = 0;
         this.angle = initAngle;
         

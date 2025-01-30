@@ -12,7 +12,6 @@ export default class AbstractBasicCircle extends AbstractEnemy{
         this.vy = this.regularSpeed*Math.sin(initAngle);
         this.area = new CircleArea(this.x, this.y, this.hitRad);
 
-        this.hp = this.maxHP;
         this.hitFlash = 0;
 
         // Currently unused

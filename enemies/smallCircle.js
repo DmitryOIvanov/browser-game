@@ -1,3 +1,4 @@
+import { createDefenseProfile } from "../attackAndDefense.js";
 import Color from "../color.js";
 import { ctx } from "../drawing.js";
 import ExplodingRingParticle from "../particles/explodingRingParticle.js";
@@ -12,7 +13,6 @@ const EV_FRICTION = 0.2;
 const HIT_FLASH_TIME = 2;
 const BASIC_PARAMS = {
     hitRad: HIT_RAD,
-    maxHP: MAX_HP,
     evFriction: EV_FRICTION,
     regularSpeed: 6
 };
@@ -22,6 +22,7 @@ export default class SmallCircle extends AbstractBasicCircle{
 
     constructor(x,y,evx,evy,initAngle){
         super(x,y,evx,evy,initAngle,BASIC_PARAMS);
+        this.defenseProfile = createDefenseProfile(MAX_HP);
     }
 
     draw(){
@@ -34,12 +35,11 @@ export default class SmallCircle extends AbstractBasicCircle{
     }
 
     getHit(proj){
-        this.hp -= 1;
-        this.hitFlash = HIT_FLASH_TIME;
-        if(this.hp <= 0){
+        if(this.defenseProfile.expired){
             this.retired = true;
             playField.addParticle(new ExplodingRingParticle(this.x, this.y, 2*RAD, 3*RAD, 6, Color.WHITE));
             return;
         }
+        this.hitFlash = HIT_FLASH_TIME;
     }
 }

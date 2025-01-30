@@ -9,16 +9,16 @@ const specificSpawnInfo = [
         name: "SmallSquare",
         probWeight: 200,
         cooldown: 30
-    }
-    // ,{
-    //     name: "SmallCircle",
-    //     probWeight: 200,
-    //     cooldown: 30
-    // },{
-    //     name: "SmallTriangle",
-    //     probWeight: 200,
-    //     cooldown: 30
-    // },{
+    },{
+        name: "SmallCircle",
+        probWeight: 200,
+        cooldown: 30
+    },{
+        name: "SmallTriangle",
+        probWeight: 200,
+        cooldown: 30
+    },
+    // {
     //     name: "MultiSquare",
     //     probWeight: 50,
     //     cooldown: 120
