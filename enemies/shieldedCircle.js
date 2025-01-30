@@ -69,7 +69,7 @@ export default class ShieldedCircle extends AbstractEnemy{
             }else{
                 this.boundingCoords[i] = this.segExistence.reduce((acc,exists,j)=>{
                     if(j==NUM_SEGMENTS) return acc;
-                    if(exists && this.segExistence[(j+1)%NUM_SEGMENTS]<=0) return acc;
+                    if(!exists && !this.segExistence[(j+1)%NUM_SEGMENTS]) return acc;
                     const cos = Math.cos(2*Math.PI*(j+1)/NUM_SEGMENTS+this.rot-0.5*Math.PI*i)
                     return Math.max(acc, OUT_RAD*cos, MID_RAD*cos);
                 }, this.segExistence[NUM_SEGMENTS]?IN_RAD:-OUT_RAD);
@@ -184,15 +184,15 @@ export default class ShieldedCircle extends AbstractEnemy{
         }
 
         // --- Bounding box test ---
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = '#fff';
-        ctx.beginPath();
-        ctx.rect(
-            this.x-this.boundingCoords[2],
-            this.y-this.boundingCoords[3],
-            this.boundingCoords[2]+this.boundingCoords[0],
-            this.boundingCoords[3]+this.boundingCoords[1]);
-        ctx.stroke();
+        // ctx.lineWidth = 1;
+        // ctx.strokeStyle = '#fff';
+        // ctx.beginPath();
+        // ctx.rect(
+        //     this.x-this.boundingCoords[2],
+        //     this.y-this.boundingCoords[3],
+        //     this.boundingCoords[2]+this.boundingCoords[0],
+        //     this.boundingCoords[3]+this.boundingCoords[1]);
+        // ctx.stroke();
     }
 
     getHit(segID){

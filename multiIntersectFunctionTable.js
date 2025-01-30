@@ -18,10 +18,10 @@ multiIntersectFunctionTable[areas.ShieldedCircleArea.ID][areas.PointArea.ID] = f
     if(distSqr > sc.rOut*sc.rOut){
         return null;
     }else if(distSqr <= sc.rIn*sc.rIn){
-        return sc.segExistence[sc.numSegs]>0 ? [sc.numSegs] : null;
+        return sc.segExistence[sc.numSegs] ? [sc.numSegs] : null;
     }else if(distSqr >= sc.rMid*sc.rMid){
         let seg = Math.floor(((Math.atan2(dy,dx)-sc.rot)*0.5/Math.PI+2)*sc.numSegs)%sc.numSegs;
-        return sc.segExistence[seg]>0 ? [seg] : null;
+        return sc.segExistence[seg] ? [seg] : null;
     }
     return null;
 };
