@@ -31,7 +31,7 @@ const specificSpawnInfo = [
         cooldown: 120
     },{
         name: "ShieldedCircle",
-        probWeight: 25000,
+        probWeight: 25,
         cooldown: 180
     },{
         name: "SimpleShooter",
