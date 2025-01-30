@@ -1,3 +1,4 @@
+import { createDefenseProfile } from "../attackAndDefense.js";
 import Color from "../color.js";
 import { ctx } from "../drawing.js";
 import ExplodingRingParticle from "../particles/explodingRingParticle.js";
@@ -29,7 +30,7 @@ export default class SimpleShooter extends AbstractBasicShooter{
     constructor(x,y){
         super(x,y,SUPERCLASS_PARAMS);
         this.hitFlash = 0;
-        this.hp = MAX_HP;
+        this.defenseProfile = createDefenseProfile(MAX_HP);
     }
 
     shoot(){
@@ -61,13 +62,12 @@ export default class SimpleShooter extends AbstractBasicShooter{
         ctx.stroke();
     }
 
-    getHit(proj){
-        this.hp -= 1;
-        this.hitFlash = HIT_FLASH_TIME;
-        if(this.hp <= 0){
+    getHit(){
+        if(this.defenseProfile.expired){
             this.retired = true;
             playField.addParticle(new ExplodingRingParticle(this.x, this.y, 1.5*RAD, 2*RAD, 6, Color.WHITE));
             return;
         }
+        this.hitFlash = HIT_FLASH_TIME;
     }
 }

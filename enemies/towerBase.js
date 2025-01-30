@@ -1,4 +1,5 @@
 import { RegularPolygonArea } from "../areas.js";
+import { createDefenseProfile } from "../attackAndDefense.js";
 import Color from "../color.js";
 import { ctx } from "../drawing.js";
 import { decToZero } from "../extraMath.js";
@@ -21,8 +22,8 @@ export default class TowerBase extends AbstractEnemy{
         super();
         this.x=x; this.y=y;
         this.hitFlash = 0;
-        this.hp = hp;
         this.area = new RegularPolygonArea(this.x,this.y,HIT_RAD,ROT_OFFSET,VERTS);
+        this.defenseProfile = createDefenseProfile(hp);
     }
 
     timeStep(amount){
@@ -42,13 +43,12 @@ export default class TowerBase extends AbstractEnemy{
         ctx.stroke();
     }
 
-    getHit(proj){
-        this.hp -= 1;
-        this.hitFlash = HIT_FLASH_TIME;
-        if(this.hp <= 0){
+    getHit(){
+        if(this.defenseProfile.expired){
             this.retired = true;
             playField.addParticle(new ExplodingRingParticle(this.x, this.y, 1.5*RAD, 2.5*RAD, 9, Color.WHITE));
             return;
         }
+        this.hitFlash = HIT_FLASH_TIME;
     }
 }

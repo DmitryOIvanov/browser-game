@@ -33,7 +33,7 @@ const specificSpawnInfo = [
         name: "ShieldedCircle",
         probWeight: 25,
         cooldown: 180
-    },{
+    },*/{
         name: "SimpleShooter",
         probWeight: 80,
         cooldown: 60
@@ -62,7 +62,6 @@ const specificSpawnInfo = [
         probWeight: 10,
         cooldown: 300
     }
-    */
 ];
 
 const WEIGHT_SUM = specificSpawnInfo.reduce((curSum,nextEntry)=>(curSum+nextEntry.probWeight), 0);
@@ -82,7 +81,7 @@ export default class DebugEnemySpawning {
         if(controls.pressed["KeyO"]) this.doSpawns = !this.doSpawns;
 
         if(this.doSpawns){
-            this.spawnTimer -= amount;
+            this.spawnTimer -= 10*amount;
             while(this.spawnTimer <= 0){
                 const randNum = WEIGHT_SUM*Math.random();
                 let curProbSum = 0;

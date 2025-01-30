@@ -1,4 +1,5 @@
 import { RegularPolygonArea } from "../areas.js";
+import { createDefenseProfile } from "../attackAndDefense.js";
 import Color from "../color.js";
 import { ctx } from "../drawing.js";
 import { bounceBoundify, decToZero, isInBounds, normalizeAngle } from "../extraMath.js";
@@ -35,7 +36,6 @@ export default class LaserShooter extends AbstractEnemy{
         super();
         this.x=x; this.y=y;
         this.hitFlash = 0;
-        this.hp = MAX_HP;
         this.rot = 2*Math.PI*Math.random();
         this.area = new RegularPolygonArea(this.x,this.y,RAD,this.rot,VERTS);
         this.moveAngle = 2*Math.PI*Math.random();
@@ -49,6 +49,7 @@ export default class LaserShooter extends AbstractEnemy{
         this.laserDX = 0; this.laserDY = 0;
         this.shotLaser = false;
         this.laserProj = null;
+        this.defenseProfile = createDefenseProfile(MAX_HP);
     }
 
     retireSelf(){
@@ -149,13 +150,12 @@ export default class LaserShooter extends AbstractEnemy{
         ctx.stroke();
     }
 
-    getHit(proj){
-        this.hp -= 1;
-        this.hitFlash = HIT_FLASH_TIME;
-        if(this.hp <= 0){
+    getHit(){
+        if(this.defenseProfile.expired){
             this.retireSelf();
             playField.addParticle(new ExplodingRingParticle(this.x, this.y, 1.5*RAD, 2*RAD, 6, Color.WHITE));
             return;
         }
+        this.hitFlash = HIT_FLASH_TIME;
     }
 }

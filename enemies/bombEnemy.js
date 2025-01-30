@@ -1,4 +1,5 @@
 import { CircleArea } from "../areas.js";
+import { createDefenseProfile } from "../attackAndDefense.js";
 import Color from "../color.js";
 import { ctx } from "../drawing.js";
 import { bounceBoundify, convergeToAngle, decToZero, isInBounds, normalizeAngle, normalizedAtan2 } from "../extraMath.js";
@@ -25,11 +26,11 @@ export default class BombEnemy extends AbstractEnemy{
         super();
         this.x=x; this.y=y;
         this.hitFlash = 0;
-        this.hp = MAX_HP;
         this.area = new CircleArea(this.x,this.y,RAD);
         this.moveAngle = 2*Math.PI*Math.random();
         this.rot = 2*Math.PI*Math.random();
         this.rotAmount = ROT_SPEED*(Math.random()>=0.5 ? 1:-1);
+        this.defenseProfile = createDefenseProfile(MAX_HP);
     }
 
     timeStep(amount){
@@ -80,10 +81,8 @@ export default class BombEnemy extends AbstractEnemy{
         ctx.stroke();
     }
 
-    getHit(proj){
-        this.hp -= 1;
-        this.hitFlash = HIT_FLASH_TIME;
-        if(this.hp <= 0){
+    getHit(){
+        if(this.defenseProfile.expired){
             this.retired = true;
             playField.addParticle(new ExplodingRingParticle(this.x, this.y, 2*RAD, 4*RAD, 6, Color.WHITE));
             for(let i=0; i<NUM_BULLETS; i++){
@@ -96,5 +95,6 @@ export default class BombEnemy extends AbstractEnemy{
             }
             return;
         }
+        this.hitFlash = HIT_FLASH_TIME;
     }
 }
