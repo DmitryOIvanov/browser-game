@@ -112,7 +112,7 @@ const playField = {
         for(let p=0; p<this.playerProj.length; p++){
             let proj = this.playerProj[p];
             if(proj.retired) continue;
-            let possibleEnemies = this.enemies.filter(enemy=>{ // Somewhat wasteful use of filter
+            let possibleEnemies = this.enemies.filter(enemy=>{ // Usually small, so filter is acceptable
                 if(enemy.retired) return false;
                 let checkArea = enemy.boundingArea;
                 if(!checkArea) checkArea = enemy.area;
@@ -120,13 +120,14 @@ const playField = {
             });
             for(let step=0; step<proj.numColSamples; step++){
                 for(let enemy of possibleEnemies){
+                    if(enemy.retired) continue;
                     if(enemy.area.type == Area.TYPE_SINGLE){
                         if(proj.excludes[enemy.id]) continue;
                         if(intersects(proj.colSamples[step], enemy.area)){
                             attackAndDefend(proj.attackProfile, enemy.defenseProfile);
                             enemy.getHit();
                             proj.getHit(step);
-                            if(!proj.attackProfile.expired && !enemy.defenseProfile.expired){
+                            if(!proj.retired && !enemy.retired){
                                 proj.excludes[enemy.id] = true;
                             }
                         }
@@ -141,10 +142,10 @@ const playField = {
                                 proj.getHit(step);
                                 if(!proj.excludes[enemy.id]) proj.excludes[enemy.id] = {};
                                 proj.excludes[enemy.id][part] = true;
-                                if(proj.retired) break;
                             }
                         }
                     }
+                    if(enemy.retired) break;
                     if(proj.retired) break;
                 }
                 if(proj.retired) break;
