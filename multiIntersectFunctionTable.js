@@ -18,16 +18,16 @@ multiIntersectFunctionTable[areas.ShieldedCircleArea.ID][areas.PointArea.ID] = f
     if(distSqr > sc.rOut*sc.rOut){
         return null;
     }else if(distSqr <= sc.rIn*sc.rIn){
-        return sc.segArr[sc.numSegs]>0 ? [sc.numSegs] : null;
+        return sc.segExistence[sc.numSegs]>0 ? [sc.numSegs] : null;
     }else if(distSqr >= sc.rMid*sc.rMid){
         let seg = Math.floor(((Math.atan2(dy,dx)-sc.rot)*0.5/Math.PI+2)*sc.numSegs)%sc.numSegs;
-        return sc.segArr[seg]>0 ? [seg] : null;
+        return sc.segExistence[seg]>0 ? [seg] : null;
     }
     return null;
 };
 
 multiIntersectFunctionTable[areas.ShieldedCircleArea.ID][areas.CircleArea.ID] = function(sc, c){
-    if(!sc.segArr.reduce((cur,hp)=>(cur||hp>0),false)) return null;
+    if(!sc.segExistence.reduce((cur,segExists)=>(cur||segExists),false)) return null;
     let dx = c.x-sc.x;
     let dy = c.y-sc.y;
     let distSqr = dx*dx+dy*dy;
@@ -82,7 +82,7 @@ multiIntersectFunctionTable[areas.ShieldedCircleArea.ID][areas.CircleArea.ID] = 
             }
         }
     }
-    result = result.filter(i=>(sc.segArr[i]>0));
+    result = result.filter(i=>(sc.segExistence[i]));
     return result.length>0?result:null;
 };
 

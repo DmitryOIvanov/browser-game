@@ -112,15 +112,15 @@ export class RayArea extends Area{
 
 export class ShieldedCircleArea extends Area{
     static ID = assignAreaID();
-    constructor(x,y,rIn,rMid,rOut,numSegs,segArr,rot){
+    constructor(x,y,rIn,rMid,rOut,numSegs,segExistence,rot){
         super(ShieldedCircleArea.ID, Area.TYPE_PARTITION);
-        this.update(x,y,rIn,rMid,rOut,numSegs,segArr, rot);
+        this.update(x,y,rIn,rMid,rOut,numSegs,segExistence, rot);
     }
-    update(x,y,rIn,rMid,rOut,numSegs,segArr, rot){
+    update(x,y,rIn,rMid,rOut,numSegs,segExistence, rot){
         this.x = x; this.y = y;
         this.rIn = rIn; this.rMid = rMid; this.rOut = rOut;
         this.numSegs = numSegs;
-        this.segArr = segArr;
+        this.segExistence = segExistence;
         this.rot = rot
     }
 }

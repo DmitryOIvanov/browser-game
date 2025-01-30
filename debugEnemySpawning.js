@@ -29,11 +29,11 @@ const specificSpawnInfo = [
         name: "MultiTriangle",
         probWeight: 50,
         cooldown: 120
-    },/*{
+    },{
         name: "ShieldedCircle",
-        probWeight: 25,
+        probWeight: 25000,
         cooldown: 180
-    },*/{
+    },{
         name: "SimpleShooter",
         probWeight: 80,
         cooldown: 60
@@ -81,7 +81,7 @@ export default class DebugEnemySpawning {
         if(controls.pressed["KeyO"]) this.doSpawns = !this.doSpawns;
 
         if(this.doSpawns){
-            this.spawnTimer -= 10*amount;
+            this.spawnTimer -= amount;
             while(this.spawnTimer <= 0){
                 const randNum = WEIGHT_SUM*Math.random();
                 let curProbSum = 0;

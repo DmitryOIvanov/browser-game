@@ -1,4 +1,5 @@
 import { CircleArea, ShieldedCircleArea } from "../areas.js";
+import { createDefenseProfile } from "../attackAndDefense.js";
 import Color from "../color.js";
 import { ctx } from "../drawing.js";
 import { bounceBoundify, decToZero, normalizeAngle, normalizeAnglePMPI, posMod } from "../extraMath.js";
@@ -29,8 +30,11 @@ export default class ShieldedCircle extends AbstractEnemy{
         this.x = x; this.y = y;
         this.rot = 2*Math.PI*Math.random();
         this.rotDir = Math.random()>=0.5 ? 1:-1;
-        this.hp = Array(NUM_SEGMENTS+1).fill(SEGMENT_MAX_HP);
-        this.hp[NUM_SEGMENTS] = CORE_MAX_HP;
+
+        this.defenseProfiles = Array(NUM_SEGMENTS).fill(null).map(()=>createDefenseProfile(SEGMENT_MAX_HP));
+        this.defenseProfiles.push(createDefenseProfile(CORE_MAX_HP));
+        this.segExistence = Array(NUM_SEGMENTS+1).fill(true);
+
         this.hitFlash = Array(NUM_SEGMENTS+1).fill(0);
         this.decayTimers = Array(NUM_SEGMENTS).fill(0).map(()=>(Math.random()*MAX_DECAY_TIME));
 
@@ -42,7 +46,7 @@ export default class ShieldedCircle extends AbstractEnemy{
             this.x,this.y,
             IN_RAD, MID_RAD, OUT_RAD,
             NUM_SEGMENTS,
-            this.hp,
+            this.segExistence,
             this.rot
         );
         this.boundingArea = new CircleArea(this.x,this.y,OUT_RAD);
@@ -51,36 +55,39 @@ export default class ShieldedCircle extends AbstractEnemy{
         this.updateBoundingCoords();
     }
 
+    getDefenseProfile(segID){
+        return this.defenseProfiles[segID];
+    }
+
     updateBoundingCoords(){
         for(let i=0; i<4; i++){
             let closestIndex = posMod(
                 Math.floor((0.25*i-0.5*this.rot/Math.PI)*NUM_SEGMENTS),
                 NUM_SEGMENTS);
-            if(this.hp[closestIndex]>0){
+            if(this.segExistence[closestIndex]){
                 this.boundingCoords[i] = OUT_RAD;
             }else{
-                this.boundingCoords[i] = this.hp.reduce((acc,hp,j)=>{
+                this.boundingCoords[i] = this.segExistence.reduce((acc,exists,j)=>{
                     if(j==NUM_SEGMENTS) return acc;
-                    if(hp<=0 && this.hp[(j+1)%NUM_SEGMENTS]<=0) return acc;
+                    if(exists && this.segExistence[(j+1)%NUM_SEGMENTS]<=0) return acc;
                     const cos = Math.cos(2*Math.PI*(j+1)/NUM_SEGMENTS+this.rot-0.5*Math.PI*i)
                     return Math.max(acc, OUT_RAD*cos, MID_RAD*cos);
-                }, this.hp[NUM_SEGMENTS]>0?IN_RAD:-OUT_RAD);
+                }, this.segExistence[NUM_SEGMENTS]?IN_RAD:-OUT_RAD);
             }
         }
     }
 
-    setHP(segID, amount){
-        this.hitFlash[segID] = HIT_FLASH_TIME;
-        this.hp[segID] = amount;
-        if(this.hp[segID] <= 0){
-            if(segID == NUM_SEGMENTS){
-                playField.addParticle(new ExplodingRingParticle(this.x, this.y, 1.5*IN_RAD, 2.5*IN_RAD, 6, Color.WHITE));
-            }else{
-                let angle = 2*Math.PI*(segID+0.5)/NUM_SEGMENTS + this.rot;
-                let dist = 0.5*(MID_RAD + OUT_RAD);
-                playField.addParticle(new ExplodingRingParticle(this.x+dist*Math.cos(angle), this.y+dist*Math.sin(angle), 20, 35, 6, Color.WHITE));
-            }
+    destroySegment(segID){
+        if(!this.segExistence[segID]) return;
+        this.segExistence[segID] = false;
+        if(segID == NUM_SEGMENTS){
+            playField.addParticle(new ExplodingRingParticle(this.x, this.y, 1.5*IN_RAD, 2.5*IN_RAD, 6, Color.WHITE));
+        }else{
+            const angle = 2*Math.PI*(segID+0.5)/NUM_SEGMENTS + this.rot;
+            const dist = 0.5*(MID_RAD + OUT_RAD);
+            playField.addParticle(new ExplodingRingParticle(this.x+dist*Math.cos(angle), this.y+dist*Math.sin(angle), 20, 35, 6, Color.WHITE));
         }
+        this.retired = !this.segExistence.reduce((cur,exists)=>(cur||exists),false);
     }
 
     timeStep(amount){
@@ -89,15 +96,14 @@ export default class ShieldedCircle extends AbstractEnemy{
         this.hitFlash = this.hitFlash.map((val)=>(decToZero(val,amount)));
 
         this.rot = normalizeAngle(this.rot + ROT_SPEED * amount * this.rotDir);
-        if(this.hp[NUM_SEGMENTS] <= 0){
+        if(!this.segExistence[NUM_SEGMENTS]){
             for(let i=0; i<NUM_SEGMENTS; i++){
                 this.decayTimers[i] = decToZero(this.decayTimers[i], amount);
-                if(this.decayTimers[i] <= 0 && this.hp[i] > 0){
-                    this.setHP(i, 0);
+                if(this.decayTimers[i] <= 0 && this.segExistence[i]){
+                    this.destroySegment(i);
                 }
             }
         }
-        this.retired = !this.hp.reduce((cur,hp)=>(cur || hp>0),false);
         if(this.retired) return;
 
         this.angleUpdateTimer -= amount;
@@ -133,7 +139,7 @@ export default class ShieldedCircle extends AbstractEnemy{
             this.x,this.y,
             IN_RAD, MID_RAD, OUT_RAD,
             NUM_SEGMENTS,
-            this.hp,
+            this.segExistence,
             this.rot
         );
         this.boundingArea.update(this.x,this.y,OUT_RAD);
@@ -144,7 +150,7 @@ export default class ShieldedCircle extends AbstractEnemy{
         if(this.retired) return;
         ctx.lineWidth = LINE_THICK;
         ctx.strokeStyle = this.hitFlash[NUM_SEGMENTS]>0?'#fff':this.baseColor.getStr();
-        if(this.hp[NUM_SEGMENTS] > 0){
+        if(this.segExistence[NUM_SEGMENTS]){
             ctx.beginPath();
             ctx.arc(this.x,this.y,IN_RAD,0,2*Math.PI);
             ctx.closePath();
@@ -154,7 +160,7 @@ export default class ShieldedCircle extends AbstractEnemy{
             ctx.strokeStyle = this.hitFlash[i]>0?'#fff':this.baseColor.getStr();
             let angle1 = this.rot + 2*Math.PI*i/NUM_SEGMENTS;
             let angle2 = this.rot + 2*Math.PI*(i+1)/NUM_SEGMENTS;
-            if(this.hp[i] > 0){
+            if(this.segExistence[i]){
                 ctx.beginPath();
                 ctx.arc(this.x,this.y,OUT_RAD,angle1,angle2);
                 ctx.stroke();
@@ -169,7 +175,7 @@ export default class ShieldedCircle extends AbstractEnemy{
             ctx.strokeStyle = (this.hitFlash[i]>0 || this.hitFlash[nextI]>0)?'#fff':this.baseColor.getStr();
             let rad1 = MID_RAD-LINE_THICK*0.5;
             let rad2 = OUT_RAD+LINE_THICK*0.5;
-            if(this.hp[i] > 0 || this.hp[nextI] > 0){
+            if(this.segExistence[i] || this.segExistence[nextI]){
                 ctx.beginPath();
                 ctx.moveTo(this.x+rad1*Math.cos(angle2),this.y+rad1*Math.sin(angle2));
                 ctx.lineTo(this.x+rad2*Math.cos(angle2),this.y+rad2*Math.sin(angle2));
@@ -178,19 +184,21 @@ export default class ShieldedCircle extends AbstractEnemy{
         }
 
         // --- Bounding box test ---
-        // ctx.lineWidth = 1;
-        // ctx.strokeStyle = '#fff';
-        // ctx.beginPath();
-        // ctx.rect(
-        //     this.x-this.boundingCoords[2],
-        //     this.y-this.boundingCoords[3],
-        //     this.boundingCoords[2]+this.boundingCoords[0],
-        //     this.boundingCoords[3]+this.boundingCoords[1]);
-        // ctx.stroke();
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = '#fff';
+        ctx.beginPath();
+        ctx.rect(
+            this.x-this.boundingCoords[2],
+            this.y-this.boundingCoords[3],
+            this.boundingCoords[2]+this.boundingCoords[0],
+            this.boundingCoords[3]+this.boundingCoords[1]);
+        ctx.stroke();
     }
 
     getHit(segID){
-        if(this.retired) return;
-        this.setHP(segID, decToZero(this.hp[segID],1));
+        this.hitFlash[segID] = HIT_FLASH_TIME;
+        if(this.defenseProfiles[segID].expired){
+            this.destroySegment(segID);
+        }
     }
 }
