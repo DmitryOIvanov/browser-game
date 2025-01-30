@@ -30,7 +30,6 @@ export default class FireworkProj{
         this.remainingTime -= amount;
         if(this.remainingTime <= 0){
             this.explode(this.x, this.y);
-            this.retired = true;
             return;
         }
 
@@ -39,7 +38,6 @@ export default class FireworkProj{
             this.y += this.vy*amount/FireworkProj.NUM_COL_SAMPLES;
             if(!isInBounds(this.x, playField.x, this.radius) || !isInBounds(this.y, playField.y, this.radius)){
                 this.explode(this.x, this.y);
-                this.retired = true;
                 return;
             }
             this.colSamples[i].update(this.x,this.y,this.radius);
@@ -52,10 +50,10 @@ export default class FireworkProj{
         const x = this.colSamples[step].x;
         const y = this.colSamples[step].y;
         this.explode(x,y);
-        this.retired = true;
     }
 
     explode(x,y){
+        if(this.retired) return;
         const randAngleOffset = 2*Math.PI*Math.random();
         for(let i=0; i<this.fragsPerRing; i++){
             const angle1 = 2*Math.PI*i/this.fragsPerRing + randAngleOffset;
@@ -69,6 +67,7 @@ export default class FireworkProj{
             const bullet2 = new PointPProj(x,y,vx2,vy2,this.color,this.secondaryAttackProfileGenerator);
             playField.addPlayerProjectile(bullet2);
         }
+        this.retired = true;
     }
 
     draw(){
