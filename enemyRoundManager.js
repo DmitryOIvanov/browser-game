@@ -28,6 +28,11 @@ class EnemyPool {
 }
 
 let poolCollection = {};
+function emptyPools(){
+    for(const name in poolCollection){
+        poolCollection[name].discardRetiredEntries();
+    }
+}
 function clearPools(){
     poolCollection = {};
 }
@@ -43,8 +48,9 @@ class WeightedSpawnTask {
     constructor(readonlyParams){
         this.enemyPool = getPool(readonlyParams.pool);
         this.delayCoeff = readonlyParams.delayCoeff;
+
         this.spawnList = [];
-        for(let entry of readonlyParams.enemies){
+        for(let entry of readonlyParams.enemies){ // Randomize enemy order, this functionality should be moved elsewhere
             for(let i=0; i<entry.num; i++){
                 this.spawnList.push({name:entry.name, weight:entry.weight});
             }
@@ -140,9 +146,7 @@ export default class EnemyRoundManager {
 
     timeStep(amount){
         if(this.concluded) return;
-        for(const name in this.pools){
-            this.pools[name].discardRetiredEntries();
-        }
+        emptyPools();
         this.curTask.timeStep(amount);
         if(this.curTask.concluded){
             if(this.nextTaskIndex<this.tasks.length){
