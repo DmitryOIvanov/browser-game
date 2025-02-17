@@ -27,10 +27,21 @@ class EnemyPool {
     }
 }
 
+let poolCollection = {};
+function clearPools(){
+    poolCollection = {};
+}
+function getPool(name){
+    if(!poolCollection[name]){
+        poolCollection[name] = new EnemyPool();
+    }
+    return poolCollection[name];
+}
+
 const PLAYER_CLEARANCE = 300;
 class WeightedSpawnTask {
     constructor(readonlyParams){
-        this.enemyPool = readonlyParams.enemyPool;
+        this.enemyPool = getPool(readonlyParams.pool);
         this.delayCoeff = readonlyParams.delayCoeff;
         this.spawnList = [];
         for(let entry of readonlyParams.enemies){
@@ -94,15 +105,13 @@ class WaitTimeTask {
     }
 }
 
-const enemyPoolA = new EnemyPool();
-
 const tasks = [
     {
         taskClass: WaitTimeTask,
         time: 60
     },{
         taskClass: WeightedSpawnTask,
-        enemyPool: enemyPoolA,
+        pool: "A",
         delayCoeff: 1,
         enemies:[
             {name:"SmallSquare",weight:1,num:20},
@@ -121,6 +130,7 @@ const tasks = [
 
 export default class EnemyRoundManager {
     constructor(){
+        clearPools();
         this.tasks = tasks;
         this.concluded = false;
         this.nextTaskIndex = 0;
@@ -130,7 +140,9 @@ export default class EnemyRoundManager {
 
     timeStep(amount){
         if(this.concluded) return;
-        enemyPoolA.discardRetiredEntries();
+        for(const name in this.pools){
+            this.pools[name].discardRetiredEntries();
+        }
         this.curTask.timeStep(amount);
         if(this.curTask.concluded){
             if(this.nextTaskIndex<this.tasks.length){
