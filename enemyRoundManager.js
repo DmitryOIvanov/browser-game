@@ -49,14 +49,9 @@ class WeightedSpawnTask {
         this.enemyPool = getPool(readonlyParams.pool);
         this.delayCoeff = readonlyParams.delayCoeff;
 
-        this.spawnList = [];
-        for(let entry of readonlyParams.enemies){ // Randomize enemy order, this functionality should be moved elsewhere
-            for(let i=0; i<entry.num; i++){
-                this.spawnList.push({name:entry.name, weight:entry.weight});
-            }
-        }
-        shuffleArray(this.spawnList);
-        this.spawnIndex = 0;
+        this.spawnList = structuredClone(readonlyParams.enemies);
+        this.groupIndex = 0;
+        this.nextSpawn = this.popNextSpawn();
 
         this.timePassed = 0;
         this.concluded = false;
@@ -67,14 +62,13 @@ class WeightedSpawnTask {
         this.timePassed += amount;
         let timeToNext = this.getTimeToNext();
         while(this.timePassed >= timeToNext){
-            const spawnListEntry = this.spawnList[this.spawnIndex];
-            const enemyInfo = enemySpawningInfo[spawnListEntry.name];
+            const enemyInfo = enemySpawningInfo[this.nextSpawn.name];
             const pos = getRandomPosWithMargins(enemyInfo.rad,PLAYER_CLEARANCE);
             const newEnemyRef = enemyInfo.spawn(pos.x, pos.y);
-            this.enemyPool.addEnemyEntry(newEnemyRef, spawnListEntry.weight);
+            this.enemyPool.addEnemyEntry(newEnemyRef, this.nextSpawn.weight);
 
-            this.spawnIndex++;
-            if(this.spawnIndex >= this.spawnList.length){
+            this.nextSpawn = this.popNextSpawn();
+            if(!this.nextSpawn){
                 this.concluded = true;
                 return;
             }
@@ -83,8 +77,32 @@ class WeightedSpawnTask {
         }
     }
 
+    popNextSpawn(){
+        if(this.groupIndex >= this.spawnList.length) return null;
+        let returnVal = null;
+        if(this.spawnList[this.groupIndex].shuffle){
+            const list = this.spawnList[this.groupIndex].shuffle;
+            const totalEnemies = list.reduce((sum,entry)=>(sum+entry.num),0);
+            const randIndex = Math.floor(Math.random()*totalEnemies);
+            let curSum = list[0].num;
+            let index = 0;
+            while(curSum <= randIndex){
+                index++;
+                curSum += list[index].num;
+            }
+            returnVal = list[index];
+            list[index].num--;
+            if(totalEnemies <= 1) this.groupIndex++;
+        }else{
+            returnVal = this.spawnList[this.groupIndex];
+            this.spawnList[this.groupIndex].num--;
+            if(this.spawnList[this.groupIndex].num <= 0) this.groupIndex++;
+        }
+        return returnVal;
+    }
+
     getTimeToNext(){
-        const nextWeight = this.spawnList[this.spawnIndex].weight;
+        const nextWeight = this.nextSpawn.weight;
         return this.enemyPool.totalWeight * nextWeight * nextWeight * this.delayCoeff;
     }
 }
@@ -121,9 +139,12 @@ const tasks = [
         delayCoeff: 1,
         enemies:[
             {name:"SmallSquare",weight:1,num:20},
-            {name:"SmallTriangle",weight:1,num:20},
-            {name:"SmallCircle",weight:1,num:20},
-            {name:"SimpleShooter",weight:2,num:10},
+            {shuffle:[
+                {name:"SmallSquare",weight:1,num:20},
+                {name:"SmallTriangle",weight:1,num:20},
+                {name:"SmallCircle",weight:1,num:20},
+                {name:"SimpleShooter",weight:2,num:10},
+            ]}
         ]
     },{
         taskClass: WaitForConditionTask,
