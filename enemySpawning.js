@@ -51,7 +51,7 @@ export const enemySpawningInfo = {
         rad: MultiSquare.RAD,
         spawn: (x,y) => {
             const spawner = new BasicSpawnerParticle(x,y,2.5*MultiSquare.RAD,10,"white",()=>{
-                playField.addEnemy(new MultiSquare(x,y,0,0,40+20*Math.random()));
+                return playField.addEnemy(new MultiSquare(x,y,0,0,40+20*Math.random()));
             });
             playField.addParticle(spawner);
             return spawner.getEnemyRef();
@@ -61,7 +61,7 @@ export const enemySpawningInfo = {
         rad: MultiCircle.RAD,
         spawn: (x,y) => {
             const spawner = new BasicSpawnerParticle(x,y,2*MultiCircle.RAD,10,"white",()=>{
-                playField.addEnemy(new MultiCircle(x,y,0,0,2*Math.PI*Math.random()));
+                return playField.addEnemy(new MultiCircle(x,y,0,0,2*Math.PI*Math.random()));
             });
             playField.addParticle(spawner);
             return spawner.getEnemyRef();
@@ -71,7 +71,7 @@ export const enemySpawningInfo = {
         rad: MultiTriangle.RAD,
         spawn: (x,y) => {
             const spawner = new BasicSpawnerParticle(x,y,2.5*MultiTriangle.RAD,10,"white",()=>{
-                playField.addEnemy(new MultiTriangle(x,y,0,0,2*Math.PI*Math.random()));
+                return playField.addEnemy(new MultiTriangle(x,y,0,0,2*Math.PI*Math.random()));
             });
             playField.addParticle(spawner);
             return spawner.getEnemyRef();
@@ -81,7 +81,7 @@ export const enemySpawningInfo = {
         rad: ShieldedCircle.RAD,
         spawn: (x,y) => {
             const spawner = new BasicSpawnerParticle(x,y,1.5*ShieldedCircle.RAD,10,"white",()=>{
-                playField.addEnemy(new ShieldedCircle(x,y));
+                return playField.addEnemy(new ShieldedCircle(x,y));
             });
             playField.addParticle(spawner);
             return spawner.getEnemyRef();
@@ -101,7 +101,7 @@ export const enemySpawningInfo = {
         rad: BombEnemy.RAD,
         spawn: (x,y) => {
             const spawner = new BasicSpawnerParticle(x,y,1.5*BombEnemy.RAD,10,"white",()=>{
-                playField.addEnemy(new BombEnemy(x,y));
+                return playField.addEnemy(new BombEnemy(x,y));
             });
             playField.addParticle(spawner);
             return spawner.getEnemyRef();
@@ -111,7 +111,7 @@ export const enemySpawningInfo = {
         rad: LaserShooter.RAD,
         spawn: (x,y) => {
             const spawner = new BasicSpawnerParticle(x,y,1.5*LaserShooter.RAD,10,"white",()=>{
-                playField.addEnemy(new LaserShooter(x,y));
+                return playField.addEnemy(new LaserShooter(x,y));
             });
             playField.addParticle(spawner);
             return spawner.getEnemyRef();
@@ -121,7 +121,7 @@ export const enemySpawningInfo = {
         rad: ThreeShooter.RAD,
         spawn: (x,y) => {
             const spawner = new BasicSpawnerParticle(x,y,1.5*ThreeShooter.RAD,10,"white",()=>{
-                playField.addEnemy(new ThreeShooter(x,y));
+                return playField.addEnemy(new ThreeShooter(x,y));
             });
             playField.addParticle(spawner);
             return spawner.getEnemyRef();
@@ -131,7 +131,7 @@ export const enemySpawningInfo = {
         rad: TowerBase.RAD,
         spawn: (x,y) => {
             const spawner = new BasicSpawnerParticle(x,y,1.5*TowerBase.RAD,10,"white",()=>{
-                playField.addEnemy(new FlowerTower(x,y));
+                return playField.addEnemy(new FlowerTower(x,y));
             });
             playField.addParticle(spawner);
             return spawner.getEnemyRef();
@@ -141,7 +141,7 @@ export const enemySpawningInfo = {
         rad: TowerBase.RAD,
         spawn: (x,y) => {
             const spawner = new BasicSpawnerParticle(x,y,1.5*TowerBase.RAD,10,"white",()=>{
-                playField.addEnemy(new HeavyTower(x,y));
+                return playField.addEnemy(new HeavyTower(x,y));
             });
             playField.addParticle(spawner);
             return spawner.getEnemyRef();
@@ -151,7 +151,7 @@ export const enemySpawningInfo = {
         rad: TowerBase.RAD,
         spawn: (x,y) => {
             const spawner = new BasicSpawnerParticle(x,y,1.5*TowerBase.RAD,10,"white",()=>{
-                playField.addEnemy(new LaserTower(x,y));
+                return playField.addEnemy(new LaserTower(x,y));
             });
             playField.addParticle(spawner);
             return spawner.getEnemyRef();

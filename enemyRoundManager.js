@@ -138,13 +138,23 @@ const tasks = [
         pool: "A",
         delayCoeff: 1,
         enemies:[
-            {name:"SmallSquare",weight:1,num:20},
+            {name:"MultiCircle",weight:3,num:20},
             {shuffle:[
                 {name:"SmallSquare",weight:1,num:20},
                 {name:"SmallTriangle",weight:1,num:20},
                 {name:"SmallCircle",weight:1,num:20},
                 {name:"SimpleShooter",weight:2,num:10},
             ]}
+        ]
+    },{
+        taskClass: WaitForConditionTask,
+        condition: ()=>(playField.isDangerFree())
+    },{
+        taskClass: WeightedSpawnTask,
+        pool: "A",
+        delayCoeff: 1,
+        enemies:[
+            {name:"MultiSquare",weight:1,num:20}
         ]
     },{
         taskClass: WaitForConditionTask,
