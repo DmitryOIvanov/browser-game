@@ -48,6 +48,8 @@ const playField = {
         this.enemies = [];
         this.particles = [];
 
+        this.enemyWeight = 0;
+
         this.manager = manager;
     },
 
@@ -56,9 +58,14 @@ const playField = {
         return proj;
     },
 
-    addEnemy(enemy){
+    addEnemy(enemy, addWeight){
         this.enemies.push(enemy);
+        if(addWeight) this.enemyWeight += enemy.weight;
         return enemy;
+    },
+
+    announceEnemyWeight(weight){
+        this.enemyWeight += weight;
     },
 
     addEnemyProjectile(proj){
@@ -174,8 +181,19 @@ const playField = {
         }
         
         deleteRetirables(this.enemyProj);
-        deleteRetirables(this.enemies);
+
+        for(let i=0; i<this.enemies.length; i++){
+            if(this.enemies[i].retired){
+                this.enemyWeight -= this.enemies[i].weight;
+                this.enemies[i] = this.enemies[this.enemies.length-1];
+                this.enemies.pop();
+                i--;
+            }
+        }
+
         deleteRetirables(this.particles);
+
+        console.log(this.enemyWeight);
     },
 
     redraw(){

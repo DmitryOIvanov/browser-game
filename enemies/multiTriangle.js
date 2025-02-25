@@ -62,7 +62,7 @@ export default class MultiTriangle extends AbstractBasicTriangle{
         if(this.defenseProfile.expired){
             this.retired = true;
             playField.addParticle(new ExplodingRingParticle(this.x, this.y, RAD, 2*RAD, 6, Color.WHITE));
-            playField.addEnemy(new SmallTriangle(this.x,this.y,0,0,this.angle));
+            playField.addEnemy(new SmallTriangle(this.x,this.y,0,0,this.angle).setWeight(this.weight*0.25), true);
             for(let i=0; i<3; i++){
                 let launchAngle = this.angle+2*Math.PI*i/3
                 playField.addEnemy(new SmallTriangle(
@@ -71,7 +71,7 @@ export default class MultiTriangle extends AbstractBasicTriangle{
                     (5+Math.random())*Math.cos(launchAngle),
                     (5+Math.random())*Math.sin(launchAngle),
                     this.angle
-                ));
+                ).setWeight(this.weight*0.25), true);
             }
             return;
         }

@@ -25,6 +25,13 @@ export default class AbstractEnemy {
             this.baseColor = baseColorTable[randIndex];
             this.dangerColor = dangerColor;
         }
+
+        this.weight = 0;
+    }
+
+    setWeight(weight){
+        this.weight = weight;
+        return this;
     }
 
     timeStep(amount){}

@@ -90,7 +90,7 @@ export default class DebugEnemySpawning {
                     if(randNum < curProbSum){
                         const generalInfo = enemySpawningInfo[entry.name];
                         const pos = getRandomPosWithMargins(generalInfo.rad,PLAYER_CLEARANCE);
-                        generalInfo.spawn(pos.x, pos.y);
+                        generalInfo.spawn(0, pos.x, pos.y);
                         this.spawnTimer += entry.cooldown;
                         break;
                     }

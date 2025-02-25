@@ -69,7 +69,8 @@ export default class MultiSquare extends AbstractBasicSquare{
                     this.y+SmallSquare.RAD*yOff[i],
                     xOff[i] * (3+Math.random()),
                     yOff[i] * (3+Math.random()),
-                    30+30*Math.random()));
+                    30+30*Math.random()
+                ).setWeight(this.weight*0.25), true);
             }
             return;
         }

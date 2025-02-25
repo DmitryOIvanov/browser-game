@@ -66,7 +66,7 @@ export default class MultiCircle extends AbstractBasicCircle{
                     this.x+SmallCircle.RAD*Math.cos(newAngle),
                     this.y+SmallCircle.RAD*Math.sin(newAngle),
                     0,0,newAngle
-                ));
+                ).setWeight(this.weight*0.25), true);
             }
             return;
         }

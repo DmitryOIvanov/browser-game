@@ -27,20 +27,20 @@ class EnemyPool {
     }
 }
 
-let poolCollection = {};
+let enemyPools = {};
 function emptyPools(){
-    for(const name in poolCollection){
-        poolCollection[name].discardRetiredEntries();
+    for(const name in enemyPools){
+        enemyPools[name].discardRetiredEntries();
     }
 }
 function clearPools(){
-    poolCollection = {};
+    enemyPools = {};
 }
 function getPool(name){
-    if(!poolCollection[name]){
-        poolCollection[name] = new EnemyPool();
+    if(!enemyPools[name]){
+        enemyPools[name] = new EnemyPool();
     }
-    return poolCollection[name];
+    return enemyPools[name];
 }
 
 const PLAYER_CLEARANCE = 300;
@@ -64,7 +64,8 @@ class WeightedSpawnTask {
         while(this.timePassed >= timeToNext){
             const enemyInfo = enemySpawningInfo[this.nextSpawn.name];
             const pos = getRandomPosWithMargins(enemyInfo.rad,PLAYER_CLEARANCE);
-            const newEnemyRef = enemyInfo.spawn(pos.x, pos.y);
+            const newEnemyRef = enemyInfo.spawn(this.nextSpawn.weight, pos.x, pos.y);
+            playField.announceEnemyWeight(this.nextSpawn.weight);
             this.enemyPool.addEnemyEntry(newEnemyRef, this.nextSpawn.weight);
 
             this.nextSpawn = this.popNextSpawn();
