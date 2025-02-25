@@ -1,52 +1,9 @@
 import { enemySpawningInfo, getRandomPosWithMargins } from "./enemySpawning.js";
 import playField from "./playField.js";
 
-class EnemyPool {
-    constructor(){
-        this.totalWeight = 0;
-        this.enemyEntries = [];
-    }
-
-    addEnemyEntry(enemyRef, weight){
-        this.totalWeight += weight;
-        this.enemyEntries.push({
-            enemyRef: enemyRef,
-            weight: weight
-        });
-    }
-
-    discardRetiredEntries(){
-        for(let i=0; i<this.enemyEntries.length; i++){
-            const enemy = this.enemyEntries[i].enemyRef.enemy;
-            if(enemy && enemy.retired){
-                this.totalWeight -= this.enemyEntries[i].weight;
-                this.enemyEntries[i] = this.enemyEntries[this.enemyEntries.length-1];
-                this.enemyEntries.pop();
-            }
-        }
-    }
-}
-
-let enemyPools = {};
-function emptyPools(){
-    for(const name in enemyPools){
-        enemyPools[name].discardRetiredEntries();
-    }
-}
-function clearPools(){
-    enemyPools = {};
-}
-function getPool(name){
-    if(!enemyPools[name]){
-        enemyPools[name] = new EnemyPool();
-    }
-    return enemyPools[name];
-}
-
 const PLAYER_CLEARANCE = 300;
 class WeightedSpawnTask {
     constructor(readonlyParams){
-        this.enemyPool = getPool(readonlyParams.pool);
         this.delayCoeff = readonlyParams.delayCoeff;
 
         this.spawnList = structuredClone(readonlyParams.enemies);
@@ -64,9 +21,8 @@ class WeightedSpawnTask {
         while(this.timePassed >= timeToNext){
             const enemyInfo = enemySpawningInfo[this.nextSpawn.name];
             const pos = getRandomPosWithMargins(enemyInfo.rad,PLAYER_CLEARANCE);
-            const newEnemyRef = enemyInfo.spawn(this.nextSpawn.weight, pos.x, pos.y);
             playField.announceEnemyWeight(this.nextSpawn.weight);
-            this.enemyPool.addEnemyEntry(newEnemyRef, this.nextSpawn.weight);
+            enemyInfo.spawn(this.nextSpawn.weight, pos.x, pos.y);
 
             this.nextSpawn = this.popNextSpawn();
             if(!this.nextSpawn){
@@ -104,7 +60,7 @@ class WeightedSpawnTask {
 
     getTimeToNext(){
         const nextWeight = this.nextSpawn.weight;
-        return this.enemyPool.totalWeight * nextWeight * nextWeight * this.delayCoeff;
+        return playField.enemyWeight * nextWeight * nextWeight * this.delayCoeff;
     }
 }
 
@@ -136,7 +92,6 @@ const tasks = [
         time: 60
     },{
         taskClass: WeightedSpawnTask,
-        pool: "A",
         delayCoeff: 1,
         enemies:[
             {name:"MultiCircle",weight:3,num:20},
@@ -168,7 +123,6 @@ const tasks = [
 
 export default class EnemyRoundManager {
     constructor(){
-        clearPools();
         this.tasks = tasks;
         this.concluded = false;
         this.nextTaskIndex = 0;
@@ -178,7 +132,6 @@ export default class EnemyRoundManager {
 
     timeStep(amount){
         if(this.concluded) return;
-        emptyPools();
         this.curTask.timeStep(amount);
         if(this.curTask.concluded){
             if(this.nextTaskIndex<this.tasks.length){
