@@ -5,9 +5,6 @@ import controls from "./controls.js";
 import { canv, ctx } from "./drawing.js";
 import { findMultiIntersections, intersects } from "./intersection.js";
 import Player from "./player.js";
-import { BouncyWeapon, MemeWeapon3 } from "./weapons/ballProjWeapons.js";
-import { FireworkWeapon, MemeWeapon2 } from "./weapons/fireworkWeapons.js";
-import { MachineGunWeapon, MemeWeapon1, PierceWeapon, ShotgunWeapon } from "./weapons/pointProjWeapons.js";
 
 function deleteRetirables(array){
     for(let i=0; i<array.length; i++){
@@ -19,17 +16,6 @@ function deleteRetirables(array){
     }
 }
 
-const weaponGenerators = [
-    ()=>(new MachineGunWeapon()),
-    ()=>(new ShotgunWeapon()),
-    ()=>(new PierceWeapon()),
-    ()=>(new BouncyWeapon()),
-    ()=>(new FireworkWeapon()),
-    ()=>(new MemeWeapon1()),
-    ()=>(new MemeWeapon2()),
-    ()=>(new MemeWeapon3())
-];
-
 const playField = {
     initialize(manager){
         this.x = canv.width;
@@ -40,8 +26,6 @@ const playField = {
         this.minDim = Math.min(this.x,this.y);
         
         this.player = new Player(playField.x/2,playField.y/2);
-        this.weaponIndex = 0;
-        this.player.weapon = weaponGenerators[this.weaponIndex]();
 
         this.playerProj = [];
         this.enemyProj = [];
@@ -51,6 +35,7 @@ const playField = {
         this.enemyWeight = 0;
 
         this.manager = manager;
+        if(manager) manager.onPlayfieldInit();
     },
 
     addPlayerProjectile(proj){
@@ -85,12 +70,6 @@ const playField = {
         const step = playerStep * player.hitSlowFactor;
     
         Color.incRainbow(step*0.1);
-    
-        // Switch weapons
-        if(controls.pressed["KeyE"]){
-            this.weaponIndex = (this.weaponIndex+1)%weaponGenerators.length;
-            player.weapon = weaponGenerators[this.weaponIndex]();
-        }
 
         // Timestep manager
         if(this.manager){
@@ -192,8 +171,6 @@ const playField = {
         }
 
         deleteRetirables(this.particles);
-
-        console.log(this.enemyWeight);
     },
 
     redraw(){

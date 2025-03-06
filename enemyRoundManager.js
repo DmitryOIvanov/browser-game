@@ -130,6 +130,8 @@ export default class EnemyRoundManager {
         this.startNextTask();
     }
 
+    onPlayfieldInit(){}
+
     timeStep(amount){
         if(this.concluded) return;
         this.curTask.timeStep(amount);

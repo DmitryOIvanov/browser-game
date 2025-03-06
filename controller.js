@@ -4,7 +4,7 @@ import { canv, ctx, drawDot, fillScreen } from "./drawing.js";
 import { CanvasTextButton } from "./gui.js";
 import playField from "./playField.js";
 import EnemyRoundManager from "./enemyRoundManager.js";
-import DebugEnemySpawning from "./debugEnemySpawning.js";
+import DebugManager from "./debugEnemySpawning.js";
 
 const modeAButton = new CanvasTextButton(canv.width/2,canv.height/2+100,"Untitled Mode A",60,new Color(false,"#fff"));
 const debugModeButton = new CanvasTextButton(canv.width/2,canv.height/2+180,"Debug Mode",60,new Color(false,"#fff"));
@@ -40,7 +40,7 @@ const controller = {
                 if(modeAButton.isPressed()){
                     playField.initialize(new EnemyRoundManager());
                 }else{
-                    playField.initialize(new DebugEnemySpawning());
+                    playField.initialize(new DebugManager());
                 }
             }
         }

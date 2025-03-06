@@ -3,6 +3,9 @@ import controls from "./controls.js";
 import { enemySpawningInfo, getRandomPosWithMargins } from "./enemySpawning.js";
 import BigExplosionParticle from "./particles/bigExplosionParticle.js";
 import playField from "./playField.js";
+import { BouncyWeapon, MemeWeapon3 } from "./weapons/ballProjWeapons.js";
+import { FireworkWeapon, MemeWeapon2 } from "./weapons/fireworkWeapons.js";
+import { MachineGunWeapon, MemeWeapon1, PierceWeapon, ShotgunWeapon } from "./weapons/pointProjWeapons.js";
 
 const specificSpawnInfo = [
     {
@@ -67,11 +70,27 @@ const specificSpawnInfo = [
 const WEIGHT_SUM = specificSpawnInfo.reduce((curSum,nextEntry)=>(curSum+nextEntry.probWeight), 0);
 const PLAYER_CLEARANCE = 300;
 
-export default class DebugEnemySpawning {
+const weaponGenerators = [
+    ()=>(new MachineGunWeapon()),
+    ()=>(new ShotgunWeapon()),
+    ()=>(new PierceWeapon()),
+    ()=>(new BouncyWeapon()),
+    ()=>(new FireworkWeapon()),
+    ()=>(new MemeWeapon1()),
+    ()=>(new MemeWeapon2()),
+    ()=>(new MemeWeapon3())
+];
+
+export default class DebugManager {
     constructor(){
         this.concluded = false;
         this.spawnTimer = 0;
         this.doSpawns = true;
+        this.weaponIndex = 0;
+    }
+
+    onPlayfieldInit(){
+        playField.player.weapon = weaponGenerators[this.weaponIndex]();
     }
 
     timeStep(amount){
@@ -79,6 +98,13 @@ export default class DebugEnemySpawning {
             playField.addParticle(new BigExplosionParticle(300,300,Color.WHITE));
         }
         if(controls.pressed["KeyO"]) this.doSpawns = !this.doSpawns;
+
+        // Switch weapons
+        if(controls.pressed["KeyE"]){
+            this.weaponIndex = (this.weaponIndex+1)%weaponGenerators.length;
+            playField.player.weapon = weaponGenerators[this.weaponIndex]();
+        }
+
 
         if(this.doSpawns){
             this.spawnTimer -= amount;
