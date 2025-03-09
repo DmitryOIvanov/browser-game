@@ -86,43 +86,14 @@ class WaitTimeTask {
     }
 }
 
-const tasks = [
-    {
-        taskClass: WaitTimeTask,
-        time: 60
-    },{
-        taskClass: WeightedSpawnTask,
-        delayCoeff: 1,
-        enemies:[
-            {name:"MultiCircle",weight:3,num:20},
-            {shuffle:[
-                {name:"SmallSquare",weight:1,num:20},
-                {name:"SmallTriangle",weight:1,num:20},
-                {name:"SmallCircle",weight:1,num:20},
-                {name:"SimpleShooter",weight:2,num:10},
-            ]}
-        ]
-    },{
-        taskClass: WaitForConditionTask,
-        condition: ()=>(playField.isDangerFree())
-    },{
-        taskClass: WeightedSpawnTask,
-        pool: "A",
-        delayCoeff: 1,
-        enemies:[
-            {name:"MultiSquare",weight:1,num:20}
-        ]
-    },{
-        taskClass: WaitForConditionTask,
-        condition: ()=>(playField.isDangerFree())
-    },{
-        taskClass: WaitTimeTask,
-        time: 60
-    }
-];
+const taskClassTable = {
+    "WeightedSpawnTask":WeightedSpawnTask,
+    "WaitForConditionTask":WaitForConditionTask,
+    "WaitTimeTask":WaitTimeTask
+}
 
 export default class EnemyRoundManager {
-    constructor(){
+    constructor(tasks){
         this.tasks = tasks;
         this.concluded = false;
         this.nextTaskIndex = 0;
@@ -146,7 +117,7 @@ export default class EnemyRoundManager {
 
     startNextTask(){
         const taskInfo = this.tasks[this.nextTaskIndex];
-        const taskClass = taskInfo.taskClass;
+        const taskClass = taskClassTable[taskInfo.taskName];
         this.curTask = new taskClass(taskInfo);
         this.nextTaskIndex++;
     }
