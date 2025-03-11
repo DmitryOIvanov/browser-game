@@ -1,10 +1,11 @@
+import playField from "./playField.js";
 import { MemeWeapon2 } from "./weapons/fireworkWeapons.js";
 import { MachineGunWeapon, MemeWeapon1, ShotgunWeapon } from "./weapons/pointProjWeapons.js";
 
 export default class ModeAGame {
     constructor(){
         this.level = 0;
-        this.weapon = null;
+        this.weaponGenerator = null;
     }
 }
 
@@ -37,7 +38,7 @@ export const modeALevelList = [
             taskName: "WeightedSpawnTask",
             delayCoeff: 1,
             enemies:[
-                {name:"MultiCircle",weight:3,num:20},
+                {name:"MultiCircle",weight:3,num:5},
                 {shuffle:[
                     {name:"SmallSquare",weight:1,num:20},
                     {name:"SmallTriangle",weight:1,num:20},

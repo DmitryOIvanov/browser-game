@@ -1,4 +1,5 @@
 import { enemySpawningInfo, getRandomPosWithMargins } from "./enemySpawning.js";
+import { modeALevelList } from "./modeAGame.js";
 import playField from "./playField.js";
 
 const PLAYER_CLEARANCE = 300;
@@ -93,15 +94,18 @@ const taskClassTable = {
 }
 
 export default class EnemyRoundManager {
-    constructor(tasks){
-        this.tasks = tasks;
+    constructor(game){
+        this.game = game;
+        this.tasks = modeALevelList[game.level];
         this.concluded = false;
         this.nextTaskIndex = 0;
         this.curTask = null;
         this.startNextTask();
     }
 
-    onPlayfieldInit(){}
+    onPlayfieldInit(){
+        playField.player.weapon = this.game.weaponGenerator();
+    }
 
     timeStep(amount){
         if(this.concluded) return;

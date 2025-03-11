@@ -1,10 +1,18 @@
+import Color from "./color.js";
 import controls from "./controls.js";
-import { canv, ctx } from "./drawing.js";
+import { canv, ctx, drawDot } from "./drawing.js";
+import { CanvasTextButton } from "./gui.js";
+import { modeAWeaponList } from "./modeAGame.js";
 
 export default class WeaponSelectController {
     constructor(game){
         this.game = game;
         this.concluded = false;
+
+        const level = game.level;
+        this.buttons = modeAWeaponList[game.level].map((entry,index)=>(
+            new CanvasTextButton(canv.width/2,200+80*index,entry.name,60,Color.WHITE)
+        ));
     }
 
     nextFrame(){
@@ -13,9 +21,24 @@ export default class WeaponSelectController {
         }
         if(this.concluded) return;
 
+        if(controls.mouse.inBounds){
+            drawDot(controls.mouse.x,controls.mouse.y)
+        }
+        for(const button of this.buttons){
+            button.update();
+            button.draw();
+        }
+        for(let i=0; i<this.buttons.length;i++){
+            if(this.buttons[i].isPressed()){
+                this.game.weaponGenerator = modeAWeaponList[this.game.level][i].generator;
+                this.concluded = true;
+                return;
+            }
+        }
+
         ctx.textAlign = "center";
-        ctx.font = "100px arial";
+        ctx.font = "80px arial";
         ctx.fillStyle = '#fff';
-        ctx.fillText("video game", canv.width/2,100);
+        ctx.fillText("Choose Your Weapon", canv.width/2,120);
     }
 }

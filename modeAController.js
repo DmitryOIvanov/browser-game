@@ -1,3 +1,4 @@
+import controls from "./controls.js";
 import EnemyRoundManager from "./enemyRoundManager.js";
 import ModeAGame, { modeALevelList } from "./modeAGame.js";
 import playField from "./playField.js";
@@ -45,9 +46,10 @@ export default class ModeAController {
     }
 
     startPlay(){
+        controls.mouse.lPressed = false;
+        controls.mouse.leftHeld = false;
         this.state = STATE_PLAYING;
         this.subController = null;
-        const tasks = modeALevelList[this.game.level];
-        playField.initialize(new EnemyRoundManager(tasks));
+        playField.initialize(new EnemyRoundManager(this.game));
     }
 }
