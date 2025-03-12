@@ -1,12 +1,14 @@
 import controls from "./controls.js";
 import EnemyRoundManager from "./enemyRoundManager.js";
 import ModeAGame, { modeALevelList } from "./modeAGame.js";
+import ModeAWinScreen from "./modeAWinScreen.js";
 import playField from "./playField.js";
 import WeaponSelectController from "./weaponSelectController.js";
 
 // const STATE_NONE = 0;
-const STATE_WEAPON_SELECT = 1;
-const STATE_PLAYING = 2;
+const STATE_WEAPON_SELECT = 0;
+const STATE_PLAYING = 1;
+const STATE_WIN = 2;
 
 export default class ModeAController {
     constructor(){
@@ -29,13 +31,18 @@ export default class ModeAController {
             if(playField.manager.concluded){
                 this.game.level++;
                 if(this.game.level >= modeALevelList.length){
-                    this.concluded = true;
-                    return;
+                    this.startWinScreen();
                 }else{
                     this.startWeaponSelect(); 
                 }
             }else{
                 playField.redraw();
+            }
+        }else if(this.state == STATE_WIN){
+            this.subController.nextFrame();
+            if(this.subController.concluded){
+                this.concluded = true;
+                return;
             }
         }
     }
@@ -51,5 +58,12 @@ export default class ModeAController {
         this.state = STATE_PLAYING;
         this.subController = null;
         playField.initialize(new EnemyRoundManager(this.game));
+    }
+
+    startWinScreen(){
+        controls.mouse.lPressed = false;
+        controls.mouse.leftHeld = false;
+        this.state = STATE_WIN;
+        this.subController = new ModeAWinScreen();
     }
 }

@@ -17,6 +17,9 @@ export const modeAWeaponList = [
         },{
             name: "Shotgun",
             generator: ()=>(new ShotgunWeapon())
+        },{
+            name: "Meme 1",
+            generator: ()=>(new MemeWeapon1())
         }
     ],[
         {
