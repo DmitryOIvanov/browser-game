@@ -3,9 +3,10 @@ import controls from "./controls.js";
 import { canv, ctx, drawDot } from "./drawing.js";
 import { CanvasTextButton } from "./gui.js";
 
-export default class ModeAWinScreen {
-    constructor(){
+export default class SimpleMessageScreen {
+    constructor(message){
         this.concluded = false;
+        this.message = message;
         this.continueButton = new CanvasTextButton(canv.width/2,420,"Continue",60,Color.WHITE);
     }
 
@@ -24,6 +25,6 @@ export default class ModeAWinScreen {
         ctx.textAlign = "center";
         ctx.font = "80px arial";
         ctx.fillStyle = '#fff';
-        ctx.fillText("You Win!", canv.width/2,300);
+        ctx.fillText(this.message, canv.width/2,300);
     }
 }

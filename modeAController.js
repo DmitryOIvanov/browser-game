@@ -1,7 +1,7 @@
 import controls from "./controls.js";
 import EnemyRoundManager from "./enemyRoundManager.js";
 import ModeAGame, { modeALevelList } from "./modeAGame.js";
-import ModeAWinScreen from "./modeAWinScreen.js";
+import SimpleMessageScreen from "./simpleMessageScreen.js";
 import playField from "./playField.js";
 import WeaponSelectController from "./weaponSelectController.js";
 
@@ -64,6 +64,6 @@ export default class ModeAController {
         controls.mouse.lPressed = false;
         controls.mouse.leftHeld = false;
         this.state = STATE_WIN;
-        this.subController = new ModeAWinScreen();
+        this.subController = new SimpleMessageScreen("You Win");
     }
 }
