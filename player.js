@@ -25,6 +25,8 @@ const HIT_SLOW_MAG = 0.1;
 const HIT_SLOW_DUR = 50;
 const HIT_COOLDOWN_DUR = 120;
 
+const MAX_HP = 5;
+
 export default class Player{
     static SLOWMO_SPEED = SLOWMO_SPEED;
 
@@ -40,6 +42,8 @@ export default class Player{
         this.hitCooldown = 0;
         this.hitSlowCooldown = 0;
         this.hitSlowFactor = 1;
+        this.hp = MAX_HP;
+        this.hpMeterDir = 0;
 
         this.inSlowMo = false;
         this.slowMeterDir = 0;
@@ -71,12 +75,38 @@ export default class Player{
         ctx.closePath();
         ctx.stroke();
         
+        if(this.hitCooldown <= 0) this.hpMeterDir = 0;
         if(this.hitCooldown > 0){
             ctx.lineWidth = 5*this.hitCooldown/HIT_COOLDOWN_DUR;
             ctx.beginPath();
-            ctx.arc(this.x,this.y,35,0,2*Math.PI);
+            ctx.arc(this.x,this.y,40,0,2*Math.PI);
             ctx.closePath();
             ctx.stroke();
+
+            if(this.hpMeterDir == 0){
+                this.hpMeterDir = this.x <= 0.5*playField.x ? 1 : -1;
+            }else if(this.hpMeterDir*(this.x/playField.x-0.5) > 0.4){
+                this.hpMeterDir = -this.hpMeterDir;
+            }
+            ctx.lineWidth = 25;
+            for(let i=0; i<this.hp+1; i++){
+                if(i == 0){
+                    const shownProbability = 0.5 + 1.2*(this.hitCooldown/HIT_COOLDOWN_DUR-0.5);
+                    if(Math.random() > shownProbability) continue;
+                }
+
+                const THICK  = 0.2;
+                let startAngle = (i-2)*0.3 - THICK*0.5 - 1.3*(this.y/playField.y-0.5);
+                let endAngle = startAngle + THICK;
+                if(this.hpMeterDir < 0){
+                    startAngle = Math.PI - startAngle;
+                    endAngle = Math.PI - endAngle;
+                }
+                ctx.beginPath();
+                ctx.arc(this.x,this.y,65,startAngle,endAngle,this.hpMeterDir < 0);
+                ctx.closePath();
+                ctx.stroke();
+            }
         }
 
         if(this.slowMoCharge >= SLOWMO_FULL_CHARGE) this.slowMeterDir = 0;
@@ -181,6 +211,7 @@ export default class Player{
 
     getHit(){
         if(this.hitCooldown == 0){
+            this.hp--;
             for(let i=0; i<50; i++){
                 const randAngle = 2*Math.PI*Math.random();
                 let randSpeed = Math.random();
