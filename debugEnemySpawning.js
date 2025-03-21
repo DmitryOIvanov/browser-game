@@ -93,6 +93,8 @@ export default class DebugManager {
         playField.player.weapon = weaponGenerators[this.weaponIndex]();
     }
 
+    onPlayerHit(){}
+
     timeStep(amount){
         if(controls.pressed["KeyP"]){
             playField.addParticle(new BigExplosionParticle(300,300,Color.WHITE));
