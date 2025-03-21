@@ -26,11 +26,13 @@ const playField = {
         this.minDim = Math.min(this.x,this.y);
         
         this.player = new Player(playField.x/2,playField.y/2);
+        this.playerLost = false;
 
         this.playerProj = [];
         this.enemyProj = [];
         this.enemies = [];
         this.particles = [];
+        this.bgParticles = [];
 
         this.enemyWeight = 0;
 
@@ -63,6 +65,11 @@ const playField = {
         return particle;
     },
 
+    addBackgroundParticle(bgParticle){
+        this.bgParticles.push(bgParticle);
+        return bgParticle;
+    },
+
     advanceOneFrame(){
         const player = this.player;
         player.updateSlowmoStatus();
@@ -79,6 +86,9 @@ const playField = {
     
         // Timestep forward
         player.timeStep(step);
+        for(let i=0; i<this.bgParticles.length; i++){
+            this.bgParticles[i].timeStep(step);
+        }
         for(let i=0; i<this.particles.length; i++){
             const part = this.particles[i];
             if(part.autonomous) part.timeStep(step);
@@ -147,6 +157,7 @@ const playField = {
             if(!proj.retired){
                 if(intersects(proj.area, player.area)){
                     player.getHit();
+                    if(this.manager) this.manager.onPlayerHit();
                     break;
                 }
             }
@@ -155,6 +166,7 @@ const playField = {
         for(let i=0; i<this.enemies.length; i++){
             if(intersects(player.area, this.enemies[i].area)){
                 player.getHit();
+                if(this.manager) this.manager.onPlayerHit();
                 break;
             }
         }
@@ -170,6 +182,7 @@ const playField = {
             }
         }
 
+        deleteRetirables(this.bgParticles);
         deleteRetirables(this.particles);
     },
 

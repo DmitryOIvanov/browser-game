@@ -101,10 +101,19 @@ export default class EnemyRoundManager {
         this.nextTaskIndex = 0;
         this.curTask = null;
         this.startNextTask();
+
+        this.playerLost = false;
     }
 
     onPlayfieldInit(){
         playField.player.weapon = this.game.weaponGenerator();
+    }
+
+    onPlayerHit(){
+        if(playField.player.hp <= 0){
+            this.playerLost = true;
+            this.concluded = true;
+        }
     }
 
     timeStep(amount){

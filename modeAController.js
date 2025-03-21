@@ -8,7 +8,7 @@ import WeaponSelectController from "./weaponSelectController.js";
 // const STATE_NONE = 0;
 const STATE_WEAPON_SELECT = 0;
 const STATE_PLAYING = 1;
-const STATE_WIN = 2;
+const STATE_END = 2;
 
 export default class ModeAController {
     constructor(){
@@ -29,16 +29,20 @@ export default class ModeAController {
         }else if(this.state == STATE_PLAYING){
             playField.advanceOneFrame();
             if(playField.manager.concluded){
-                this.game.level++;
-                if(this.game.level >= modeALevelList.length){
-                    this.startWinScreen();
+                if(playField.manager.playerLost){
+                    this.startEndScreen("Game Over");
                 }else{
-                    this.startWeaponSelect(); 
+                    this.game.level++;
+                    if(this.game.level >= modeALevelList.length){
+                        this.startEndScreen("You Win");
+                    }else{
+                        this.startWeaponSelect(); 
+                    }
                 }
             }else{
                 playField.redraw();
             }
-        }else if(this.state == STATE_WIN){
+        }else if(this.state == STATE_END){
             this.subController.nextFrame();
             if(this.subController.concluded){
                 this.concluded = true;
@@ -60,10 +64,10 @@ export default class ModeAController {
         playField.initialize(new EnemyRoundManager(this.game));
     }
 
-    startWinScreen(){
+    startEndScreen(message){
         controls.mouse.lPressed = false;
         controls.mouse.leftHeld = false;
-        this.state = STATE_WIN;
-        this.subController = new SimpleMessageScreen("You Win");
+        this.state = STATE_END;
+        this.subController = new SimpleMessageScreen(message);
     }
 }
