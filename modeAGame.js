@@ -35,6 +35,13 @@ export const modeAWeaponList = [
 export const modeALevelList = [
     [
         {
+            taskName: "MessageTask",
+            centerX: 100,
+            centerY: 100,
+            text: "TEST",
+            fontSizePx: 100,
+            duration: 200
+        },{
             taskName: "WaitTimeTask",
             time: 60
         },{

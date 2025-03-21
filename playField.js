@@ -187,6 +187,9 @@ const playField = {
     },
 
     redraw(){
+        for(let i=0; i<this.bgParticles.length; i++){
+            this.bgParticles[i].draw();
+        }
         for(let i=0; i<this.enemies.length; i++){
             this.enemies[i].draw();
         }

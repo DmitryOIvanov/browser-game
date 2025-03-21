@@ -1,3 +1,4 @@
+import BgMessage from "./bgMessage.js";
 import { enemySpawningInfo, getRandomPosWithMargins } from "./enemySpawning.js";
 import { modeALevelList } from "./modeAGame.js";
 import playField from "./playField.js";
@@ -87,10 +88,33 @@ class WaitTimeTask {
     }
 }
 
+class MessageTask {
+    constructor(readonlyParams){
+        this.messageObject = new BgMessage(
+            readonlyParams.centerX,
+            readonlyParams.centerY,
+            readonlyParams.text,
+            readonlyParams.fontSizePx,
+            readonlyParams.duration
+        );
+        this.msgAdded = false;
+        this.concluded = false;
+    }
+
+    timeStep(amount){
+        if(!this.msgAdded){
+            playField.addBackgroundParticle(this.messageObject);
+            this.msgAdded = true;
+        }
+        if(this.messageObject.retired) this.concluded = true;
+    }
+}
+
 const taskClassTable = {
     "WeightedSpawnTask":WeightedSpawnTask,
     "WaitForConditionTask":WaitForConditionTask,
-    "WaitTimeTask":WaitTimeTask
+    "WaitTimeTask":WaitTimeTask,
+    "MessageTask":MessageTask
 }
 
 export default class EnemyRoundManager {
