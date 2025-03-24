@@ -1,3 +1,4 @@
+import { canv } from "./drawing.js";
 import playField from "./playField.js";
 import { MemeWeapon2 } from "./weapons/fireworkWeapons.js";
 import { MachineGunWeapon, MemeWeapon1, ShotgunWeapon } from "./weapons/pointProjWeapons.js";
@@ -36,14 +37,14 @@ export const modeALevelList = [
     [
         {
             taskName: "MessageTask",
-            centerX: 100,
-            centerY: 100,
-            text: "TEST",
+            centerX: canv.width/2,
+            centerY: canv.height/2-200,
+            text: "Level 1",
             fontSizePx: 100,
-            duration: 200
+            duration: 120
         },{
             taskName: "WaitTimeTask",
-            time: 60
+            time: 30
         },{
             taskName: "WeightedSpawnTask",
             delayCoeff: 1,

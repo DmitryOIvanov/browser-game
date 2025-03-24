@@ -8,6 +8,7 @@ export default class BgMessage{
         this.centerY = centerY;
         this.fontSizePx = fontSizePx;
         this.duration = duration;
+        this.fontStr = `${fontSizePx}px Arial`;
 
         this.retired = false;
         this.timeElapsed = 0;
