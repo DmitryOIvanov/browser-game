@@ -91,7 +91,7 @@ export default class Player{
             ctx.lineWidth = 25;
             for(let i=0; i<this.hp+1; i++){
                 if(i == 0){
-                    const shownProbability = 0.5 + 1.2*(this.hitCooldown/HIT_COOLDOWN_DUR-0.5);
+                    const shownProbability = 0.7*(1.6*this.hitCooldown/HIT_COOLDOWN_DUR - 1);
                     if(Math.random() > shownProbability) continue;
                 }
 
