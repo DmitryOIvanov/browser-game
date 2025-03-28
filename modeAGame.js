@@ -1,7 +1,9 @@
+import { createAttackProfile } from "./attackAndDefense.js";
+import Color from "./color.js";
 import { canv } from "./drawing.js";
 import playField from "./playField.js";
 import { MemeWeapon2 } from "./weapons/fireworkWeapons.js";
-import { MachineGunWeapon, MemeWeapon1, ShotgunWeapon } from "./weapons/pointProjWeapons.js";
+import { MachineGunWeapon, MemeWeapon1, PointPProjWeapon, ShotgunWeapon } from "./weapons/pointProjWeapons.js";
 
 export default class ModeAGame {
     constructor(){
@@ -14,10 +16,34 @@ export const modeAWeaponList = [
     [
         {
             name: "Machine Gun",
-            generator: ()=>(new MachineGunWeapon())
+            generator: ()=>(new PointPProjWeapon(
+                5, // Fire Rate
+                1, // Number of bullets
+                0, // Fixed spread between bullets
+                0.02, // Random variance in each bullet's angle
+                20, // Bullet speed
+                new Color(false,'#0ff'), // Color
+                ()=>(createAttackProfile(
+                    1, // Damage
+                    3, // Overkill factor
+                    0 // Free hits where bullet is unaffected
+                ))
+            ))
         },{
             name: "Shotgun",
-            generator: ()=>(new ShotgunWeapon())
+            generator: ()=>(new PointPProjWeapon(
+                25, // Fire Rate
+                5, // Number of bullets
+                0.18, // Fixed spread between bullets
+                0, // Random variance in each bullet's angle
+                20, // Bullet speed
+                new Color(false,'#ff0'), // Color
+                ()=>(createAttackProfile(
+                    1, // Damage
+                    3, // Overkill factor
+                    0 // Free hits where bullet is unaffected
+                ))
+            ))
         },{
             name: "Meme 1",
             generator: ()=>(new MemeWeapon1())
@@ -41,20 +67,17 @@ export const modeALevelList = [
             centerY: canv.height/2-200,
             text: "Level 1",
             fontSizePx: 100,
-            duration: 120
+            duration: 60
         },{
             taskName: "WaitTimeTask",
             time: 30
         },{
             taskName: "WeightedSpawnTask",
-            delayCoeff: 1,
+            delayCoeff: 20,
             enemies:[
-                {name:"MultiCircle",weight:3,num:5},
                 {shuffle:[
-                    {name:"SmallSquare",weight:1,num:20},
-                    {name:"SmallTriangle",weight:1,num:20},
-                    {name:"SmallCircle",weight:1,num:20},
-                    {name:"SimpleShooter",weight:2,num:10},
+                    {name:"SmallSquare",weight:1,num:10},
+                    {name:"MultiSquare",weight:2,num:2},
                 ]}
             ]
         },{
@@ -62,10 +85,24 @@ export const modeALevelList = [
             condition: ()=>(playField.isDangerFree())
         },{
             taskName: "WeightedSpawnTask",
-            pool: "A",
-            delayCoeff: 1,
+            delayCoeff: 20,
             enemies:[
-                {name:"MultiSquare",weight:1,num:20}
+                {shuffle:[
+                    {name:"SmallTriangle",weight:1,num:10},
+                    {name:"MultiTriangle",weight:2,num:2},
+                ]}
+            ]
+        },{
+            taskName: "WaitForConditionTask",
+            condition: ()=>(playField.isDangerFree())
+        },{
+            taskName: "WeightedSpawnTask",
+            delayCoeff: 20,
+            enemies:[
+                {shuffle:[
+                    {name:"SmallCircle",weight:1,num:10},
+                    {name:"MultiCircle",weight:2,num:2},
+                ]}
             ]
         },{
             taskName: "WaitForConditionTask",
@@ -80,7 +117,6 @@ export const modeALevelList = [
             time: 60
         },{
             taskName: "WeightedSpawnTask",
-            pool: "A",
             delayCoeff: 1,
             enemies:[
                 {name:"MultiTriangle",weight:1,num:50}

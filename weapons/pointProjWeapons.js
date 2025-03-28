@@ -4,7 +4,7 @@ import controls from "../controls.js";
 import playField from "../playField.js";
 import PointPProj from "../projectiles/player/pointPProj.js";
 
-class PointPProjWeapon {
+export class PointPProjWeapon {
     constructor(fireRate, numShots, spread, variance, speed, color, attackProfileGenerator){
         this.fireRate = fireRate;
         this.numShots = numShots;
