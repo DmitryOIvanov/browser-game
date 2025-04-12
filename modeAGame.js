@@ -75,21 +75,29 @@ export const modeALevelList = [
             taskName: "WeightedSpawnTask",
             delayCoeff: 20,
             enemies:[
+                {name:"SmallSquare",weight:1,num:5},
+                {name:"SmallCircle",weight:1,num:3},
+                {name:"SmallTriangle",weight:1,num:5},
+            ]
+        },{
+            taskName: "WaitForConditionTask",
+            condition: ()=>(playField.isDangerFree())
+        },{
+            taskName: "WeightedSpawnTask",
+            delayCoeff: 15,
+            enemies:[
                 {shuffle:[
-                    {name:"SmallSquare",weight:1,num:10},
+                    {name:"SmallSquare",weight:1,num:5},
+                    {name:"SmallTriangle",weight:1,num:5},
+                    {name:"SmallCircle",weight:1,num:5},
+                ]},
+                {shuffle:[
+                    {name:"SmallSquare",weight:1,num:5},
+                    {name:"SmallTriangle",weight:1,num:5},
+                    {name:"SmallCircle",weight:1,num:3},
                     {name:"MultiSquare",weight:2,num:2},
-                ]}
-            ]
-        },{
-            taskName: "WaitForConditionTask",
-            condition: ()=>(playField.isDangerFree())
-        },{
-            taskName: "WeightedSpawnTask",
-            delayCoeff: 20,
-            enemies:[
-                {shuffle:[
-                    {name:"SmallTriangle",weight:1,num:10},
                     {name:"MultiTriangle",weight:2,num:2},
+                    {name:"MultiCircle",weight:2,num:1},
                 ]}
             ]
         },{
@@ -97,12 +105,9 @@ export const modeALevelList = [
             condition: ()=>(playField.isDangerFree())
         },{
             taskName: "WeightedSpawnTask",
-            delayCoeff: 20,
+            delayCoeff: 30,
             enemies:[
-                {shuffle:[
-                    {name:"SmallCircle",weight:1,num:10},
-                    {name:"MultiCircle",weight:2,num:2},
-                ]}
+                {name:"SimpleShooter",weight:1,num:3},
             ]
         },{
             taskName: "WaitForConditionTask",

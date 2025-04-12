@@ -61,8 +61,7 @@ class WeightedSpawnTask {
     }
 
     getTimeToNext(){
-        const nextWeight = this.nextSpawn.weight;
-        return playField.enemyWeight * nextWeight * nextWeight * this.delayCoeff;
+        return playField.enemyWeight * this.delayCoeff;
     }
 }
 
