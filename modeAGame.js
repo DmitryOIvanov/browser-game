@@ -81,7 +81,7 @@ export const modeALevelList = [
             ]
         },{
             taskName: "WaitForConditionTask",
-            condition: ()=>(playField.isDangerFree())
+            condition: ()=>(playField.enemyWeight <= 1)
         },{
             taskName: "WeightedSpawnTask",
             delayCoeff: 15,
@@ -102,7 +102,7 @@ export const modeALevelList = [
             ]
         },{
             taskName: "WaitForConditionTask",
-            condition: ()=>(playField.isDangerFree())
+            condition: ()=>(playField.enemyWeight <= 1)
         },{
             taskName: "WeightedSpawnTask",
             delayCoeff: 30,
