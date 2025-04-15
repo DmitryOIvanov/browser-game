@@ -4,7 +4,7 @@ import controls from "../controls.js";
 import playField from "../playField.js";
 import BallPProj from "../projectiles/player/ballPProj.js";
 
-class BallPProjWeapon {
+export class BallPProjWeapon {
     constructor(fireRate, numShots, spread, variance, speed, radius, duration, numBounces, color, attackProfileGenerator){
         this.fireRate = fireRate;
         this.numShots = numShots;

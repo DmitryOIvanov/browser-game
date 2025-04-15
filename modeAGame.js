@@ -2,6 +2,7 @@ import { createAttackProfile } from "./attackAndDefense.js";
 import Color from "./color.js";
 import { canv } from "./drawing.js";
 import playField from "./playField.js";
+import { BallPProjWeapon } from "./weapons/ballProjWeapons.js";
 import { MemeWeapon2 } from "./weapons/fireworkWeapons.js";
 import { MachineGunWeapon, MemeWeapon1, PointPProjWeapon, ShotgunWeapon } from "./weapons/pointProjWeapons.js";
 
@@ -40,6 +41,24 @@ export const modeAWeaponList = [
                 new Color(false,'#ff0'), // Color
                 ()=>(createAttackProfile(
                     1, // Damage
+                    3, // Overkill factor
+                    0 // Free hits where bullet is unaffected
+                ))
+            ))
+        },{
+            name: "Heavy",
+            generator: ()=>(new BallPProjWeapon(
+                30, // fireRate
+                1, // numShots
+                0, // spread
+                0, // variance
+                10, // speed
+                10, // radius
+                -1, // duration (Negative: infinite)
+                0, // bounces (Negative: infinite)
+                new Color(false,'#f0f'), // color
+                () => (createAttackProfile(
+                    5, // Damage
                     3, // Overkill factor
                     0 // Free hits where bullet is unaffected
                 ))
