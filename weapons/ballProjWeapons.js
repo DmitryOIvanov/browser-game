@@ -5,7 +5,7 @@ import playField from "../playField.js";
 import BallPProj from "../projectiles/player/ballPProj.js";
 
 class BallPProjWeapon {
-    constructor(fireRate, numShots, spread, variance, speed, radius, duration, color, attackProfileGenerator){
+    constructor(fireRate, numShots, spread, variance, speed, radius, duration, numBounces, color, attackProfileGenerator){
         this.fireRate = fireRate;
         this.numShots = numShots;
         this.spread = spread;
@@ -13,6 +13,7 @@ class BallPProjWeapon {
         this.speed = speed;
         this.radius = radius;
         this.duration = duration;
+        this.numBounces = numBounces;
         this.color = color;
         this.attackProfileGenerator = attackProfileGenerator;
 
@@ -37,7 +38,7 @@ class BallPProjWeapon {
                     let dy2 = coeff*(dy*Math.cos(theta) - dx*Math.sin(theta));
                     let newBullet = new BallPProj(
                         playField.player.x, playField.player.y, dx2, dy2,
-                        this.radius, this.duration, this.color, this.attackProfileGenerator);
+                        this.radius, this.duration, this.numBounces, this.color, this.attackProfileGenerator);
                     newBullet.timeStep(-this.fireTimer);
                     playField.addPlayerProjectile(newBullet);
                 }
@@ -56,7 +57,8 @@ export class BouncyWeapon extends BallPProjWeapon {
             0, // variance
             15, // speed
             10, // radius
-            150, // duration
+            150, // duration (Negative: infinite)
+            -1, // bounces (Negative: infinite)
             new Color(false,'#0f0'), // color
             () => (createAttackProfile(
                 1, // Damage
@@ -76,7 +78,8 @@ export class MemeWeapon3 extends BallPProjWeapon {
             0.2, // variance
             20, // speed
             15, // radius
-            500, // duration
+            500, // duration (Negative: infinite)
+            -1, // bounces (Negative: infinite)
             new Color(true,0), // color
             () => (createAttackProfile(
                 1, // Damage

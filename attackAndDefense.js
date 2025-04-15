@@ -22,7 +22,7 @@ export function attackAndDefend(attackProfile, defenseProfile){
     }
     if(attackProfile.freePierce > 0){
         attackProfile.freePierce--;
-    }else{
+    }else if(attackProfile.freePierce == 0){
         attackProfile.damage -= attackProfile.overkillFactor * defenseProfile.maxHP;
         if(attackProfile.damage <= 0){
             attackProfile.expired = true;

@@ -6,13 +6,16 @@ import playField from "../../playField.js";
 const NUM_COL_SAMPLES = 5;
 
 export default class BallPProj{
-    constructor(x,y,vx,vy,rad,dur,color,attackProfileGenerator){
+    constructor(x,y,vx,vy,rad,dur,numBounces,color,attackProfileGenerator){
         this.x=x; this.y=y; this.vx=vx; this.vy=vy;
         this.radius = rad;
         this.boundingRad = 0.5*Math.sqrt(this.vx*this.vx + this.vy*this.vy) + this.radius;
         this.color = color;
         this.attackProfile = attackProfileGenerator();
+        this.doTimeLimit = dur >= 0;
         this.remainingTime = dur;
+        this.doBounceLimit = numBounces >= 0;
+        this.bouncesLeft = numBounces;
         this.numColSamples = NUM_COL_SAMPLES;
 
         this.colSamples = Array(NUM_COL_SAMPLES).fill(null).map(()=>(new CircleArea(x,y,rad)));
@@ -22,21 +25,25 @@ export default class BallPProj{
 
     timeStep(amount){
         if(this.retired) return;
-        this.remainingTime -= amount;
-        if(this.remainingTime <= 0){
-            this.retired = true;
-            return;
+        if(this.doTimeLimit){
+            this.remainingTime -= amount;
+            if(this.remainingTime <= 0){
+                this.retired = true;
+                return;
+            }
         }
 
         for(let i=0; i<NUM_COL_SAMPLES; i++){
             this.x += this.vx*amount/NUM_COL_SAMPLES;
             this.y += this.vy*amount/NUM_COL_SAMPLES;
-            if(!isInBounds(this.x, playField.x, this.radius)){
+            if(!isInBounds(this.x, playField.x, this.radius) && (!this.doBounceLimit || this.bouncesLeft>0)){
+                this.bouncesLeft--;
                 this.x = bounceBoundify(this.x, playField.x, this.radius);
                 this.vx *= -1;
                 this.excludes = {};
             }
-            if(!isInBounds(this.y, playField.y, this.radius)){
+            if(!isInBounds(this.y, playField.y, this.radius) && (!this.doBounceLimit || this.bouncesLeft>0)){
+                this.bouncesLeft--;
                 this.y = bounceBoundify(this.y, playField.y, this.radius);
                 this.vy *= -1;
                 this.excludes = {};
@@ -45,6 +52,12 @@ export default class BallPProj{
         }
         const middleCol = (NUM_COL_SAMPLES-1)/2;
         this.boundingCircle.update(this.colSamples[middleCol].x,this.colSamples[middleCol].y,this.boundingRad);
+        if(
+            !isInBounds(this.x, playField.x, -this.boundingRad) ||
+            !isInBounds(this.y, playField.y, -this.boundingRad)
+        ){
+            this.retired = true;
+        }
     }
 
     draw(){
