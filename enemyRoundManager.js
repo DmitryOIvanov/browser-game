@@ -119,7 +119,7 @@ const taskClassTable = {
 export default class EnemyRoundManager {
     constructor(game){
         this.game = game;
-        this.tasks = modeALevelList[game.level];
+        this.tasks = modeALevelList[game.level].tasks;
         this.concluded = false;
         this.nextTaskIndex = 0;
         this.curTask = null;

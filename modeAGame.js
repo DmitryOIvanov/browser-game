@@ -13,8 +13,8 @@ export default class ModeAGame {
     }
 }
 
-export const modeAWeaponList = [
-    [
+const level1 = {
+    weapons: [
         {
             name: "Machine Gun",
             generator: ()=>(new PointPProjWeapon(
@@ -66,20 +66,11 @@ export const modeAWeaponList = [
         },{
             name: "Meme 1",
             generator: ()=>(new MemeWeapon1())
-        }
-    ],[
-        {
-            name: "Meme 1",
-            generator: ()=>(new MemeWeapon1())
         },{
             name: "Meme 2",
             generator: ()=>(new MemeWeapon2())
         }
-    ]
-];
-
-export const modeALevelList = [
-    [
+    ], tasks: [
         {
             taskName: "MessageTask",
             centerX: canv.width/2,
@@ -135,15 +126,114 @@ export const modeALevelList = [
             taskName: "WaitTimeTask",
             time: 60
         }
-    ],[
+    ]
+};
+
+const level2 = {
+    weapons: [
         {
+            name: "Machine Gun II",
+            generator: ()=>(new PointPProjWeapon(
+                3, // Fire Rate
+                1, // Number of bullets
+                0, // Fixed spread between bullets
+                0.02, // Random variance in each bullet's angle
+                20, // Bullet speed
+                new Color(false,'#0ff'), // Color
+                ()=>(createAttackProfile(
+                    1, // Damage
+                    3, // Overkill factor
+                    0 // Free hits where bullet is unaffected
+                ))
+            ))
+        },{
+            name: "Shotgun II",
+            generator: ()=>(new PointPProjWeapon(
+                22, // Fire Rate
+                7, // Number of bullets
+                0.11, // Fixed spread between bullets
+                0, // Random variance in each bullet's angle
+                20, // Bullet speed
+                new Color(false,'#ff0'), // Color
+                ()=>(createAttackProfile(
+                    1, // Damage
+                    3, // Overkill factor
+                    0 // Free hits where bullet is unaffected
+                ))
+            ))
+        },{
+            name: "Heavy II",
+            generator: ()=>(new BallPProjWeapon(
+                20, // fireRate
+                1, // numShots
+                0, // spread
+                0, // variance
+                10, // speed
+                10, // radius
+                -1, // duration (Negative: infinite)
+                0, // bounces (Negative: infinite)
+                new Color(false,'#f0f'), // color
+                () => (createAttackProfile(
+                    10, // Damage
+                    3, // Overkill factor
+                    0 // Free hits where bullet is unaffected
+                ))
+            ))
+        },{
+            name: "Meme 1",
+            generator: ()=>(new MemeWeapon1())
+        },{
+            name: "Meme 2",
+            generator: ()=>(new MemeWeapon2())
+        }
+    ], tasks: [
+        {
+            taskName: "MessageTask",
+            centerX: canv.width/2,
+            centerY: canv.height/2-200,
+            text: "Level 2",
+            fontSizePx: 100,
+            duration: 60
+        },{
             taskName: "WaitTimeTask",
-            time: 60
+            time: 30
         },{
             taskName: "WeightedSpawnTask",
-            delayCoeff: 1,
+            delayCoeff: 20,
             enemies:[
-                {name:"MultiTriangle",weight:1,num:50}
+                {name:"SmallSquare",weight:1,num:5},
+                {name:"SmallCircle",weight:1,num:3},
+                {name:"SmallTriangle",weight:1,num:5},
+            ]
+        },{
+            taskName: "WaitForConditionTask",
+            condition: ()=>(playField.enemyWeight <= 1)
+        },{
+            taskName: "WeightedSpawnTask",
+            delayCoeff: 15,
+            enemies:[
+                {shuffle:[
+                    {name:"SmallSquare",weight:1,num:5},
+                    {name:"SmallTriangle",weight:1,num:5},
+                    {name:"SmallCircle",weight:1,num:5},
+                ]},
+                {shuffle:[
+                    {name:"SmallSquare",weight:1,num:5},
+                    {name:"SmallTriangle",weight:1,num:5},
+                    {name:"SmallCircle",weight:1,num:3},
+                    {name:"MultiSquare",weight:2,num:2},
+                    {name:"MultiTriangle",weight:2,num:2},
+                    {name:"MultiCircle",weight:2,num:1},
+                ]}
+            ]
+        },{
+            taskName: "WaitForConditionTask",
+            condition: ()=>(playField.enemyWeight <= 1)
+        },{
+            taskName: "WeightedSpawnTask",
+            delayCoeff: 30,
+            enemies:[
+                {name:"SimpleShooter",weight:1,num:3},
             ]
         },{
             taskName: "WaitForConditionTask",
@@ -153,4 +243,9 @@ export const modeALevelList = [
             time: 60
         }
     ]
+};
+
+export const modeALevelList = [
+    level1,
+    level2
 ]
