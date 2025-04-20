@@ -53,7 +53,7 @@ const level1 = {
                 0, // spread
                 0, // variance
                 10, // speed
-                10, // radius
+                12, // radius
                 -1, // duration (Negative: infinite)
                 0, // bounces (Negative: infinite)
                 new Color(false,'#f0f'), // color
@@ -149,9 +149,9 @@ const level2 = {
         },{
             name: "Shotgun II",
             generator: ()=>(new PointPProjWeapon(
-                22, // Fire Rate
+                23, // Fire Rate
                 7, // Number of bullets
-                0.11, // Fixed spread between bullets
+                0.15, // Fixed spread between bullets
                 0, // Random variance in each bullet's angle
                 20, // Bullet speed
                 new Color(false,'#ff0'), // Color
@@ -164,18 +164,18 @@ const level2 = {
         },{
             name: "Heavy II",
             generator: ()=>(new BallPProjWeapon(
-                20, // fireRate
+                60, // fireRate
                 1, // numShots
                 0, // spread
                 0, // variance
                 10, // speed
-                10, // radius
+                16, // radius
                 -1, // duration (Negative: infinite)
                 0, // bounces (Negative: infinite)
                 new Color(false,'#f0f'), // color
                 () => (createAttackProfile(
-                    10, // Damage
-                    3, // Overkill factor
+                    15, // Damage
+                    1, // Overkill factor
                     0 // Free hits where bullet is unaffected
                 ))
             ))
@@ -199,41 +199,39 @@ const level2 = {
             time: 30
         },{
             taskName: "WeightedSpawnTask",
-            delayCoeff: 20,
-            enemies:[
-                {name:"SmallSquare",weight:1,num:5},
-                {name:"SmallCircle",weight:1,num:3},
-                {name:"SmallTriangle",weight:1,num:5},
-            ]
-        },{
-            taskName: "WaitForConditionTask",
-            condition: ()=>(playField.enemyWeight <= 1)
-        },{
-            taskName: "WeightedSpawnTask",
-            delayCoeff: 15,
+            delayCoeff: 6,
             enemies:[
                 {shuffle:[
-                    {name:"SmallSquare",weight:1,num:5},
-                    {name:"SmallTriangle",weight:1,num:5},
-                    {name:"SmallCircle",weight:1,num:5},
+                    {name:"SmallSquare",weight:1,num:6},
+                    {name:"SmallTriangle",weight:1,num:6},
+                    {name:"SmallCircle",weight:1,num:6},
+                    {name:"MultiSquare",weight:3,num:2},
+                    {name:"MultiTriangle",weight:3,num:2},
+                    {name:"MultiCircle",weight:3,num:1},
                 ]},
                 {shuffle:[
-                    {name:"SmallSquare",weight:1,num:5},
-                    {name:"SmallTriangle",weight:1,num:5},
+                    {name:"SmallSquare",weight:1,num:3},
+                    {name:"SmallTriangle",weight:1,num:3},
                     {name:"SmallCircle",weight:1,num:3},
-                    {name:"MultiSquare",weight:2,num:2},
-                    {name:"MultiTriangle",weight:2,num:2},
-                    {name:"MultiCircle",weight:2,num:1},
-                ]}
+                    {name:"MultiSquare",weight:3,num:1},
+                    {name:"MultiTriangle",weight:3,num:1},
+                    {name:"MultiCircle",weight:3,num:1},
+                    {name:"SimpleShooter",weight:2,num:3},
+                ]},
+                {shuffle:[
+                    {name:"MultiSquare",weight:1,num:3},
+                    {name:"SimpleShooter",weight:2,num:3},
+                    {name:"ThreeShooter",weight:3,num:1},
+                ]},
             ]
         },{
             taskName: "WaitForConditionTask",
-            condition: ()=>(playField.enemyWeight <= 1)
+            condition: ()=>(playField.enemyWeight <= 3)
         },{
             taskName: "WeightedSpawnTask",
-            delayCoeff: 30,
+            delayCoeff: 4,
             enemies:[
-                {name:"SimpleShooter",weight:1,num:3},
+                {name:"SmallTriangle",weight:1,num:30},
             ]
         },{
             taskName: "WaitForConditionTask",
@@ -246,6 +244,6 @@ const level2 = {
 };
 
 export const modeALevelList = [
-    level1,
-    level2
+    // level1,
+    level2,
 ]
