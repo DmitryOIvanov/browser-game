@@ -1,5 +1,6 @@
 import { createAttackProfile } from "./attackAndDefense.js";
 import Color from "./color.js";
+import controls from "./controls.js";
 import { canv } from "./drawing.js";
 import playField from "./playField.js";
 import { BallPProjWeapon } from "./weapons/ballProjWeapons.js";
@@ -77,7 +78,8 @@ const level1 = {
             centerY: canv.height/2-200,
             text: "Level 1",
             fontSizePx: 100,
-            duration: 60
+            duration: 60,
+            preCondition: ()=>(controls.pressed["KeyO"])
         },{
             taskName: "WaitTimeTask",
             time: 30
@@ -244,6 +246,6 @@ const level2 = {
 };
 
 export const modeALevelList = [
-    // level1,
+    level1,
     level2,
 ]

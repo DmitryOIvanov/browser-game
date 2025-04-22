@@ -94,8 +94,10 @@ class MessageTask {
             readonlyParams.centerY,
             readonlyParams.text,
             readonlyParams.fontSizePx,
-            readonlyParams.duration
+            readonlyParams.duration,
+            false
         );
+        this.preCondition = readonlyParams.preCondition;
         this.msgAdded = false;
         this.concluded = false;
     }
@@ -104,6 +106,10 @@ class MessageTask {
         if(!this.msgAdded){
             playField.addBackgroundParticle(this.messageObject);
             this.msgAdded = true;
+        }
+
+        if(!this.messageObject.active){
+            this.messageObject.active = this.preCondition();
         }
         if(this.messageObject.retired) this.concluded = true;
     }
