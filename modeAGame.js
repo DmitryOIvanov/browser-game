@@ -1,11 +1,11 @@
 import { createAttackProfile } from "./attackAndDefense.js";
 import Color from "./color.js";
-import controls from "./controls.js";
 import { canv } from "./drawing.js";
 import playField from "./playField.js";
 import { BallPProjWeapon } from "./weapons/ballProjWeapons.js";
 import { MemeWeapon2 } from "./weapons/fireworkWeapons.js";
 import { MachineGunWeapon, MemeWeapon1, PointPProjWeapon, ShotgunWeapon } from "./weapons/pointProjWeapons.js";
+import { MessageTask, WaitForConditionTask, WaitTimeTask, WeightedSpawnTask } from "./tasks.js";
 
 export default class ModeAGame {
     constructor(){
@@ -73,17 +73,17 @@ const level1 = {
         }
     ], tasks: [
         {
-            taskName: "MessageTask",
+            class: MessageTask,
             centerX: canv.width/2,
             centerY: canv.height/2-200,
             text: "Level 1",
             fontSizePx: 100,
             duration: 60
         },{
-            taskName: "WaitTimeTask",
+            class: WaitTimeTask,
             time: 30
         },{
-            taskName: "WeightedSpawnTask",
+            class: WeightedSpawnTask,
             delayCoeff: 20,
             enemies:[
                 {name:"SmallSquare",weight:1,num:5},
@@ -91,10 +91,10 @@ const level1 = {
                 {name:"SmallTriangle",weight:1,num:5},
             ]
         },{
-            taskName: "WaitForConditionTask",
+            class: WaitForConditionTask,
             condition: ()=>(playField.enemyWeight <= 1)
         },{
-            taskName: "WeightedSpawnTask",
+            class: WeightedSpawnTask,
             delayCoeff: 15,
             enemies:[
                 {shuffle:[
@@ -112,19 +112,19 @@ const level1 = {
                 ]}
             ]
         },{
-            taskName: "WaitForConditionTask",
+            class: WaitForConditionTask,
             condition: ()=>(playField.enemyWeight <= 1)
         },{
-            taskName: "WeightedSpawnTask",
+            class: WeightedSpawnTask,
             delayCoeff: 30,
             enemies:[
                 {name:"SimpleShooter",weight:1,num:3},
             ]
         },{
-            taskName: "WaitForConditionTask",
+            class: WaitForConditionTask,
             condition: ()=>(playField.isDangerFree())
         },{
-            taskName: "WaitTimeTask",
+            class: WaitTimeTask,
             time: 60
         }
     ]
@@ -189,17 +189,17 @@ const level2 = {
         }
     ], tasks: [
         {
-            taskName: "MessageTask",
+            class: MessageTask,
             centerX: canv.width/2,
             centerY: canv.height/2-200,
             text: "Level 2",
             fontSizePx: 100,
             duration: 60
         },{
-            taskName: "WaitTimeTask",
+            class: WaitTimeTask,
             time: 30
         },{
-            taskName: "WeightedSpawnTask",
+            class: WeightedSpawnTask,
             delayCoeff: 6,
             enemies:[
                 {shuffle:[
@@ -226,19 +226,19 @@ const level2 = {
                 ]},
             ]
         },{
-            taskName: "WaitForConditionTask",
+            class: WaitForConditionTask,
             condition: ()=>(playField.enemyWeight <= 3)
         },{
-            taskName: "WeightedSpawnTask",
+            class: WeightedSpawnTask,
             delayCoeff: 4,
             enemies:[
                 {name:"SmallTriangle",weight:1,num:30},
             ]
         },{
-            taskName: "WaitForConditionTask",
+            class: WaitForConditionTask,
             condition: ()=>(playField.isDangerFree())
         },{
-            taskName: "WaitTimeTask",
+            class: WaitTimeTask,
             time: 60
         }
     ]
