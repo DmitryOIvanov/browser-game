@@ -89,15 +89,15 @@ class WaitTimeTask {
 
 class MessageTask {
     constructor(readonlyParams){
+        this.preCondition = readonlyParams.preCondition;
         this.messageObject = new BgMessage(
             readonlyParams.centerX,
             readonlyParams.centerY,
             readonlyParams.text,
             readonlyParams.fontSizePx,
             readonlyParams.duration,
-            false
+            !this.preCondition
         );
-        this.preCondition = readonlyParams.preCondition;
         this.msgAdded = false;
         this.concluded = false;
     }

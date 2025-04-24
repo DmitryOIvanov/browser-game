@@ -78,8 +78,7 @@ const level1 = {
             centerY: canv.height/2-200,
             text: "Level 1",
             fontSizePx: 100,
-            duration: 60,
-            preCondition: ()=>(controls.pressed["KeyO"])
+            duration: 60
         },{
             taskName: "WaitTimeTask",
             time: 30
