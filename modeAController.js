@@ -1,5 +1,5 @@
 import controls from "./controls.js";
-import EnemyRoundManager from "./enemyRoundManager.js";
+import TaskBasedManager from "./taskBasedManager.js";
 import ModeAGame, { modeALevelList } from "./modeAGame.js";
 import SimpleMessageScreen from "./simpleMessageScreen.js";
 import playField from "./playField.js";
@@ -61,7 +61,7 @@ export default class ModeAController {
         controls.mouse.leftHeld = false;
         this.state = STATE_PLAYING;
         this.subController = null;
-        playField.initialize(new EnemyRoundManager(this.game));
+        playField.initialize(new TaskBasedManager(this.game));
     }
 
     startEndScreen(message){

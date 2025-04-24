@@ -3,7 +3,7 @@ import controls from "./controls.js";
 import { canv, ctx, drawDot, fillScreen } from "./drawing.js";
 import { CanvasTextButton } from "./gui.js";
 import playField from "./playField.js";
-import EnemyRoundManager from "./enemyRoundManager.js";
+import TaskBasedManager from "./taskBasedManager.js";
 import DebugManager from "./debugEnemySpawning.js";
 import ModeAController from "./modeAController.js";
 
