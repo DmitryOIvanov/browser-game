@@ -33,6 +33,7 @@ const playField = {
         this.enemies = [];
         this.particles = [];
         this.bgParticles = [];
+        this.trackedBgParticles = {};
 
         this.enemyWeight = 0;
 
@@ -68,6 +69,16 @@ const playField = {
     addBackgroundParticle(bgParticle){
         this.bgParticles.push(bgParticle);
         return bgParticle;
+    },
+
+    addTrackedBackgroundParticle(bgParticle, id){
+        this.addBackgroundParticle(bgParticle);
+        this.trackedBgParticles[id] = bgParticle;
+    },
+
+    deleteTrackedBackgroundParticle(id){
+        this.trackedBgParticles[id].retired = true;
+        this.trackedBgParticles[id] = undefined;
     },
 
     advanceOneFrame(){

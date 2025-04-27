@@ -5,7 +5,7 @@ import playField from "./playField.js";
 import { BallPProjWeapon } from "./weapons/ballProjWeapons.js";
 import { MemeWeapon2 } from "./weapons/fireworkWeapons.js";
 import { MachineGunWeapon, MemeWeapon1, PointPProjWeapon, ShotgunWeapon } from "./weapons/pointProjWeapons.js";
-import { MessageTask, WaitForConditionTask, WaitTimeTask, WeightedSpawnTask } from "./tasks.js";
+import { CreateStaticMessageTask, DeleteStaticMessageTask, MessageTask, WaitForConditionTask, WaitTimeTask, WeightedSpawnTask } from "./tasks.js";
 
 export default class ModeAGame {
     constructor(){
@@ -73,6 +73,13 @@ const level1 = {
         }
     ], tasks: [
         {
+            class: CreateStaticMessageTask,
+            centerX: canv.width/2,
+            centerY: canv.height/2,
+            text: "Test",
+            fontSizePx: 100,
+            id: "MSG_TEST"
+        },{
             class: MessageTask,
             centerX: canv.width/2,
             centerY: canv.height/2-200,
@@ -90,6 +97,9 @@ const level1 = {
                 {name:"SmallCircle",weight:1,num:3},
                 {name:"SmallTriangle",weight:1,num:5},
             ]
+        },{
+            class: DeleteStaticMessageTask,
+            id: "MSG_TEST"
         },{
             class: WaitForConditionTask,
             condition: ()=>(playField.enemyWeight <= 1)

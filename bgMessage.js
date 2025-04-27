@@ -2,21 +2,21 @@ import Color from "./color.js";
 import { ctx } from "./drawing.js";
 
 export default class BgMessage{
-    constructor(centerX, centerY, text, fontSizePx, duration, active){
+    constructor(centerX, centerY, text, fontSizePx, duration){
         this.text = text;
         this.centerX = centerX;
         this.centerY = centerY;
         this.fontSizePx = fontSizePx;
         this.duration = duration;
         this.fontStr = `${fontSizePx}px Arial`;
-        this.active = active;
+        this.isStatic = duration < 0;
 
         this.retired = false;
         this.timeElapsed = 0;
     }
 
     timeStep(amount){
-        if(this.active){
+        if(!this.isStatic){
             this.timeElapsed += amount;
             if(this.timeElapsed >= this.duration) this.retired = true;
         }
