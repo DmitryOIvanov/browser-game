@@ -5,7 +5,8 @@ import playField from "./playField.js";
 import { BallPProjWeapon } from "./weapons/ballProjWeapons.js";
 import { MemeWeapon2 } from "./weapons/fireworkWeapons.js";
 import { MachineGunWeapon, MemeWeapon1, PointPProjWeapon, ShotgunWeapon } from "./weapons/pointProjWeapons.js";
-import { CreateStaticMessageTask, DeleteStaticMessageTask, MessageTask, WaitForConditionTask, WaitTimeTask, WeightedSpawnTask } from "./tasks.js";
+import { CreateStaticBgParticleTask, CreateStaticMessageTask, DeleteStaticBgParticleTask, DeleteStaticMessageTask, MessageTask, WaitForConditionTask, WaitTimeTask, WeightedSpawnTask } from "./tasks.js";
+import BgMessage from "./bgMessage.js";
 
 export default class ModeAGame {
     constructor(){
@@ -73,7 +74,8 @@ const level1 = {
         }
     ], tasks: [
         {
-            class: CreateStaticMessageTask,
+            class: CreateStaticBgParticleTask,
+            particleClass: BgMessage,
             centerX: canv.width/2,
             centerY: canv.height/2,
             text: "Test",
@@ -98,7 +100,7 @@ const level1 = {
                 {name:"SmallTriangle",weight:1,num:5},
             ]
         },{
-            class: DeleteStaticMessageTask,
+            class: DeleteStaticBgParticleTask,
             id: "MSG_TEST"
         },{
             class: WaitForConditionTask,

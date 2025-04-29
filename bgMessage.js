@@ -1,15 +1,14 @@
-import Color from "./color.js";
 import { ctx } from "./drawing.js";
 
 export default class BgMessage{
-    constructor(centerX, centerY, text, fontSizePx, duration){
-        this.text = text;
-        this.centerX = centerX;
-        this.centerY = centerY;
-        this.fontSizePx = fontSizePx;
-        this.duration = duration;
-        this.fontStr = `${fontSizePx}px Arial`;
-        this.isStatic = duration < 0;
+    constructor(params){
+        this.text = params.text;
+        this.centerX = params.centerX;
+        this.centerY = params.centerY;
+        this.fontSizePx = params.fontSizePx;
+        this.duration = params.duration;
+        this.fontStr = `${this.fontSizePx}px Arial`;
+        this.isStatic = this.duration && this.duration < 0;
 
         this.retired = false;
         this.timeElapsed = 0;
