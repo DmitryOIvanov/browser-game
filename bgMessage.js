@@ -24,7 +24,7 @@ export default class BgMessage{
     draw(){
         ctx.textAlign = "center";
         ctx.font = this.fontStr;
-        ctx.fillStyle = "#999";
+        ctx.fillStyle = "#777";
         ctx.fillText(this.text,this.centerX,this.centerY+this.fontSizePx*0.25);
     }
 }
