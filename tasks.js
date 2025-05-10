@@ -1,4 +1,4 @@
-import BgMessage from "./bgMessage.js";
+import BgMessage, { StaticBGMessage } from "./bgMessage.js";
 import { enemySpawningInfo, getRandomPosWithMargins } from "./enemySpawning.js";
 import playField from "./playField.js";
 
@@ -88,7 +88,14 @@ export class WaitTimeTask {
 
 export class MessageTask {
     constructor(readonlyParams){
-        this.messageObject = new BgMessage(readonlyParams, readonlyParams.duration);
+        this.messageObject = new BgMessage(
+            readonlyParams.text,
+            readonlyParams.fontSizePx,
+            readonlyParams.color,
+            readonlyParams.opacity,
+            readonlyParams.centerX,
+            readonlyParams.centerY,
+            readonlyParams.duration);
         this.msgAdded = false;
         this.concluded = false;
     }
@@ -104,7 +111,7 @@ export class MessageTask {
 
 export class CreateStaticMessageTask {
     constructor(readonlyParams){
-        this.messageObject = new BgMessage(readonlyParams, -1);
+        this.messageObject = new StaticBGMessage(readonlyParams);
         this.id = readonlyParams.id;
         this.concluded = false;
     }

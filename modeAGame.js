@@ -6,7 +6,7 @@ import { BallPProjWeapon } from "./weapons/ballProjWeapons.js";
 import { MemeWeapon2 } from "./weapons/fireworkWeapons.js";
 import { MachineGunWeapon, MemeWeapon1, PointPProjWeapon, ShotgunWeapon } from "./weapons/pointProjWeapons.js";
 import { CreateStaticBgParticleTask, CreateStaticMessageTask, DeleteStaticBgParticleTask, DeleteStaticMessageTask, MessageTask, WaitForConditionTask, WaitTimeTask, WeightedSpawnTask } from "./tasks.js";
-import BgMessage from "./bgMessage.js";
+import BgMessage, { StaticBGMessage } from "./bgMessage.js";
 import { WasdSymbol } from "./tutorialParticles.js";
 
 export default class ModeAGame {
@@ -80,7 +80,7 @@ const level1 = {
             id: "TUT_WASD"
         },{
             class: CreateStaticBgParticleTask,
-            particleClass: BgMessage,
+            particleClass: StaticBGMessage,
             centerX: canv.width/2,
             centerY: canv.height/2+100,
             text: "Test",

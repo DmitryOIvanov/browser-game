@@ -1,4 +1,5 @@
 import BgMessage from "./bgMessage.js";
+import Color from "./color.js";
 import { canv, ctx } from "./drawing.js";
 
 const CENTER_X = canv.width/2;
@@ -13,13 +14,15 @@ const KEY_CENTERS_X = [CENTER_X,CENTER_X-OFFSET_SIZE_X,CENTER_X,CENTER_X+OFFSET_
 const KEY_CENTERS_Y = [CENTER_Y-OFFSET_SIZE_Y,CENTER_Y,CENTER_Y,CENTER_Y];
 
 const LETTER_MESSAGES = [0,1,2,3].map((i)=>(
-    new BgMessage({
-        text: "WASD".charAt(i),
-        centerX: KEY_CENTERS_X[i],
-        centerY: KEY_CENTERS_Y[i]+5,
-        fontSizePx: 50,
-        duration:-1
-    })
+    new BgMessage(
+        "WASD".charAt(i),
+        50,
+        Color.WHITE,
+        1,
+        KEY_CENTERS_X[i],
+        KEY_CENTERS_Y[i]+5,
+        -1
+    )
 ));
 
 export class WasdSymbol {
