@@ -7,7 +7,7 @@ import { MemeWeapon2 } from "./weapons/fireworkWeapons.js";
 import { MachineGunWeapon, MemeWeapon1, PointPProjWeapon, ShotgunWeapon } from "./weapons/pointProjWeapons.js";
 import { CreateStaticBgParticleTask, CreateStaticMessageTask, DeleteStaticBgParticleTask, DeleteStaticMessageTask, MessageTask, WaitForConditionTask, WaitTimeTask, WeightedSpawnTask } from "./tasks.js";
 import BgMessage, { StaticBGMessage } from "./bgMessage.js";
-import { WasdSymbol } from "./tutorialParticles.js";
+import { WasdSymbol } from "./tutorialTasks.js";
 
 export default class ModeAGame {
     constructor(){

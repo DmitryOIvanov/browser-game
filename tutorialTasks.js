@@ -1,6 +1,46 @@
 import BgMessage from "./bgMessage.js";
 import Color from "./color.js";
-import { canv, ctx } from "./drawing.js";
+import { addToGlobalAlphaStack, canv, ctx, popFromGlobalStack } from "./drawing.js";
+
+const MAX_END_TIME = 60;
+
+class TutorialTask {
+    constructor(){
+        this.satisfied = false;
+        this.endTime = MAX_END_TIME;
+        this.concluded = false;
+    }
+
+    timeStep(amount){
+        if(this.concluded) return;
+        if(this.satisfied){
+            this.endTime -= amount;
+            if(this.endTime <= 0) this.concluded = true;
+        }else if(this.getSatisfaction()){
+            this.satisfied = true;
+        }
+    }
+
+    draw(){
+
+    }
+
+    getSatisfaction(){
+        throw new Error("Tutorial Satisfaction not implemented");
+    }
+
+    drawRaw(){
+        throw new Error("Tutorial (raw) drawing function not implemented");
+    }
+}
+
+export class TutorialScreen1 {
+    constructor(params){}
+
+    timeStep(amount){}
+
+    draw(){}
+}
 
 const CENTER_X = canv.width/2;
 const CENTER_Y = canv.height/2;
@@ -34,7 +74,8 @@ export class WasdSymbol {
         // ctx.textAlign = "center";
         // ctx.font = this.fontStr;
         // ctx.fillStyle = "#999";
-        ctx.strokeStyle = "#777";
+        addToGlobalAlphaStack(0.5);
+        ctx.strokeStyle = "#FFF";
         ctx.lineWidth = LINE_WIDTH;
         for(let i=0; i<4; i++){
             const x = KEY_CENTERS_X[i];
@@ -43,6 +84,7 @@ export class WasdSymbol {
 
             LETTER_MESSAGES[i].draw();
         }
+        popFromGlobalStack();
     }
 }
 

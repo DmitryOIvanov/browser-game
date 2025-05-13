@@ -1,5 +1,5 @@
 import Color from "./color.js";
-import { ctx } from "./drawing.js";
+import { addToGlobalAlphaStack, ctx, popFromGlobalStack } from "./drawing.js";
 
 export default class BgMessage{
     constructor(text, fontSizePx, color, opacity, centerX, centerY, duration){
@@ -25,13 +25,12 @@ export default class BgMessage{
     }
 
     draw(){
-        ctx.globalAlpha = this.opacity;
+        addToGlobalAlphaStack(this.opacity);
         ctx.textAlign = "center";
         ctx.font = this.fontStr;
         ctx.fillStyle = this.color.getStr();
         ctx.fillText(this.text,this.centerX,this.centerY+this.fontSizePx*0.25);
-
-        ctx.globalAlpha = 1;
+        popFromGlobalStack();
     }
 }
 
