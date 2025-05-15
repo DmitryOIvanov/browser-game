@@ -5,9 +5,9 @@ import playField from "./playField.js";
 import { BallPProjWeapon } from "./weapons/ballProjWeapons.js";
 import { MemeWeapon2 } from "./weapons/fireworkWeapons.js";
 import { MachineGunWeapon, MemeWeapon1, PointPProjWeapon, ShotgunWeapon } from "./weapons/pointProjWeapons.js";
-import { CreateStaticBgParticleTask, CreateStaticMessageTask, DeleteStaticBgParticleTask, DeleteStaticMessageTask, MessageTask, WaitForConditionTask, WaitTimeTask, WeightedSpawnTask } from "./tasks.js";
+import { CreateStaticBgParticleTask, DeleteStaticBgParticleTask, MessageTask, WaitForBgParticleTask, WaitForConditionTask, WaitTimeTask, WeightedSpawnTask } from "./tasks.js";
 import BgMessage, { StaticBGMessage } from "./bgMessage.js";
-import { WasdSymbol } from "./tutorialTasks.js";
+import { TutorialTask1 } from "./tutorialTasks.js";
 
 export default class ModeAGame {
     constructor(){
@@ -75,9 +75,11 @@ const level1 = {
         }
     ], tasks: [
         {
-            class: CreateStaticBgParticleTask,
-            particleClass: WasdSymbol,
-            id: "TUT_WASD"
+            class: WaitTimeTask,
+            time: 30
+        },{
+            class: WaitForBgParticleTask,
+            particleClass: TutorialTask1
         },{
             class: CreateStaticBgParticleTask,
             particleClass: StaticBGMessage,

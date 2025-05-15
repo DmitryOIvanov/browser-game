@@ -109,31 +109,6 @@ export class MessageTask {
     }
 }
 
-export class CreateStaticMessageTask {
-    constructor(readonlyParams){
-        this.messageObject = new StaticBGMessage(readonlyParams);
-        this.id = readonlyParams.id;
-        this.concluded = false;
-    }
-
-    timeStep(amount){
-        if(!this.concluded) playField.addTrackedBackgroundParticle(this.messageObject, this.id);
-        this.concluded = true;
-    }
-}
-
-export class DeleteStaticMessageTask {
-    constructor(readonlyParams){
-        this.id = readonlyParams.id;
-        this.concluded = false;
-    }
-
-    timeStep(amount){
-        if(!this.concluded) playField.deleteTrackedBackgroundParticle(this.id);
-        this.concluded = true;
-    }
-}
-
 export class CreateStaticBgParticleTask {
     constructor(readonlyParams){
         this.particle = new readonlyParams.particleClass(readonlyParams);
@@ -156,5 +131,23 @@ export class DeleteStaticBgParticleTask {
     timeStep(amount){
         if(!this.concluded) playField.deleteTrackedBackgroundParticle(this.id);
         this.concluded = true;
+    }
+}
+
+export class WaitForBgParticleTask {
+    constructor(readonlyParams){
+        this.particle = new readonlyParams.particleClass(readonlyParams);
+        this.particleAdded = false;
+        this.concluded = false;
+    }
+
+    timeStep(amount){
+        if(!this.particleAdded){
+            playField.addBackgroundParticle(this.particle);
+            this.particleAdded = true;
+        }
+        if(this.particle.retired){
+            this.concluded = true;
+        }
     }
 }

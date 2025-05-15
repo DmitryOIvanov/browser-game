@@ -43,3 +43,8 @@ export function popFromGlobalStack(){
     }
     recomputeGlobalAlpha();
 }
+
+export function fillTextCenteredXY(text, fontSizePx, x, y){
+    ctx.textAlign = "center";
+    ctx.fillText(text,x,y+fontSizePx*0.25);
+}
