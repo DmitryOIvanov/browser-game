@@ -7,7 +7,7 @@ import { MemeWeapon2 } from "./weapons/fireworkWeapons.js";
 import { MachineGunWeapon, MemeWeapon1, PointPProjWeapon, ShotgunWeapon } from "./weapons/pointProjWeapons.js";
 import { CreateStaticBgParticleTask, DeleteStaticBgParticleTask, MessageTask, WaitForBgParticleTask, WaitForConditionTask, WaitTimeTask, WeightedSpawnTask } from "./tasks.js";
 import BgMessage, { StaticBGMessage } from "./bgMessage.js";
-import { TutorialTask1 } from "./tutorialTasks.js";
+import { TutorialTask1, TutorialTask2 } from "./tutorialTasks.js";
 
 export default class ModeAGame {
     constructor(){
@@ -80,6 +80,9 @@ const level1 = {
         },{
             class: WaitForBgParticleTask,
             particleClass: TutorialTask1
+        },{
+            class: WaitForBgParticleTask,
+            particleClass: TutorialTask2
         },{
             class: CreateStaticBgParticleTask,
             particleClass: StaticBGMessage,

@@ -3,8 +3,8 @@ import Color from "./color.js";
 import controls from "./controls.js";
 import { addToGlobalAlphaStack, canv, ctx, fillTextCenteredXY, popFromGlobalStack } from "./drawing.js";
 
-const MAX_END_TIME = 30;
-const MAX_START_TIME = 30;
+const MAX_START_TIME = 20;
+const MAX_END_TIME = 40;
 
 class TutorialTask {
     constructor(){
@@ -66,7 +66,7 @@ export class TutorialTask1 extends TutorialTask {
         ctx.strokeStyle = "#FFF";
         ctx.fillStyle = "#FFF";
         this.drawWASD();
-        fillTextCenteredXY("Move", 50, canv.width/2, canv.height/2 + 100);
+        fillTextCenteredXY("Move", 60, canv.width/2, canv.height/2 + 100);
     }
 
     drawWASD(){
@@ -76,26 +76,66 @@ export class TutorialTask1 extends TutorialTask {
         const OFFSET_SIZE_Y = 85;
         const RADIUS_X = 35;
         const RADIUS_Y = 35;
-        const LINE_WIDTH = 8;
-        ctx.lineWidth = LINE_WIDTH;
+        ctx.lineWidth = 8;
 
         for(let i=0; i<4; i++){
             const x = CENTER_X + OFFSET_SIZE_X*KEY_OFFSETS_X[i];
             const y = CENTER_Y + OFFSET_SIZE_Y*KEY_OFFSETS_Y[i];
             ctx.strokeRect(x-RADIUS_X,y-RADIUS_Y,2*RADIUS_X,2*RADIUS_Y);
-            fillTextCenteredXY("WASD".charAt(i), 50, x, y+8);
+            fillTextCenteredXY("WASD".charAt(i), 52, x, y+6);
         }
     }
 }
 
-// const LETTER_MESSAGES = [0,1,2,3].map((i)=>(
-//     new BgMessage(
-//         "WASD".charAt(i),
-//         50,
-//         Color.WHITE,
-//         1,
-//         KEY_CENTERS_X[i],
-//         KEY_CENTERS_Y[i]+5,
-//         -1
-//     )
-// ));
+export class TutorialTask2 extends TutorialTask {
+    constructor(params){
+        super();
+        this.satisfied = false;
+    }
+
+    getSatisfaction(){
+        if(controls.mouse.leftHeld){
+            this.satisfied = true;
+        }
+        return this.satisfied;
+    }
+
+    drawRaw(){
+        ctx.strokeStyle = "#FFF";
+        ctx.fillStyle = "#FFF";
+        this.drawMouse();
+        fillTextCenteredXY("Aim & Shoot", 60, canv.width/2, canv.height/2 + 100);
+    }
+
+    drawMouse(){
+        const CENTER_X = canv.width/2;
+        const CENTER_Y = canv.height/2 - 130;
+        const RADIUS = 40;
+        const BAR_HEIGHT = 40;
+        const BUTTON_OFFSET = 10;
+
+        ctx.lineWidth = 8;
+
+        ctx.beginPath();
+        ctx.moveTo(CENTER_X-RADIUS, CENTER_Y+0.5*BAR_HEIGHT);
+        ctx.lineTo(CENTER_X-RADIUS, CENTER_Y-0.5*BAR_HEIGHT);
+        ctx.arc(CENTER_X, CENTER_Y-0.5*BAR_HEIGHT, RADIUS, Math.PI, 0);
+        ctx.lineTo(CENTER_X+RADIUS, CENTER_Y+0.5*BAR_HEIGHT);
+        ctx.arc(CENTER_X, CENTER_Y+0.5*BAR_HEIGHT, RADIUS, 0, Math.PI);
+        ctx.moveTo(CENTER_X-RADIUS, CENTER_Y-BUTTON_OFFSET);
+        ctx.lineTo(CENTER_X+RADIUS, CENTER_Y-BUTTON_OFFSET);
+        ctx.moveTo(CENTER_X, CENTER_Y-BUTTON_OFFSET);
+        ctx.lineTo(CENTER_X, CENTER_Y-0.5*BAR_HEIGHT-RADIUS);
+        ctx.stroke();
+
+        addToGlobalAlphaStack(0.5);
+        ctx.beginPath();
+        ctx.arc(CENTER_X, CENTER_Y-0.5*BAR_HEIGHT, RADIUS, Math.PI, 1.5*Math.PI);
+        ctx.lineTo(CENTER_X, CENTER_Y-0.5*BAR_HEIGHT-RADIUS);
+        ctx.lineTo(CENTER_X, CENTER_Y-BUTTON_OFFSET);
+        ctx.lineTo(CENTER_X-RADIUS, CENTER_Y-BUTTON_OFFSET);
+        ctx.closePath();
+        ctx.fill();
+        popFromGlobalStack();
+    }
+}
