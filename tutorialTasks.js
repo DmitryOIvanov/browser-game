@@ -1,7 +1,7 @@
 import BgMessage from "./bgMessage.js";
 import Color from "./color.js";
 import controls from "./controls.js";
-import { addToGlobalAlphaStack, canv, ctx, fillTextCenteredXY, popFromGlobalStack } from "./drawing.js";
+import { addToGlobalAlphaStack, canv, ctx, customStrokeRect, fillTextCenteredXY, popFromGlobalStack } from "./drawing.js";
 
 const MAX_START_TIME = 20;
 const MAX_END_TIME = 40;
@@ -81,7 +81,7 @@ export class TutorialTask1 extends TutorialTask {
         for(let i=0; i<4; i++){
             const x = CENTER_X + OFFSET_SIZE_X*KEY_OFFSETS_X[i];
             const y = CENTER_Y + OFFSET_SIZE_Y*KEY_OFFSETS_Y[i];
-            ctx.strokeRect(x-RADIUS_X,y-RADIUS_Y,2*RADIUS_X,2*RADIUS_Y);
+            customStrokeRect(x-RADIUS_X,y-RADIUS_Y,2*RADIUS_X,2*RADIUS_Y);
             fillTextCenteredXY("WASD".charAt(i), 52, x, y+6);
         }
     }
@@ -137,5 +137,37 @@ export class TutorialTask2 extends TutorialTask {
         ctx.closePath();
         ctx.fill();
         popFromGlobalStack();
+    }
+}
+
+export class TutorialTask3 extends TutorialTask {
+    constructor(params){
+        super();
+        this.satisfied = false;
+    }
+
+    getSatisfaction(){
+        if(controls.held["Space"]){
+            this.satisfied = true;
+        }
+        return this.satisfied;
+    }
+
+    drawRaw(){
+        ctx.strokeStyle = "#FFF";
+        ctx.fillStyle = "#FFF";
+        this.drawSpacebar();
+        fillTextCenteredXY("Slow Time", 60, canv.width/2, canv.height/2 + 100);
+    }
+
+    drawSpacebar(){
+        const CENTER_X = canv.width/2;
+        const CENTER_Y = canv.height/2 - 100;
+        const WIDTH = 350;
+        const HEIGHT = 70;
+        ctx.lineWidth = 8;
+
+        customStrokeRect(CENTER_X-0.5*WIDTH,CENTER_Y-0.5*HEIGHT,WIDTH,HEIGHT);
+        fillTextCenteredXY("SPACE", 52, CENTER_X, CENTER_Y+6);
     }
 }

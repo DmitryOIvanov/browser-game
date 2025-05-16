@@ -49,3 +49,13 @@ export function fillTextCenteredXY(text, fontSizePx, x, y){
     ctx.font = `${fontSizePx}px Arial`;
     ctx.fillText(text,x,y+fontSizePx*0.25);
 }
+
+export function customStrokeRect(x,y,w,h){
+    ctx.beginPath();
+    ctx.moveTo(x,y);
+    ctx.lineTo(x+w,y);
+    ctx.lineTo(x+w,y+h);
+    ctx.lineTo(x,y+h);
+    ctx.closePath();
+    ctx.stroke();
+}
