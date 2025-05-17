@@ -2,6 +2,7 @@ import BgMessage from "./bgMessage.js";
 import Color from "./color.js";
 import controls from "./controls.js";
 import { addToGlobalAlphaStack, canv, ctx, customStrokeRect, fillTextCenteredXY, popFromGlobalStack } from "./drawing.js";
+import { normalizeAngle, normalizedAtan2 } from "./extraMath.js";
 
 const MAX_START_TIME = 20;
 const MAX_END_TIME = 40;
@@ -168,13 +169,12 @@ class Gear {
     }
 
     timeStep(amount){
-        this.rot += this.rotSpeed * amount;
+        this.rot = normalizeAngle(this.rot + this.rotSpeed * amount);
     }
 
     draw(){
         ctx.beginPath();
         // Outermost shape
-        // ctx.arc(this.x,this.y,this.r4,0,2*Math.PI);
         const dl = Math.sqrt(this.r4*this.r4 - this.tlw*this.tlw);
         const du = Math.sqrt((this.r4+this.th)*(this.r4+this.th) - this.tuw*this.tuw);
         for(let i=0; i<this.numTeeth; i++){
@@ -212,13 +212,30 @@ class Gear {
             ctx.arc(this.x,this.y,this.r3,angle2-dAngle3,angle1+dAngle3,true);
             ctx.closePath();
         }
-        ctx.fill();
+        ctx.fill("evenodd");
+    }
+
+    mesh(otherGear, clearance, toothOffset){
+        const d = Math.sqrt((this.x-otherGear.x)*(this.x-otherGear.x) + (this.y-otherGear.y)*(this.y-otherGear.y));
+        const distanceCoeff = (this.r4 + otherGear.r4 + clearance)/d;
+        const newX = otherGear.x + distanceCoeff*(this.x-otherGear.x);
+        const newY = otherGear.y + distanceCoeff*(this.y-otherGear.y);
+        this.x = newX;
+        this.y = newY;
+        this.rotSpeed = -otherGear.rotSpeed*otherGear.r4/this.r4;
+        const meetingAngle = normalizedAtan2(this.y-otherGear.y, this.x-otherGear.x);
+        const otherDeviation = otherGear.rot - meetingAngle;
+        this.rot = meetingAngle + Math.PI - otherDeviation*otherGear.r4/this.r4 + (2*toothOffset+1)*Math.PI/this.numTeeth;
     }
 }
 
 class TutorialGearBackground {
     constructor(){
+        const DUMMY_VALUE = 0;
         const SPEED_COEFF = 0.001;
+        const TOOTH_HEIGHT = 20;
+        const TOOTH_INNER_THICKNESS = 11;
+        const TOOTH_OUTER_THICKNESS = 4;
         this.gears = [
             new Gear(
                 80, // Center X
@@ -227,12 +244,12 @@ class TutorialGearBackground {
                 40, // Inner Ring Depth
                 360, // Outer Ring Radius
                 40, // Outer Depth Radius
-                6, // # of Spokes
+                1, // # of Spokes
                 35, // Spoke Thickness
                 72, // # of teeth
-                20, // Tooth Height
-                10, // Tooth Inner Thickness
-                3, // Tooth Outer Thickness
+                TOOTH_HEIGHT, // Tooth Height
+                TOOTH_INNER_THICKNESS, // Tooth Inner Thickness
+                TOOTH_OUTER_THICKNESS, // Tooth Outer Thickness
                 5*SPEED_COEFF, // Speed (& Direction)
                 0 // Initial Angle
             ),new Gear(
@@ -242,14 +259,14 @@ class TutorialGearBackground {
                 20, // Inner Ring Depth
                 90, // Outer Ring Radius
                 20, // Outer Depth Radius
-                4, // # of Spokes
+                1, // # of Spokes
                 20, // Spoke Thickness
                 18, // # of teeth
-                20, // Tooth Height
-                10, // Tooth Inner Thickness
-                3, // Tooth Outer Thickness
-                -20*SPEED_COEFF, // Speed (& Direction)
-                -0.025+0.175 // Initial Angle
+                TOOTH_HEIGHT, // Tooth Height
+                TOOTH_INNER_THICKNESS, // Tooth Inner Thickness
+                TOOTH_OUTER_THICKNESS, // Tooth Outer Thickness
+                DUMMY_VALUE, // Speed (& Direction)
+                DUMMY_VALUE // Initial Angle
             ),new Gear(
                 80+57, // Center X
                 640-687, // Center Y
@@ -257,14 +274,14 @@ class TutorialGearBackground {
                 20, // Inner Ring Depth
                 180, // Outer Ring Radius
                 20, // Outer Depth Radius
-                4, // # of Spokes
+                1, // # of Spokes
                 20, // Spoke Thickness
                 36, // # of teeth
-                20, // Tooth Height
-                10, // Tooth Inner Thickness
-                3, // Tooth Outer Thickness
-                10*SPEED_COEFF, // Speed (& Direction)
-                -0.025+0.175 // Initial Angle
+                TOOTH_HEIGHT, // Tooth Height
+                TOOTH_INNER_THICKNESS, // Tooth Inner Thickness
+                TOOTH_OUTER_THICKNESS, // Tooth Outer Thickness
+                DUMMY_VALUE, // Speed (& Direction)
+                DUMMY_VALUE // Initial Angle
             ),new Gear(
                 1280, // Center X
                 0, // Center Y
@@ -272,29 +289,29 @@ class TutorialGearBackground {
                 20, // Inner Ring Depth
                 450, // Outer Ring Radius
                 20, // Outer Depth Radius
-                4, // # of Spokes
+                1, // # of Spokes
                 20, // Spoke Thickness
                 90, // # of teeth
-                20, // Tooth Height
-                10, // Tooth Inner Thickness
-                3, // Tooth Outer Thickness
+                TOOTH_HEIGHT, // Tooth Height
+                TOOTH_INNER_THICKNESS, // Tooth Inner Thickness
+                TOOTH_OUTER_THICKNESS, // Tooth Outer Thickness
                 4*SPEED_COEFF, // Speed (& Direction)
-                -0.025+0.175 // Initial Angle
+                0 // Initial Angle
             ),new Gear(
-                1280-450-90-26, // Center X
+                1280-450-90-22, // Center X
                 0, // Center Y
                 40, // Inner Ring Radius
                 20, // Inner Ring Depth
                 90, // Outer Ring Radius
                 20, // Outer Depth Radius
-                4, // # of Spokes
+                1, // # of Spokes
                 20, // Spoke Thickness
                 18, // # of teeth
-                20, // Tooth Height
-                10, // Tooth Inner Thickness
-                3, // Tooth Outer Thickness
-                -20*SPEED_COEFF, // Speed (& Direction)
-                -0.025+0.175 // Initial Angle
+                TOOTH_HEIGHT, // Tooth Height
+                TOOTH_INNER_THICKNESS, // Tooth Inner Thickness
+                TOOTH_OUTER_THICKNESS, // Tooth Outer Thickness
+                DUMMY_VALUE, // Speed (& Direction)
+                DUMMY_VALUE // Initial Angle
             ),new Gear(
                 1058, // Center X
                 720-100, // Center Y
@@ -302,17 +319,36 @@ class TutorialGearBackground {
                 20, // Inner Ring Depth
                 180, // Outer Ring Radius
                 20, // Outer Depth Radius
-                4, // # of Spokes
+                1, // # of Spokes
                 20, // Spoke Thickness
                 36, // # of teeth
-                20, // Tooth Height
-                10, // Tooth Inner Thickness
-                3, // Tooth Outer Thickness
-                -10*SPEED_COEFF, // Speed (& Direction)
-                -0.025+0.175 // Initial Angle
+                TOOTH_HEIGHT, // Tooth Height
+                TOOTH_INNER_THICKNESS, // Tooth Inner Thickness
+                TOOTH_OUTER_THICKNESS, // Tooth Outer Thickness
+                DUMMY_VALUE, // Speed (& Direction)
+                DUMMY_VALUE // Initial Angle
+            ),new Gear(
+                775, // Center X
+                700, // Center Y
+                40, // Inner Ring Radius
+                20, // Inner Ring Depth
+                90, // Outer Ring Radius
+                20, // Outer Depth Radius
+                1, // # of Spokes
+                20, // Spoke Thickness
+                18, // # of teeth
+                TOOTH_HEIGHT, // Tooth Height
+                TOOTH_INNER_THICKNESS, // Tooth Inner Thickness
+                TOOTH_OUTER_THICKNESS, // Tooth Outer Thickness
+                DUMMY_VALUE, // Speed (& Direction)
+                DUMMY_VALUE // Initial Angle
             ),
-            // new Gear(300,300,30,15,100,20,6,10,24,16,8,3,0.01),
         ];
+        this.gears[1].mesh(this.gears[0], 22, 0);
+        this.gears[2].mesh(this.gears[1], 22, 0);
+        this.gears[4].mesh(this.gears[3], 22, 0);
+        this.gears[5].mesh(this.gears[3], 22, 0);
+        this.gears[6].mesh(this.gears[5], 22, 0);
     }
 
     timeStep(amount){
@@ -341,9 +377,9 @@ export class TutorialTask3 extends TutorialTask {
     }
 
     getSatisfaction(){
-        if(controls.held["Space"]){
-            this.satisfied = true;
-        }
+        // if(controls.held["Space"]){
+        //     this.satisfied = true;
+        // }
         return this.satisfied;
     }
 
@@ -353,7 +389,7 @@ export class TutorialTask3 extends TutorialTask {
         this.drawSpacebar();
         fillTextCenteredXY("Slow Time", 60, canv.width/2, canv.height/2 + 100);
 
-        addToGlobalAlphaStack(0.2);
+        addToGlobalAlphaStack(0.3);
         this.gears.draw();
         popFromGlobalStack();
     }
