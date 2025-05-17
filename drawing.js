@@ -22,26 +22,19 @@ const MAX_ALPHA_STACK = 16; // arbitrary and high enough
 const alphaStack = new Array(MAX_ALPHA_STACK);
 let alphaStackSize = 0;
 
-function recomputeGlobalAlpha(){
-    let alpha = 1;
-    for(let i=0; i<alphaStackSize; i++){
-        alpha *= alphaStack[i];
-    }
-    ctx.globalAlpha = alpha;
-}
-
 export function addToGlobalAlphaStack(val){
     if(alphaStackSize >= MAX_ALPHA_STACK) throw new Error("Max alpha stack size exceeded");
-    alphaStack[alphaStackSize] = val;
+    const prevAlpha = (alphaStackSize==0) ? 1 : alphaStack[alphaStackSize-1];
+    alphaStack[alphaStackSize] = prevAlpha * val;
     alphaStackSize++;
-    recomputeGlobalAlpha();
+    ctx.globalAlpha = alphaStack[alphaStackSize-1];
 }
 
 export function popFromGlobalStack(){
     if(alphaStackSize > 0){
         alphaStackSize--;
     }
-    recomputeGlobalAlpha();
+    ctx.globalAlpha = (alphaStackSize==0) ? 1 : alphaStack[alphaStackSize-1];
 }
 
 export function fillTextCenteredXY(text, fontSizePx, x, y){

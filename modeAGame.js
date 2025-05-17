@@ -78,12 +78,12 @@ const level1 = {
             class: WaitTimeTask,
             time: 30
         },{
-            class: WaitForBgParticleTask,
-            particleClass: TutorialTask1
-        },{
-            class: WaitForBgParticleTask,
-            particleClass: TutorialTask2
-        },{
+        //     class: WaitForBgParticleTask,
+        //     particleClass: TutorialTask1
+        // },{
+        //     class: WaitForBgParticleTask,
+        //     particleClass: TutorialTask2
+        // },{
             class: WaitForBgParticleTask,
             particleClass: TutorialTask3
         },{

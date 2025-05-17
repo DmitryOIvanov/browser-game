@@ -30,7 +30,7 @@ class TutorialTask {
     }
 
     draw(){
-        let alpha = 0.5 * this.startTime/MAX_START_TIME;
+        let alpha = 0.6 * this.startTime/MAX_START_TIME;
         if(this.satisfied) alpha = this.endTime/MAX_END_TIME;
         addToGlobalAlphaStack(alpha);
         this.drawRaw();  
@@ -140,6 +140,65 @@ export class TutorialTask2 extends TutorialTask {
     }
 }
 
+function rotateX(x,y,cos,sin){
+    return x*cos - y*sin;
+}
+
+function rotateY(x,y,cos,sin){
+    return x*sin + y*cos;
+}
+
+class Gear {
+    constructor(x,y, innerRad, innerDepth, outerRad, outerDepth, numSpokes, SpokeThickness, rotSpeed){
+        this.x = x;
+        this.y = y;
+        this.r1 = innerRad-innerDepth;
+        this.r2 = innerRad;
+        this.r3 = outerRad-outerDepth;
+        this.r4 = outerRad;
+        this.n = numSpokes;
+        this.w = SpokeThickness*0.5;
+        this.rotSpeed = rotSpeed;
+
+        this.rot = 0.2435675;
+    }
+
+    timeStep(amount){
+        this.rot += this.rotSpeed * amount;
+    }
+
+    draw(){
+        ctx.beginPath();
+        // Outermost shape
+        ctx.arc(this.x,this.y,this.r4,0,2*Math.PI);
+        ctx.closePath();
+        // Central Hole
+        ctx.arc(this.x,this.y,this.r1,0,2*Math.PI, true);
+        ctx.closePath();
+        // Empty Space between spokes
+        for(let i=0; i<this.n; i++){
+            const angle1 = this.rot + 2*Math.PI*i/this.n;
+            const angle2 = this.rot + 2*Math.PI*(i+1)/this.n;
+            const cos1 = Math.cos(angle1);
+            const sin1 = Math.sin(angle1);
+            const cos2 = Math.cos(angle2);
+            const sin2 = Math.sin(angle2);
+            const d2 = Math.sqrt(this.r2*this.r2 - this.w*this.w);
+            const d3 = Math.sqrt(this.r3*this.r3 - this.w*this.w);
+            const dAngle2 = Math.asin(this.w/this.r2);
+            const dAngle3 = Math.asin(this.w/this.r3);
+            ctx.moveTo(this.x+rotateX(d2,this.w,cos1,sin1),this.y+rotateY(d2,this.w,cos1,sin1));
+            ctx.arc(this.x,this.y,this.r2,angle1+dAngle2,angle2-dAngle2,false);
+            ctx.lineTo(this.x+rotateX(d3,-this.w,cos2,sin2),this.y+rotateY(d3,-this.w,cos2,sin2));
+            ctx.arc(this.x,this.y,this.r3,angle2-dAngle3,angle1+dAngle3,true);
+            ctx.closePath();
+        }
+        ctx.fill();
+    }
+}
+
+const testGear = new Gear(300,300,30,15,100,20,6,10,1);
+
 export class TutorialTask3 extends TutorialTask {
     constructor(params){
         super();
@@ -158,6 +217,21 @@ export class TutorialTask3 extends TutorialTask {
         ctx.fillStyle = "#FFF";
         this.drawSpacebar();
         fillTextCenteredXY("Slow Time", 60, canv.width/2, canv.height/2 + 100);
+
+        // ctx.beginPath();
+        // ctx.moveTo(300,300);
+        // ctx.lineTo(300,500);
+        // ctx.lineTo(500,500);
+        // ctx.lineTo(500,300);
+        // ctx.closePath();
+        // ctx.moveTo(350,350);
+        // ctx.lineTo(450,350);
+        // ctx.lineTo(450,450);
+        // ctx.lineTo(350,450);
+        // ctx.closePath();
+        // ctx.fill();
+
+        testGear.draw();
     }
 
     drawSpacebar(){
