@@ -149,15 +149,19 @@ function rotateY(x,y,cos,sin){
 }
 
 class Gear {
-    constructor(x,y, innerRad, innerDepth, outerRad, outerDepth, numSpokes, SpokeThickness, rotSpeed){
+    constructor(x,y, innerRad, innerDepth, outerRad, outerDepth, numSpokes, SpokeThickness, numTeeth, toothHeight, toothLowerWidth, toothUpperWidth, rotSpeed){
         this.x = x;
         this.y = y;
         this.r1 = innerRad-innerDepth;
         this.r2 = innerRad;
         this.r3 = outerRad-outerDepth;
         this.r4 = outerRad;
-        this.n = numSpokes;
-        this.w = SpokeThickness*0.5;
+        this.numSpokes = numSpokes;
+        this.sw = SpokeThickness*0.5;
+        this.numTeeth = numTeeth;
+        this.th = toothHeight;
+        this.tlw = toothLowerWidth;
+        this.tuw = toothUpperWidth;
         this.rotSpeed = rotSpeed;
 
         this.rot = 0.2435675;
@@ -170,26 +174,41 @@ class Gear {
     draw(){
         ctx.beginPath();
         // Outermost shape
-        ctx.arc(this.x,this.y,this.r4,0,2*Math.PI);
+        // ctx.arc(this.x,this.y,this.r4,0,2*Math.PI);
+        const dl = Math.sqrt(this.r4*this.r4 - this.tlw*this.tlw);
+        const du = Math.sqrt((this.r4+this.th)*(this.r4+this.th) - this.tuw*this.tuw);
+        for(let i=0; i<this.numTeeth; i++){
+            const angle = this.rot + 2*Math.PI*i/this.numTeeth;
+            const cos = Math.cos(angle);
+            const sin = Math.sin(angle);
+            if(i==0){
+                ctx.moveTo(this.x+rotateX(dl,-this.tlw,cos,sin),this.y+rotateY(dl,-this.tlw,cos,sin));
+            }else{
+                ctx.lineTo(this.x+rotateX(dl,-this.tlw,cos,sin),this.y+rotateY(dl,-this.tlw,cos,sin));
+            }
+            ctx.lineTo(this.x+rotateX(du,-this.tuw,cos,sin),this.y+rotateY(du,-this.tuw,cos,sin));
+            ctx.lineTo(this.x+rotateX(du,this.tuw,cos,sin),this.y+rotateY(du,this.tuw,cos,sin));
+            ctx.lineTo(this.x+rotateX(dl,this.tlw,cos,sin),this.y+rotateY(dl,this.tlw,cos,sin));
+        }
         ctx.closePath();
         // Central Hole
         ctx.arc(this.x,this.y,this.r1,0,2*Math.PI, true);
         ctx.closePath();
         // Empty Space between spokes
-        for(let i=0; i<this.n; i++){
-            const angle1 = this.rot + 2*Math.PI*i/this.n;
-            const angle2 = this.rot + 2*Math.PI*(i+1)/this.n;
+        const d2 = Math.sqrt(this.r2*this.r2 - this.sw*this.sw);
+        const d3 = Math.sqrt(this.r3*this.r3 - this.sw*this.sw);
+        const dAngle2 = Math.asin(this.sw/this.r2);
+        const dAngle3 = Math.asin(this.sw/this.r3);
+        for(let i=0; i<this.numSpokes; i++){
+            const angle1 = this.rot + 2*Math.PI*i/this.numSpokes;
+            const angle2 = this.rot + 2*Math.PI*(i+1)/this.numSpokes;
             const cos1 = Math.cos(angle1);
             const sin1 = Math.sin(angle1);
             const cos2 = Math.cos(angle2);
             const sin2 = Math.sin(angle2);
-            const d2 = Math.sqrt(this.r2*this.r2 - this.w*this.w);
-            const d3 = Math.sqrt(this.r3*this.r3 - this.w*this.w);
-            const dAngle2 = Math.asin(this.w/this.r2);
-            const dAngle3 = Math.asin(this.w/this.r3);
-            ctx.moveTo(this.x+rotateX(d2,this.w,cos1,sin1),this.y+rotateY(d2,this.w,cos1,sin1));
+            ctx.moveTo(this.x+rotateX(d2,this.sw,cos1,sin1),this.y+rotateY(d2,this.sw,cos1,sin1));
             ctx.arc(this.x,this.y,this.r2,angle1+dAngle2,angle2-dAngle2,false);
-            ctx.lineTo(this.x+rotateX(d3,-this.w,cos2,sin2),this.y+rotateY(d3,-this.w,cos2,sin2));
+            ctx.lineTo(this.x+rotateX(d3,-this.sw,cos2,sin2),this.y+rotateY(d3,-this.sw,cos2,sin2));
             ctx.arc(this.x,this.y,this.r3,angle2-dAngle3,angle1+dAngle3,true);
             ctx.closePath();
         }
@@ -197,7 +216,7 @@ class Gear {
     }
 }
 
-const testGear = new Gear(300,300,30,15,100,20,6,10,1);
+const testGear = new Gear(300,300,30,15,100,20,6,10,24,10,5,3,1);
 
 export class TutorialTask3 extends TutorialTask {
     constructor(params){
