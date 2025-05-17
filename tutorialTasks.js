@@ -235,16 +235,16 @@ class TutorialGearBackground {
         const SPEED_COEFF = 0.001;
         const TOOTH_HEIGHT = 20;
         const TOOTH_INNER_THICKNESS = 11;
-        const TOOTH_OUTER_THICKNESS = 4;
+        const TOOTH_OUTER_THICKNESS = 3;
         this.gears = [
             new Gear(
                 80, // Center X
                 640, // Center Y
-                70, // Inner Ring Radius
+                80, // Inner Ring Radius
                 40, // Inner Ring Depth
                 360, // Outer Ring Radius
                 40, // Outer Depth Radius
-                1, // # of Spokes
+                6, // # of Spokes
                 35, // Spoke Thickness
                 72, // # of teeth
                 TOOTH_HEIGHT, // Tooth Height
@@ -259,7 +259,7 @@ class TutorialGearBackground {
                 20, // Inner Ring Depth
                 90, // Outer Ring Radius
                 20, // Outer Depth Radius
-                1, // # of Spokes
+                4, // # of Spokes
                 20, // Spoke Thickness
                 18, // # of teeth
                 TOOTH_HEIGHT, // Tooth Height
@@ -270,12 +270,12 @@ class TutorialGearBackground {
             ),new Gear(
                 80+57, // Center X
                 640-687, // Center Y
-                40, // Inner Ring Radius
-                20, // Inner Ring Depth
+                60, // Inner Ring Radius
+                30, // Inner Ring Depth
                 180, // Outer Ring Radius
-                20, // Outer Depth Radius
-                1, // # of Spokes
-                20, // Spoke Thickness
+                30, // Outer Depth Radius
+                5, // # of Spokes
+                28, // Spoke Thickness
                 36, // # of teeth
                 TOOTH_HEIGHT, // Tooth Height
                 TOOTH_INNER_THICKNESS, // Tooth Inner Thickness
@@ -285,12 +285,12 @@ class TutorialGearBackground {
             ),new Gear(
                 1280, // Center X
                 0, // Center Y
-                40, // Inner Ring Radius
-                20, // Inner Ring Depth
+                120, // Inner Ring Radius
+                60, // Inner Ring Depth
                 450, // Outer Ring Radius
-                20, // Outer Depth Radius
-                1, // # of Spokes
-                20, // Spoke Thickness
+                50, // Outer Depth Radius
+                8, // # of Spokes
+                40, // Spoke Thickness
                 90, // # of teeth
                 TOOTH_HEIGHT, // Tooth Height
                 TOOTH_INNER_THICKNESS, // Tooth Inner Thickness
@@ -304,7 +304,7 @@ class TutorialGearBackground {
                 20, // Inner Ring Depth
                 90, // Outer Ring Radius
                 20, // Outer Depth Radius
-                1, // # of Spokes
+                4, // # of Spokes
                 20, // Spoke Thickness
                 18, // # of teeth
                 TOOTH_HEIGHT, // Tooth Height
@@ -315,12 +315,12 @@ class TutorialGearBackground {
             ),new Gear(
                 1058, // Center X
                 720-100, // Center Y
-                40, // Inner Ring Radius
-                20, // Inner Ring Depth
+                60, // Inner Ring Radius
+                30, // Inner Ring Depth
                 180, // Outer Ring Radius
-                20, // Outer Depth Radius
-                1, // # of Spokes
-                20, // Spoke Thickness
+                30, // Outer Depth Radius
+                5, // # of Spokes
+                28, // Spoke Thickness
                 36, // # of teeth
                 TOOTH_HEIGHT, // Tooth Height
                 TOOTH_INNER_THICKNESS, // Tooth Inner Thickness
@@ -334,7 +334,7 @@ class TutorialGearBackground {
                 20, // Inner Ring Depth
                 90, // Outer Ring Radius
                 20, // Outer Depth Radius
-                1, // # of Spokes
+                4, // # of Spokes
                 20, // Spoke Thickness
                 18, // # of teeth
                 TOOTH_HEIGHT, // Tooth Height
