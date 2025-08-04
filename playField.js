@@ -81,6 +81,10 @@ const playField = {
         this.trackedBgParticles[id] = undefined;
     },
 
+    getTrackedBackgroundParticle(id){
+        return this.trackedBgParticles[id];
+    },
+
     advanceOneFrame(){
         const player = this.player;
         player.updateSlowmoStatus();

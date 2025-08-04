@@ -1,5 +1,3 @@
-import BgMessage from "./bgMessage.js";
-import Color from "./color.js";
 import controls from "./controls.js";
 import { addToGlobalAlphaStack, canv, ctx, customStrokeRect, fillTextCenteredXY, popFromGlobalStack } from "./drawing.js";
 import { normalizeAngle, normalizedAtan2 } from "./extraMath.js";
@@ -229,10 +227,10 @@ class Gear {
     }
 }
 
-class TutorialGearBackground {
+export class TutorialGearBackground {
     constructor(){
         const DUMMY_VALUE = 0;
-        const SPEED_COEFF = 0.001;
+        const SPEED_COEFF = 0.0014;
         const TOOTH_HEIGHT = 20;
         const TOOTH_INNER_THICKNESS = 11;
         const TOOTH_OUTER_THICKNESS = 3;
@@ -377,9 +375,9 @@ export class TutorialTask3 extends TutorialTask {
     }
 
     getSatisfaction(){
-        // if(controls.held["Space"]){
-        //     this.satisfied = true;
-        // }
+        if(controls.held["Space"]){
+            this.satisfied = true;
+        }
         return this.satisfied;
     }
 

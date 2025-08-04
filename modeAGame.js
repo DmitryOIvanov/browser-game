@@ -5,7 +5,7 @@ import playField from "./playField.js";
 import { BallPProjWeapon } from "./weapons/ballProjWeapons.js";
 import { MemeWeapon2 } from "./weapons/fireworkWeapons.js";
 import { MachineGunWeapon, MemeWeapon1, PointPProjWeapon, ShotgunWeapon } from "./weapons/pointProjWeapons.js";
-import { CreateStaticBgParticleTask, DeleteStaticBgParticleTask, MessageTask, WaitForBgParticleTask, WaitForConditionTask, WaitTimeTask, WeightedSpawnTask } from "./tasks.js";
+import { CreateBgParticleAndWaitForRetirementTask, CreateStaticBgParticleTask, DeleteStaticBgParticleTask, MessageTask, WaitForConditionTask, WaitTimeTask, WeightedSpawnTask } from "./tasks.js";
 import BgMessage, { StaticBGMessage } from "./bgMessage.js";
 import { TutorialTask1, TutorialTask2, TutorialTask3 } from "./tutorialTasks.js";
 
@@ -78,23 +78,23 @@ const level1 = {
             class: WaitTimeTask,
             time: 30
         },{
-        //     class: WaitForBgParticleTask,
-        //     particleClass: TutorialTask1
-        // },{
-        //     class: WaitForBgParticleTask,
-        //     particleClass: TutorialTask2
-        // },{
-            class: WaitForBgParticleTask,
+            class: CreateBgParticleAndWaitForRetirementTask,
+            particleClass: TutorialTask1
+        },{
+            class: CreateBgParticleAndWaitForRetirementTask,
+            particleClass: TutorialTask2
+        },{
+            class: CreateBgParticleAndWaitForRetirementTask,
             particleClass: TutorialTask3
         },{
-            class: CreateStaticBgParticleTask,
-            particleClass: StaticBGMessage,
-            centerX: canv.width/2,
-            centerY: canv.height/2+100,
-            text: "Test",
-            fontSizePx: 100,
-            id: "MSG_TEST"
-        },{
+        //     class: CreateStaticBgParticleTask,
+        //     particleClass: StaticBGMessage,
+        //     centerX: canv.width/2,
+        //     centerY: canv.height/2+100,
+        //     text: "Test",
+        //     fontSizePx: 100,
+        //     id: "MSG_TEST"
+        // },{
             class: MessageTask,
             centerX: canv.width/2,
             centerY: canv.height/2-200,
@@ -113,9 +113,9 @@ const level1 = {
                 {name:"SmallTriangle",weight:1,num:5},
             ]
         },{
-            class: DeleteStaticBgParticleTask,
-            id: "MSG_TEST"
-        },{
+        //     class: DeleteStaticBgParticleTask,
+        //     id: "MSG_TEST"
+        // },{
             class: WaitForConditionTask,
             condition: ()=>(playField.enemyWeight <= 1)
         },{

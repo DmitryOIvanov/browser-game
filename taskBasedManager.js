@@ -28,11 +28,11 @@ export default class TaskBasedManager {
 
     timeStep(amount){
         if(this.concluded) return;
-        this.curTask.timeStep(amount);
+        if(this.curTask.timeStep) this.curTask.timeStep(amount);
         while(this.curTask.concluded){
             if(this.nextTaskIndex<this.tasks.length){
                 this.startNextTask();
-                this.curTask.timeStep(0);
+                if(this.curTask.timeStep) this.curTask.timeStep(0);
             }else{
                 this.concluded = true;
                 return;
