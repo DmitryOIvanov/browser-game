@@ -4,6 +4,7 @@ import { enemySpawningInfo, getRandomPosWithMargins } from "./enemySpawning.js";
 import BigExplosionParticle from "./particles/bigExplosionParticle.js";
 import playField from "./playField.js";
 import { BouncyWeapon, MemeWeapon3 } from "./weapons/ballProjWeapons.js";
+import { BigBallHeavyComponent, DualWeapon, MachineGunLightComponent } from "./weapons/dualWeapons/dualWeapon.js";
 import { FireworkWeapon, MemeWeapon2 } from "./weapons/fireworkWeapons.js";
 import { MachineGunWeapon, MemeWeapon1, PierceWeapon, ShotgunWeapon } from "./weapons/pointProjWeapons.js";
 
@@ -78,7 +79,8 @@ const weaponGenerators = [
     ()=>(new FireworkWeapon()),
     ()=>(new MemeWeapon1()),
     ()=>(new MemeWeapon2()),
-    ()=>(new MemeWeapon3())
+    ()=>(new MemeWeapon3()),
+    ()=>(new DualWeapon(new MachineGunLightComponent(), new BigBallHeavyComponent())),
 ];
 
 export default class DebugManager {
