@@ -7,7 +7,7 @@ import playField from "./playField.js";
 import BallPProj from "./projectiles/player/ballPProj.js";
 import PointPProj from "./projectiles/player/pointPProj.js";
 import { BouncyWeapon, MemeWeapon3 } from "./weapons/ballProjWeapons.js";
-import { BasicDualWeaponComponent, DualWeapon} from "./weapons/dualWeapons/dualWeapon.js";
+import { BasicDualWeaponComponent, DualWeapon} from "./weapons/dualWeapons.js";
 import { FireworkWeapon, MemeWeapon2 } from "./weapons/fireworkWeapons.js";
 import { MachineGunWeapon, MemeWeapon1, PierceWeapon, ShotgunWeapon } from "./weapons/pointProjWeapons.js";
 
