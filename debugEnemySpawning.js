@@ -7,7 +7,7 @@ import playField from "./playField.js";
 import BallPProj from "./projectiles/player/ballPProj.js";
 import PointPProj from "./projectiles/player/pointPProj.js";
 import { BouncyWeapon, MemeWeapon3 } from "./weapons/ballProjWeapons.js";
-import { BasicDualWeaponComponent, DualWeapon} from "./weapons/dualWeapons.js";
+import { BasicDualWeaponComponent, DualWeapon, MultiDualWeaponComponent} from "./weapons/dualWeapons.js";
 import { FireworkWeapon, MemeWeapon2 } from "./weapons/fireworkWeapons.js";
 import { MachineGunWeapon, MemeWeapon1, PierceWeapon, ShotgunWeapon } from "./weapons/pointProjWeapons.js";
 
@@ -85,14 +85,14 @@ const weaponGenerators = [
     ()=>(new MemeWeapon3()),
 
     ()=>(new DualWeapon(
-        new BasicDualWeaponComponent(5, 3, 0.1, 0.01, 20,
+        new BasicDualWeaponComponent(4, 1, 0.1, 0.01, 20,
             (x, y, dx, dy, color)=>(
                 new PointPProj(x,y,dx,dy,color,()=>(createAttackProfile(
                     1, 3, 0
                 )))
             )
         ),
-        new BasicDualWeaponComponent(60, 3, 0.1, 0.01, 30,
+        new MultiDualWeaponComponent(10, 120, 3, 1, 0.1, 0.01, 30,
             (x, y, dx, dy, color)=>(
                 new BallPProj(x,y,dx,dy,15,-1,0,color,()=>(createAttackProfile(
                     10, 1, 0

@@ -4,6 +4,24 @@ import controls from "../controls.js";
 import playField from "../playField.js";
 import PointPProj from "../projectiles/player/pointPProj.js";
 
+function getFromArrayOrSingleValue(source, index){
+    return Array.isArray(source) ? source[index] : source;
+}
+
+function fireSpread(projectileGenerator, numShots, spread, variance, speed, partialDt){
+    const dx = controls.mouse.x-playField.player.x;
+    const dy = controls.mouse.y-playField.player.y;
+    const baseAngle = Math.atan2(dy,dx);
+    for(let i=0; i<numShots; i++){
+        const angle = baseAngle + spread*(i+0.5*(1-numShots)) + variance*2*(Math.random()-0.5);
+        const dx2 = speed * Math.cos(angle);
+        const dy2 = speed * Math.sin(angle);
+        const newBullet = projectileGenerator(playField.player.x, playField.player.y, dx2, dy2, Color.WHITE);
+        newBullet.timeStep(partialDt);
+        playField.addPlayerProjectile(newBullet);
+    }
+}
+
 export class BasicDualWeaponComponent {
     constructor(fireTime, numShots, spread, variance, speed, projectileGenerator){
         this.fireTime = fireTime;
@@ -15,18 +33,54 @@ export class BasicDualWeaponComponent {
     }
 
     fire(partialDt){
-        let dx = controls.mouse.x-playField.player.x;
-        let dy = controls.mouse.y-playField.player.y;
-        if(dx==0 && dy==0) dx = 1;
-        const baseAngle = Math.atan2(dy,dx);
-        for(let i=0; i<this.numShots; i++){
-            let angle = baseAngle + this.spread*(i+0.5*(1-this.numShots)) + this.variance*2*(Math.random()-0.5);
-            let dx = this.speed * Math.cos(angle);
-            let dy = this.speed * Math.sin(angle);
-            const newBullet = this.projectileGenerator(playField.player.x, playField.player.y, dx, dy, Color.WHITE);
-            newBullet.timeStep(partialDt);
-            playField.addPlayerProjectile(newBullet);
+        fireSpread(this.projectileGenerator, this.numShots, this.spread, this.variance, this.speed, partialDt)
+    }
+
+    getDelay(){
+        return this.fireTime;
+    }
+
+    isContinuing(){
+        return false;
+    }
+}
+
+export class MultiDualWeaponComponent {
+    constructor(numRounds, mainDelay, subDelays, projCounts, spreads, variances, speeds, projectileGenerators){
+        this.numRounds = numRounds;
+        this.mainDelay = mainDelay;
+        this.subDelays = subDelays;
+        this.projCounts = projCounts;
+        this.spreads = spreads;
+        this.variances = variances;
+        this.speeds = speeds;
+        this.projectileGenerators = projectileGenerators;
+
+        this.roundIndex = 0;
+    }
+
+    fire(partialDt){
+        fireSpread(
+            getFromArrayOrSingleValue(this.projectileGenerators, this.roundIndex),
+            getFromArrayOrSingleValue(this.projCounts, this.roundIndex),
+            getFromArrayOrSingleValue(this.spreads, this.roundIndex),
+            getFromArrayOrSingleValue(this.variances, this.roundIndex),
+            getFromArrayOrSingleValue(this.speeds, this.roundIndex),
+            partialDt
+        );
+        this.roundIndex = (this.roundIndex+1)%this.numRounds;
+    }
+
+    getDelay(){
+        if(this.roundIndex == 0){
+            return this.mainDelay;
+        }else{
+            return getFromArrayOrSingleValue(this.subDelays, this.roundIndex-1);
         }
+    }
+
+    isContinuing(){
+        return this.roundIndex != 0;
     }
 }
 
@@ -35,39 +89,50 @@ export class DualWeapon {
         this.lightComponent = lightComponent;
         this.heavyComponent = heavyComponent;
 
-        this.isShootingHeavy = false;
-        this.isManuallyFiring = false;
-        this.lightTimer = 0;
-        this.heavyTimer = 0;
+        this.fireTimer = 0;
+        this.wasRightClicking = false;
 
         this.color = Color.WHITE;
     }
 
     timeStep(dt){
-        this.isManuallyFiring = !!controls.mouse.leftHeld;
-        this.isShootingHeavy = !!controls.mouse.rightHeld;
-
-        this.lightTimer += dt;
-        if(!this.isShootingHeavy){
-            if(this.heavyTimer >= this.heavyComponent.fireTime) this.heavyComponent.fire(dt);
-            this.heavyTimer = 0;
-            
-            if(this.isManuallyFiring){
-                while(this.lightTimer >= this.lightComponent.fireTime){
-                    this.lightTimer -= this.lightComponent.fireTime;
-                    this.lightComponent.fire(this.lightTimer);
+        let dtAdded = false;
+        let forcedHeavyShot = (this.wasRightClicking && !controls.mouse.rightHeld);
+        if(this.heavyComponent.isContinuing() || controls.mouse.rightHeld || forcedHeavyShot){
+            this.fireTimer += dt;
+            dtAdded = true;
+            while(true){
+                if(!this.heavyComponent.isContinuing() && !forcedHeavyShot){
+                    if(!controls.mouse.rightHeld || !controls.mouse.leftHeld) break;
                 }
-            }
-        }else{
-            this.heavyTimer += dt;
-            if(this.isManuallyFiring){
-                while(this.heavyTimer >= this.heavyComponent.fireTime){
-                    this.heavyTimer -= this.heavyComponent.fireTime;
-                    this.heavyComponent.fire(this.heavyTimer);
+                if(this.fireTimer >= this.heavyComponent.getDelay()){
+                    this.fireTimer -= this.heavyComponent.getDelay();
+                    this.heavyComponent.fire(this.fireTimer);
+                }else{
+                    break;
                 }
+                forcedHeavyShot = false;
             }
-            if(this.heavyTimer > this.heavyComponent.fireTime) this.heavyTimer = this.heavyComponent.fireTime;
         }
-        if(this.lightTimer > this.lightComponent.fireTime) this.lightTimer = this.lightComponent.fireTime;
+
+        if(!this.heavyComponent.isContinuing() && !controls.mouse.rightHeld){
+            this.fireTimer = Math.min(this.fireTimer, this.lightComponent.getDelay());
+            if(!dtAdded) this.fireTimer += dt;
+            dtAdded = true;
+            if(controls.mouse.leftHeld){
+                while(this.fireTimer >= this.lightComponent.getDelay()){
+                    this.fireTimer -= this.lightComponent.getDelay();
+                    this.lightComponent.fire(this.fireTimer);
+                }
+            }
+        }else if(controls.mouse.rightHeld){
+            this.fireTimer = Math.min(this.fireTimer, this.heavyComponent.getDelay());
+        }
+        this.wasRightClicking = controls.mouse.rightHeld
+
+        if(!dtAdded){
+            console.log("[!!!] Dual weapon: dt added later than expected");
+            this.fireTimer += dt;
+        }
     }
 }
