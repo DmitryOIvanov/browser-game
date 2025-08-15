@@ -7,7 +7,7 @@ import playField from "./playField.js";
 import BallPProj from "./projectiles/player/ballPProj.js";
 import PointPProj from "./projectiles/player/pointPProj.js";
 import { BouncyWeapon, MemeWeapon3 } from "./weapons/ballProjWeapons.js";
-import { BasicDualWeaponComponent, DualWeapon, MultiDualWeaponComponent} from "./weapons/dualWeapons.js";
+import { BasicDualWeaponComponent, DualWeapon, MultiDualWeaponComponent, VolleyDualWeaponComponent} from "./weapons/dualWeapons.js";
 import { FireworkWeapon, MemeWeapon2 } from "./weapons/fireworkWeapons.js";
 import { MachineGunWeapon, MemeWeapon1, PierceWeapon, ShotgunWeapon } from "./weapons/pointProjWeapons.js";
 
@@ -77,12 +77,12 @@ const PLAYER_CLEARANCE = 300;
 const weaponGenerators = [
     ()=>(new MachineGunWeapon()),
     ()=>(new ShotgunWeapon()),
-    ()=>(new PierceWeapon()),
-    ()=>(new BouncyWeapon()),
-    ()=>(new FireworkWeapon()),
-    ()=>(new MemeWeapon1()),
-    ()=>(new MemeWeapon2()),
-    ()=>(new MemeWeapon3()),
+    // ()=>(new PierceWeapon()),
+    // ()=>(new BouncyWeapon()),
+    // ()=>(new FireworkWeapon()),
+    // ()=>(new MemeWeapon1()),
+    // ()=>(new MemeWeapon2()),
+    // ()=>(new MemeWeapon3()),
 
     ()=>(new DualWeapon(
         new BasicDualWeaponComponent(4, 1, 0.1, 0.01, 20,
@@ -94,8 +94,25 @@ const weaponGenerators = [
         ),
         new MultiDualWeaponComponent(10, 120, 3, 1, 0.1, 0.01, 30,
             (x, y, dx, dy, color)=>(
-                new BallPProj(x,y,dx,dy,15,-1,0,color,()=>(createAttackProfile(
+                new BallPProj(x,y,dx,dy,15,-1,-1,color,()=>(createAttackProfile(
                     10, 1, 0
+                )))
+            )
+        ),
+    )),
+
+    ()=>(new DualWeapon(
+        new BasicDualWeaponComponent(4, 1, 0.1, 0.01, 20,
+            (x, y, dx, dy, color)=>(
+                new PointPProj(x,y,dx,dy,color,()=>(createAttackProfile(
+                    1, 3, 0
+                )))
+            )
+        ),
+        new VolleyDualWeaponComponent(30, 120, 1, 3, 0.15, 0.3, 25,
+            (x, y, dx, dy, color)=>(
+                new PointPProj(x,y,dx,dy,color,()=>(createAttackProfile(
+                    1, 3, 0
                 )))
             )
         ),
