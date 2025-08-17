@@ -29,6 +29,7 @@ const MAX_HP = 5;
 
 export default class Player{
     static SLOWMO_SPEED = SLOWMO_SPEED;
+    static IN_RAD = IN_RAD;
 
     constructor(x,y){
         this.x = x;

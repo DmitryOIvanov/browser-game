@@ -1,6 +1,7 @@
 import { createAttackProfile } from "../attackAndDefense.js";
 import Color from "../color.js";
 import controls from "../controls.js";
+import Player from "../player.js";
 import playField from "../playField.js";
 import PointPProj from "../projectiles/player/pointPProj.js";
 
@@ -65,6 +66,16 @@ function fireProjectile(projectileGenerator, angle, speed, partialDt){
     const dx = speed * Math.cos(angle);
     const dy = speed * Math.sin(angle);
     const newBullet = projectileGenerator(playField.player.x, playField.player.y, dx, dy, Color.WHITE);
+    newBullet.timeStep(partialDt);
+    playField.addPlayerProjectile(newBullet);
+}
+
+function fireProjectileWithSurfaceOffset(projectileGenerator, angle, speed, offsetAngle, partialDt){
+    const x = playField.player.x + Player.IN_RAD * Math.cos(angle + offsetAngle);
+    const y = playField.player.y + Player.IN_RAD * Math.sin(angle + offsetAngle);
+    const dx = speed * Math.cos(angle);
+    const dy = speed * Math.sin(angle);
+    const newBullet = projectileGenerator(x, y, dx, dy, Color.WHITE);
     newBullet.timeStep(partialDt);
     playField.addPlayerProjectile(newBullet);
 }
@@ -142,13 +153,13 @@ export class MultiDualWeaponComponent {
 }
 
 export class VolleyDualWeaponComponent {
-    constructor(numRounds, mainDelay, subDelay, projPerRound, spread, oscillationRate, speed, projectileGenerator){
+    constructor(numRounds, mainDelay, subDelay, sideProjCount, spread, offsetSpread, speed, projectileGenerator){
         this.numRounds = numRounds;
         this.mainDelay = mainDelay;
         this.subDelay = subDelay;
-        this.oscillationRate = oscillationRate;
-        this.projPerRound = projPerRound;
+        this.sideProjCount = sideProjCount;
         this.spread = spread;
+        this.offsetSpread = offsetSpread;
         this.speed = speed;
         this.projectileGenerator = projectileGenerator;
 
@@ -160,11 +171,17 @@ export class VolleyDualWeaponComponent {
         const dx = controls.mouse.x-playField.player.x;
         const dy = controls.mouse.y-playField.player.y;
         const baseAngle = Math.atan2(dy,dx);
-        const angle = baseAngle + this.spread * Math.sin(this.oscillationRate*this.roundIndex + 2*Math.PI*this.subRound/this.projPerRound);
-        fireProjectile(this.projectileGenerator, angle, this.speed, partialDt);
+        if(this.subRound == 0){
+            fireProjectileWithSurfaceOffset(this.projectileGenerator, baseAngle, this.speed, 0, partialDt);
+        }else{
+            const angleChange = this.spread * this.subRound/this.sideProjCount;
+            const offset = this.offsetSpread * this.subRound/this.sideProjCount;
+            fireProjectileWithSurfaceOffset(this.projectileGenerator, baseAngle+angleChange, this.speed, offset, partialDt);
+            fireProjectileWithSurfaceOffset(this.projectileGenerator, baseAngle-angleChange, this.speed, -offset, partialDt);
+        }
 
         this.subRound++;
-        if(this.subRound >= this.projPerRound){
+        if(this.subRound >= this.sideProjCount){
             this.subRound = 0;
             this.roundIndex = (this.roundIndex+1)%this.numRounds;
         }
@@ -174,8 +191,7 @@ export class VolleyDualWeaponComponent {
         if(this.roundIndex == 0 && this.subRound == 0){
             return this.mainDelay;
         }else{
-            console.log(this.subDelay/this.projPerRound);
-            return this.subDelay/this.projPerRound;
+            return this.subDelay;
         }
     }
 

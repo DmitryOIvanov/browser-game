@@ -109,7 +109,7 @@ const weaponGenerators = [
                 )))
             )
         ),
-        new VolleyDualWeaponComponent(30, 120, 1, 3, 0.15, 0.3, 25,
+        new VolleyDualWeaponComponent(10, 120, 0.5, 8, 0.04, Math.PI/2, 25,
             (x, y, dx, dy, color)=>(
                 new PointPProj(x,y,dx,dy,color,()=>(createAttackProfile(
                     1, 3, 0
