@@ -3,6 +3,10 @@ import Color from "../color.js";
 import controls from "../controls.js";
 import Player from "../player.js";
 import playField from "../playField.js";
+import { shootSpread, shootSpreadAsPlayer } from "../projectileCreation.js";
+import BallPProj from "../projectiles/player/ballPProj.js";
+import ExplodingBallPProj from "../projectiles/player/explodingBallPProj.js";
+import FireworkProj from "../projectiles/player/fireworkProj.js";
 import PointPProj from "../projectiles/player/pointPProj.js";
 
 export class DualWeapon {
@@ -62,32 +66,31 @@ function getFromArrayOrSingleValue(source, index){
     return Array.isArray(source) ? source[index] : source;
 }
 
-function fireProjectile(projectileGenerator, angle, speed, partialDt){
-    const dx = speed * Math.cos(angle);
-    const dy = speed * Math.sin(angle);
-    const newBullet = projectileGenerator(playField.player.x, playField.player.y, dx, dy, Color.WHITE);
-    newBullet.timeStep(partialDt);
-    playField.addPlayerProjectile(newBullet);
-}
+// function fireProjectileWithSurfaceOffset(projectileGenerator, angle, speed, offsetAngle, partialDt){
+//     const x = playField.player.x + Player.IN_RAD * Math.cos(angle + offsetAngle);
+//     const y = playField.player.y + Player.IN_RAD * Math.sin(angle + offsetAngle);
+//     const dx = speed * Math.cos(angle);
+//     const dy = speed * Math.sin(angle);
+//     const newBullet = projectileGenerator(x, y, dx, dy, Color.WHITE);
+//     newBullet.timeStep(partialDt);
+//     playField.addPlayerProjectile(newBullet);
+// }
 
-function fireProjectileWithSurfaceOffset(projectileGenerator, angle, speed, offsetAngle, partialDt){
-    const x = playField.player.x + Player.IN_RAD * Math.cos(angle + offsetAngle);
-    const y = playField.player.y + Player.IN_RAD * Math.sin(angle + offsetAngle);
-    const dx = speed * Math.cos(angle);
-    const dy = speed * Math.sin(angle);
-    const newBullet = projectileGenerator(x, y, dx, dy, Color.WHITE);
-    newBullet.timeStep(partialDt);
-    playField.addPlayerProjectile(newBullet);
-}
+// function fireSpread(projectileGenerator, numShots, spread, variance, speed, partialDt){
+//     const dx = controls.mouse.x-playField.player.x;
+//     const dy = controls.mouse.y-playField.player.y;
+//     const baseAngle = Math.atan2(dy,dx);
+//     for(let i=0; i<numShots; i++){
+//         const angle = baseAngle + spread*(i+0.5*(1-numShots)) + variance*2*(Math.random()-0.5);
+//         fireProjectileFromPlayer(projectileGenerator, angle, speed, partialDt);
+//     }
+// }
 
-function fireSpread(projectileGenerator, numShots, spread, variance, speed, partialDt){
-    const dx = controls.mouse.x-playField.player.x;
-    const dy = controls.mouse.y-playField.player.y;
-    const baseAngle = Math.atan2(dy,dx);
-    for(let i=0; i<numShots; i++){
-        const angle = baseAngle + spread*(i+0.5*(1-numShots)) + variance*2*(Math.random()-0.5);
-        fireProjectile(projectileGenerator, angle, speed, partialDt);
-    }
+export class DummyDualWeaponComponent {
+     constructor(){}
+    fire(partialDt){}
+    getDelay(){ return Infinity; }
+    isContinuing(){ return false; }
 }
 
 export class BasicDualWeaponComponent {
@@ -101,7 +104,7 @@ export class BasicDualWeaponComponent {
     }
 
     fire(partialDt){
-        fireSpread(this.projectileGenerator, this.numShots, this.spread, this.variance, this.speed, partialDt)
+        shootSpreadAsPlayer(this.numShots, this.spread, this.variance, this.speed, partialDt, this.projectileGenerator);
     }
 
     getDelay(){
@@ -201,9 +204,148 @@ export class VolleyDualWeaponComponent {
 }
 
 export const stockLightComponents = {
-    //
+    MachineGun: class extends BasicDualWeaponComponent{
+        constructor(){
+            super(
+                3, // Delay
+                1, // # Bullets
+                0, // Spread
+                0.01, // Variance
+                20, // Speed
+                (x, y, dx, dy, color)=>(
+                    new PointPProj(x,y,dx,dy,color,()=>(createAttackProfile(
+                        1, // Damage
+                        3, // Overflow deduction coefficient
+                        0, // Free hits (pierce-1)
+                    )))
+                )
+            );
+        }
+    },
+    // machineGun: ()=>(new BasicDualWeaponComponent(3, 1, 0.1, 0.01, 20,
+    //     (x, y, dx, dy, color)=>(
+    //         new PointPProj(x,y,dx,dy,color,()=>(createAttackProfile(
+    //             1, 3, 0
+    //         )))
+    //     )
+    // )),
+    // spread: ()=>(new BasicDualWeaponComponent(20, 7, 0.1, 0, 20,
+    //     (x, y, dx, dy, color)=>(
+    //         new PointPProj(x,y,dx,dy,color,()=>(createAttackProfile(
+    //             1, 3, 0
+    //         )))
+    //     )
+    // )),
+    // heavy: ()=>(new BasicDualWeaponComponent(30, 1, 0, 0, 20,
+    //     (x, y, dx, dy, color)=>(
+    //         new BallPProj(x,y,dx,dy,10,-1,0,color,()=>(createAttackProfile(
+    //             10, 1, 0
+    //         )))
+    //     )
+    // )),
+    // splitter: ()=>(new BasicDualWeaponComponent(30, 1, 0, 0, 20,
+    //     (x, y, dx, dy, color)=>(
+    //         new FireworkProj(x,y,dx,dy,10,-1,0,color,()=>(createAttackProfile(
+    //             10, 1, 0
+    //         )))
+    //     )
+    // )),
+    Splitter: (function(){
+        const PROJECTILE_PARAMS = {
+            radius: 10,
+            duration: 20,
+            attackProfileGenerator: ()=>(createAttackProfile(
+                1, // Damage
+                3, // Overflow deduction coefficient
+                0, // Free hits (pierce-1)
+            )),
+            explode: (x, y, angle)=>{
+                shootSpread(
+                    x, y,
+                    7,
+                    angle,
+                    0.2,
+                    0,
+                    25,
+                    0,
+                    0,
+                    (x, y, dx, dy, color)=>(
+                        new PointPProj(x,y,dx,dy,color,()=>(createAttackProfile(
+                            1, // Damage
+                            3, // Overflow deduction coefficient
+                            0, // Free hits (pierce-1)
+                        )))
+                    )
+                );
+            },
+        };
+
+        class Splitter extends BasicDualWeaponComponent{
+            constructor(){
+                super(
+                    20, // Delay
+                    1, // # Bullets
+                    0, // Spread
+                    0, // Variance
+                    15, // Speed
+                    (x, y, dx, dy, color)=>(
+                        new ExplodingBallPProj(x,y,dx,dy,color,PROJECTILE_PARAMS)
+                    )
+                );
+            }
+        }
+
+        return Splitter;
+    })(),
 };
 
 export const stockHeavyComponents = {
-    //
+    Volley: class extends VolleyDualWeaponComponent{
+        constructor(){
+            super(
+                15,
+                120,
+                0.5,
+                8,
+                0.06,
+                Math.PI/2,
+                25,
+                (x, y, dx, dy, color)=>(
+                    new PointPProj(x,y,dx,dy,color,()=>(createAttackProfile(
+                        1, // Damage
+                        3, // Overflow deduction coefficient
+                        0, // Free hits (pierce-1)
+                    )))
+                )
+            );
+        }
+    },
+    // volley: ()=>(new VolleyDualWeaponComponent(15, 120, 0.5, 8, 0.06, Math.PI/2, 25,
+    //     (x, y, dx, dy, color)=>(
+    //         new PointPProj(x,y,dx,dy,color,()=>(createAttackProfile(
+    //             1, 3, 0
+    //         )))
+    //     )
+    // )),
+    // volley: ()=>(new MultiDualWeaponComponent(100, 120, 0.5, 1, 0, 0.2, 25,
+    //     (x, y, dx, dy, color)=>(
+    //         new PointPProj(x,y,dx,dy,color,()=>(createAttackProfile(
+    //             1, 3, 0
+    //         )))
+    //     )
+    // )),
+    // wave: ()=>(new MultiDualWeaponComponent(3, 120, 0, [31,30,29], 0.05, 0, [25,22.5,20],
+    //     (x, y, dx, dy, color)=>(
+    //         new PointPProj(x,y,dx,dy,color,()=>(createAttackProfile(
+    //             1, 3, 0
+    //         )))
+    //     )
+    // )),
+    // buster: ()=>(new BasicDualWeaponComponent(120, 1, 0, 0, 15,
+    //     (x, y, dx, dy, color)=>(
+    //         new BallPProj(x,y,dx,dy,20,-1,0,color,()=>(createAttackProfile(
+    //             100, 1, 0
+    //         )))
+    //     )
+    // )),
 };

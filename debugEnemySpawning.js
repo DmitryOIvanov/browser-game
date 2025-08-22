@@ -4,10 +4,8 @@ import controls from "./controls.js";
 import { enemySpawningInfo, getRandomPosWithMargins } from "./enemySpawning.js";
 import BigExplosionParticle from "./particles/bigExplosionParticle.js";
 import playField from "./playField.js";
-import BallPProj from "./projectiles/player/ballPProj.js";
-import PointPProj from "./projectiles/player/pointPProj.js";
 import { BouncyWeapon, MemeWeapon3 } from "./weapons/ballProjWeapons.js";
-import { BasicDualWeaponComponent, DualWeapon, MultiDualWeaponComponent, VolleyDualWeaponComponent} from "./weapons/dualWeapons.js";
+import {DualWeapon, DummyDualWeaponComponent, stockHeavyComponents, stockLightComponents} from "./weapons/dualWeapons.js";
 import { FireworkWeapon, MemeWeapon2 } from "./weapons/fireworkWeapons.js";
 import { MachineGunWeapon, MemeWeapon1, PierceWeapon, ShotgunWeapon } from "./weapons/pointProjWeapons.js";
 
@@ -76,7 +74,7 @@ const PLAYER_CLEARANCE = 300;
 
 const weaponGenerators = [
     ()=>(new MachineGunWeapon()),
-    ()=>(new ShotgunWeapon()),
+    // ()=>(new ShotgunWeapon()),
     // ()=>(new PierceWeapon()),
     // ()=>(new BouncyWeapon()),
     // ()=>(new FireworkWeapon()),
@@ -85,38 +83,21 @@ const weaponGenerators = [
     // ()=>(new MemeWeapon3()),
 
     ()=>(new DualWeapon(
-        new BasicDualWeaponComponent(4, 1, 0.1, 0.01, 20,
-            (x, y, dx, dy, color)=>(
-                new PointPProj(x,y,dx,dy,color,()=>(createAttackProfile(
-                    1, 3, 0
-                )))
-            )
-        ),
-        new MultiDualWeaponComponent(10, 120, 3, 1, 0.1, 0.01, 30,
-            (x, y, dx, dy, color)=>(
-                new BallPProj(x,y,dx,dy,15,-1,-1,color,()=>(createAttackProfile(
-                    10, 1, 0
-                )))
-            )
-        ),
+        new stockLightComponents.Splitter(),
+        new DummyDualWeaponComponent()
     )),
-
-    ()=>(new DualWeapon(
-        new BasicDualWeaponComponent(4, 1, 0.1, 0.01, 20,
-            (x, y, dx, dy, color)=>(
-                new PointPProj(x,y,dx,dy,color,()=>(createAttackProfile(
-                    1, 3, 0
-                )))
-            )
-        ),
-        new VolleyDualWeaponComponent(10, 120, 0.5, 8, 0.04, Math.PI/2, 25,
-            (x, y, dx, dy, color)=>(
-                new PointPProj(x,y,dx,dy,color,()=>(createAttackProfile(
-                    1, 3, 0
-                )))
-            )
-        ),
-    )),
+    // ()=>(new DualWeapon(
+    //     stockLightComponentGenerators.machineGun(),
+    //     stockHeavyComponentGenerators.volley()
+    // )),
+    // ()=>(new DualWeapon(
+    //     stockLightComponentGenerators.spread(),
+    //     stockHeavyComponentGenerators.wave()
+    // )),
+    // ()=>(new DualWeapon(
+    //     stockLightComponentGenerators.heavy(),
+    //     stockHeavyComponentGenerators.buster()
+    // )),
 ];
 
 export default class DebugManager {
