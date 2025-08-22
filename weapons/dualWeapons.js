@@ -222,34 +222,47 @@ export const stockLightComponents = {
             );
         }
     },
-    // machineGun: ()=>(new BasicDualWeaponComponent(3, 1, 0.1, 0.01, 20,
-    //     (x, y, dx, dy, color)=>(
-    //         new PointPProj(x,y,dx,dy,color,()=>(createAttackProfile(
-    //             1, 3, 0
-    //         )))
-    //     )
-    // )),
-    // spread: ()=>(new BasicDualWeaponComponent(20, 7, 0.1, 0, 20,
-    //     (x, y, dx, dy, color)=>(
-    //         new PointPProj(x,y,dx,dy,color,()=>(createAttackProfile(
-    //             1, 3, 0
-    //         )))
-    //     )
-    // )),
-    // heavy: ()=>(new BasicDualWeaponComponent(30, 1, 0, 0, 20,
-    //     (x, y, dx, dy, color)=>(
-    //         new BallPProj(x,y,dx,dy,10,-1,0,color,()=>(createAttackProfile(
-    //             10, 1, 0
-    //         )))
-    //     )
-    // )),
-    // splitter: ()=>(new BasicDualWeaponComponent(30, 1, 0, 0, 20,
-    //     (x, y, dx, dy, color)=>(
-    //         new FireworkProj(x,y,dx,dy,10,-1,0,color,()=>(createAttackProfile(
-    //             10, 1, 0
-    //         )))
-    //     )
-    // )),
+    Spread: class extends BasicDualWeaponComponent{
+        constructor(){
+            super(
+                22, // Delay
+                7, // # Bullets
+                0.1, // Spread
+                0, // Variance
+                20, // Speed
+                (x, y, dx, dy, color)=>(
+                    new PointPProj(x,y,dx,dy,color,()=>(createAttackProfile(
+                        1, // Damage
+                        3, // Overflow deduction coefficient
+                        0, // Free hits (pierce-1)
+                    )))
+                )
+            );
+        }
+    },
+    Heavy: class extends BasicDualWeaponComponent{
+        constructor(){
+            super(
+                30, // Delay
+                1, // # Bullets
+                0, // Spread
+                0, // Variance
+                20, // Speed
+                (x, y, dx, dy, color)=>(
+                    new BallPProj(x,y,dx,dy,
+                        10, // Radius
+                        -1, // Duration
+                        0, // # Bounces
+                        color,()=>(createAttackProfile(
+                            10, // Damage
+                            1, // Overflow deduction coefficient
+                            0, // Free hits (pierce-1)
+                        ))
+                    )
+                )
+            );
+        }
+    },
     Splitter: (function(){
         const PROJECTILE_PARAMS = {
             radius: 10,
@@ -262,13 +275,13 @@ export const stockLightComponents = {
             explode: (x, y, angle)=>{
                 shootSpread(
                     x, y,
-                    7,
+                    7, // # Sub bullets
                     angle,
-                    0.2,
-                    0,
-                    25,
-                    0,
-                    0,
+                    0.2, // Spread
+                    0, // Variance
+                    25, // Speed
+                    0, // Headstart
+                    0, // (PartialDt)
                     (x, y, dx, dy, color)=>(
                         new PointPProj(x,y,dx,dy,color,()=>(createAttackProfile(
                             1, // Damage

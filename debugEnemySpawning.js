@@ -81,23 +81,22 @@ const weaponGenerators = [
     // ()=>(new MemeWeapon1()),
     // ()=>(new MemeWeapon2()),
     // ()=>(new MemeWeapon3()),
-
+    ()=>(new DualWeapon(
+        new stockLightComponents.MachineGun(),
+        new DummyDualWeaponComponent()
+    )),
+    ()=>(new DualWeapon(
+        new stockLightComponents.Spread(),
+        new DummyDualWeaponComponent()
+    )),
+    ()=>(new DualWeapon(
+        new stockLightComponents.Heavy(),
+        new DummyDualWeaponComponent()
+    )),
     ()=>(new DualWeapon(
         new stockLightComponents.Splitter(),
         new DummyDualWeaponComponent()
     )),
-    // ()=>(new DualWeapon(
-    //     stockLightComponentGenerators.machineGun(),
-    //     stockHeavyComponentGenerators.volley()
-    // )),
-    // ()=>(new DualWeapon(
-    //     stockLightComponentGenerators.spread(),
-    //     stockHeavyComponentGenerators.wave()
-    // )),
-    // ()=>(new DualWeapon(
-    //     stockLightComponentGenerators.heavy(),
-    //     stockHeavyComponentGenerators.buster()
-    // )),
 ];
 
 export default class DebugManager {
