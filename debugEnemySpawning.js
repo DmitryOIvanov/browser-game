@@ -73,7 +73,7 @@ const WEIGHT_SUM = specificSpawnInfo.reduce((curSum,nextEntry)=>(curSum+nextEntr
 const PLAYER_CLEARANCE = 300;
 
 const weaponGenerators = [
-    ()=>(new MachineGunWeapon()),
+    // ()=>(new MachineGunWeapon()),
     // ()=>(new ShotgunWeapon()),
     // ()=>(new PierceWeapon()),
     // ()=>(new BouncyWeapon()),
@@ -83,19 +83,19 @@ const weaponGenerators = [
     // ()=>(new MemeWeapon3()),
     ()=>(new DualWeapon(
         new stockLightComponents.MachineGun(),
-        new DummyDualWeaponComponent()
+        new stockHeavyComponents.Volley()
     )),
     ()=>(new DualWeapon(
         new stockLightComponents.Spread(),
-        new DummyDualWeaponComponent()
+        new stockHeavyComponents.Wave()
     )),
     ()=>(new DualWeapon(
         new stockLightComponents.Heavy(),
-        new DummyDualWeaponComponent()
+        new stockHeavyComponents.Buster()
     )),
     ()=>(new DualWeapon(
         new stockLightComponents.Splitter(),
-        new DummyDualWeaponComponent()
+        new stockHeavyComponents.Firework()
     )),
 ];
 

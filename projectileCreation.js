@@ -3,7 +3,7 @@ import controls from "./controls.js";
 import Player from "./player.js";
 import playField from "./playField.js";
 
-const PLAYER_SHOT_HEAD_START = Player.IN_RAD;
+export const PLAYER_SHOT_HEAD_START = Player.IN_RAD;
 
 export function shoot(x, y, angle, speed, partialDt, projectileGenerator){
     const dx = speed * Math.cos(angle);
@@ -11,7 +11,14 @@ export function shoot(x, y, angle, speed, partialDt, projectileGenerator){
     const newBullet = projectileGenerator(x, y, dx, dy, Color.WHITE);
     playField.addPlayerProjectile(newBullet);
     newBullet.timeStep(partialDt);
-    return newBullet;
+}
+
+export function shootWithAngularOffset(x, y, angle, speed, offsetAngle, partialDt, projectileGenerator){
+    shoot(
+        x + PLAYER_SHOT_HEAD_START * Math.cos(angle+offsetAngle),
+        y + PLAYER_SHOT_HEAD_START * Math.sin(angle+offsetAngle),
+        angle, speed, partialDt, projectileGenerator
+    );
 }
 
 export function shootSpread(x, y, numShots, baseAngle, spread, variance, speed, headStart, partialDt, projectileGenerator){
