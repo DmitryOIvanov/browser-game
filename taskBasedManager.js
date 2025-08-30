@@ -1,4 +1,4 @@
-import { modeALevelList } from "./modeAGame.js";
+import { modeALevelList } from "./modes/modeA/modeAGame.js";
 import playField from "./playField.js";
 
 // Contains some functionality specific to mode A, has to be generalized if needed

@@ -4,7 +4,7 @@ import { canv, ctx, drawDot, fillScreen } from "./drawing.js";
 import { CanvasTextButton } from "./gui.js";
 import playField from "./playField.js";
 import DebugManager from "./debugEnemySpawning.js";
-import ModeAController from "./modeAController.js";
+import ModeAController from "./modes/modeA/modeAController.js";
 
 const modeAButton = new CanvasTextButton(canv.width/2,canv.height/2+100,"Untitled Mode A",60,new Color(false,"#fff"));
 const debugModeButton = new CanvasTextButton(canv.width/2,canv.height/2+180,"Debug Mode",60,new Color(false,"#fff"));

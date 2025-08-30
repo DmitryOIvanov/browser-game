@@ -1,13 +1,13 @@
-import { createAttackProfile } from "./attackAndDefense.js";
-import Color from "./color.js";
-import { canv } from "./drawing.js";
-import playField from "./playField.js";
-import { BallPProjWeapon } from "./weapons/ballProjWeapons.js";
-import { MemeWeapon2 } from "./weapons/fireworkWeapons.js";
-import { MachineGunWeapon, MemeWeapon1, PointPProjWeapon, ShotgunWeapon } from "./weapons/pointProjWeapons.js";
-import { CreateBgParticleAndWaitForRetirementTask, CreateStaticBgParticleTask, DeleteStaticBgParticleTask, MessageTask, WaitForConditionTask, WaitTimeTask, WeightedSpawnTask } from "./tasks.js";
-import BgMessage, { StaticBGMessage } from "./bgMessage.js";
-import { TutorialTask1, TutorialTask2, TutorialTask3 } from "./tutorialTasks.js";
+import { createAttackProfile } from "../../attackAndDefense.js";
+import Color from "../../color.js";
+import { canv } from "../../drawing.js";
+import playField from "../../playField.js";
+import { BallPProjWeapon } from "../../weapons/ballProjWeapons.js";
+import { MemeWeapon2 } from "../../weapons/fireworkWeapons.js";
+import { MachineGunWeapon, MemeWeapon1, PointPProjWeapon, ShotgunWeapon } from "../../weapons/pointProjWeapons.js";
+import { CreateBgParticleAndWaitForRetirementTask, CreateStaticBgParticleTask, DeleteStaticBgParticleTask, MessageTask, WaitForConditionTask, WaitTimeTask, WeightedSpawnTask } from "../../tasks.js";
+import BgMessage, { StaticBGMessage } from "../../bgMessage.js";
+import { TutorialTask1, TutorialTask2, TutorialTask3 } from "../../tutorialTasks.js";
 
 export default class ModeAGame {
     constructor(){
