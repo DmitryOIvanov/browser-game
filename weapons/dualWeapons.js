@@ -368,7 +368,7 @@ export const stockHeavyComponents = {
                     new FireworkProj(x,y,dx,dy,
                         12, // Radius
                         40, // Duration
-                        30, // Projectiles in 1 of 2 rings
+                        50, // Projectiles in 1 of 2 rings
                         30, // Speed 1
                         25, // Speed 2
                         color,
