@@ -1,8 +1,8 @@
-import Color from "./color.js";
-import controls from "./controls.js";
-import { canv, ctx, drawDot } from "./drawing.js";
-import { CanvasTextButton } from "./gui.js";
-import { modeALevelList } from "./modes/modeA/modeAGame.js";
+import Color from "../../color.js";
+import controls from "../../controls.js";
+import { canv, ctx, drawDot } from "../../drawing.js";
+import { CanvasTextButton } from "../../gui.js";
+import { modeALevelList } from "./modeAGame.js";
 
 export default class WeaponSelectController {
     constructor(game){
