@@ -1,13 +1,13 @@
-import { createAttackProfile } from "./attackAndDefense.js";
-import Color from "./color.js";
-import controls from "./controls.js";
-import { enemySpawningInfo, getRandomPosWithMargins } from "./enemySpawning.js";
-import BigExplosionParticle from "./particles/bigExplosionParticle.js";
-import playField from "./playField.js";
-import { BouncyWeapon, MemeWeapon3 } from "./weapons/ballProjWeapons.js";
-import {DualWeapon, DummyDualWeaponComponent, stockHeavyComponents, stockLightComponents} from "./weapons/dualWeapons.js";
-import { FireworkWeapon, MemeWeapon2 } from "./weapons/fireworkWeapons.js";
-import { MachineGunWeapon, MemeWeapon1, PierceWeapon, ShotgunWeapon } from "./weapons/pointProjWeapons.js";
+import { createAttackProfile } from "../../attackAndDefense.js";
+import Color from "../../color.js";
+import controls from "../../controls.js";
+import { enemySpawningInfo, getRandomPosWithMargins } from "../../enemySpawning.js";
+import BigExplosionParticle from "../../particles/bigExplosionParticle.js";
+import playField from "../../playField.js";
+import { BouncyWeapon, MemeWeapon3 } from "../../weapons/ballProjWeapons.js";
+import {DualWeapon, DummyDualWeaponComponent, stockHeavyComponents, stockLightComponents} from "../../weapons/dualWeapons.js";
+import { FireworkWeapon, MemeWeapon2 } from "../../weapons/fireworkWeapons.js";
+import { MachineGunWeapon, MemeWeapon1, PierceWeapon, ShotgunWeapon } from "../../weapons/pointProjWeapons.js";
 
 const specificSpawnInfo = [
     {
