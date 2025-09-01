@@ -3,7 +3,7 @@ import TaskBasedManager from "./modeATaskBasedManager.js";
 import ModeAGame, { modeALevelList } from "./modeAGame.js";
 import SimpleMessageScreen from "../../simpleMessageScreen.js";
 import playField from "../../playField.js";
-import ModeAWeaponSelectController from "./weaponSelectController.js";
+import ModeAWeaponSelectController from "./modeAWeaponSelectController.js";
 
 // const STATE_NONE = 0;
 const STATE_WEAPON_SELECT = 0;
