@@ -4,7 +4,7 @@ import { canv, ctx, drawDot } from "../../drawing.js";
 import { CanvasTextButton } from "../../gui.js";
 import { modeALevelList } from "./modeAGame.js";
 
-export default class WeaponSelectController {
+export default class ModeAWeaponSelectController {
     constructor(game){
         this.game = game;
         this.concluded = false;

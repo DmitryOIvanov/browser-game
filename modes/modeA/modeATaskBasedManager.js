@@ -1,9 +1,9 @@
-import { modeALevelList } from "./modes/modeA/modeAGame.js";
-import playField from "./playField.js";
+import { modeALevelList } from "./modeAGame.js";
+import playField from "../../playField.js";
 
 // Contains some functionality specific to mode A, has to be generalized if needed
 
-export default class TaskBasedManager {
+export default class ModeATaskBasedManager {
     constructor(game){
         this.game = game;
         this.tasks = modeALevelList[game.level].tasks;

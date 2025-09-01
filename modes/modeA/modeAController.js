@@ -1,9 +1,9 @@
 import controls from "../../controls.js";
-import TaskBasedManager from "../../taskBasedManager.js";
+import TaskBasedManager from "./modeATaskBasedManager.js";
 import ModeAGame, { modeALevelList } from "./modeAGame.js";
 import SimpleMessageScreen from "../../simpleMessageScreen.js";
 import playField from "../../playField.js";
-import WeaponSelectController from "./weaponSelectController.js";
+import ModeAWeaponSelectController from "./weaponSelectController.js";
 
 // const STATE_NONE = 0;
 const STATE_WEAPON_SELECT = 0;
@@ -53,7 +53,7 @@ export default class ModeAController {
 
     startWeaponSelect(){
         this.state = STATE_WEAPON_SELECT;
-        this.subController = new WeaponSelectController(this.game);
+        this.subController = new ModeAWeaponSelectController(this.game);
     }
 
     startPlay(){
