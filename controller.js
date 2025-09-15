@@ -7,9 +7,9 @@ import DebugManager from "./modes/debug/debugEnemySpawning.js";
 import ModeAController from "./modes/modeA/modeAController.js";
 import ModeBController from "./modes/modeB/modeBController.js";
 
-const modeAButton = new CanvasTextButton(canv.width/2,canv.height/2+100,"Untitled Mode A",60,new Color(false,"#fff"));
-const modeBButton = new CanvasTextButton(canv.width/2,canv.height/2+180,"Untitled Mode B",60,new Color(false,"#fff"));
-const debugModeButton = new CanvasTextButton(canv.width/2,canv.height/2+260,"Debug Mode",60,new Color(false,"#fff"));
+const modeAButton = new CanvasTextButton(canv.width/2,canv.height/2,"Untitled Mode A",60,new Color(false,"#fff"));
+const modeBButton = new CanvasTextButton(canv.width/2,canv.height/2+80,"Untitled Mode B",60,new Color(false,"#fff"));
+const debugModeButton = new CanvasTextButton(canv.width/2,canv.height/2+160,"Debug Mode",60,new Color(false,"#fff"));
 
 const STATE_TITLE = 0;
 const STATE_MODE_A = 1;
@@ -29,7 +29,7 @@ const controller = {
             ctx.textAlign = "center";
             ctx.font = "100px arial";
             ctx.fillStyle = '#fff';
-            ctx.fillText("video game", canv.width/2,canv.height/2-100);
+            ctx.fillText("video game", canv.width/2,canv.height/2-200);
             modeAButton.update();
             modeAButton.draw();
             modeBButton.update();

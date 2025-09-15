@@ -1,6 +1,7 @@
-import { WeightedSpawnTask } from "../../tasks.js";
+import playField from "../../playField.js";
+import { PerformTasksTask, WaitForConditionTask, WaitTimeTask, WeightedSpawnTask } from "../../tasks.js";
 
-const modeBTasks = [
+const level1 = [
     {
         class: WeightedSpawnTask,
         delayCoeff: 15,
@@ -19,6 +20,23 @@ const modeBTasks = [
                 {name:"MultiCircle",weight:2,num:1},
             ]}
         ]
+    },{
+        class: WaitForConditionTask,
+        condition: ()=>(playField.isDangerFree())
+    },{
+        class: WaitTimeTask,
+        time: 30
+    }
+];
+
+const modeBLevels = [
+    level1
+];
+
+const modeBTasks = [
+    {
+        class: PerformTasksTask,
+        tasks: modeBLevels[0],
     }
 ];
 

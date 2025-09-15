@@ -1,6 +1,6 @@
 import playField from "./playField.js";
 
-export default class TaskBasedManager {
+export class TaskPerformer {
     constructor(tasks){
         this.tasks = tasks;
         this.concluded = false;
@@ -9,15 +9,6 @@ export default class TaskBasedManager {
         this.startNextTask();
 
         this.playerLost = false;
-    }
-
-    onPlayfieldInit(){}
-
-    onPlayerHit(){
-        if(playField.player.hp <= 0){
-            this.playerLost = true;
-            this.concluded = true;
-        }
     }
 
     timeStep(amount){
@@ -38,5 +29,27 @@ export default class TaskBasedManager {
         const taskInfo = this.tasks[this.nextTaskIndex];
         this.curTask = new taskInfo.class(taskInfo);
         this.nextTaskIndex++;
+    }
+}
+
+export default class TaskBasedManager {
+    constructor(tasks){
+        this.concluded = false;
+        this.performer = new TaskPerformer(tasks);
+    }
+
+    onPlayfieldInit(){}
+
+    onPlayerHit(){
+        if(playField.player.hp <= 0){
+            this.playerLost = true;
+            this.concluded = true;
+        }
+    }
+
+    timeStep(dt){
+        if(this.concluded) return;
+        this.performer.timeStep(dt);
+        if(this.performer.concluded) this.concluded = true;
     }
 }

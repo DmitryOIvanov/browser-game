@@ -1,6 +1,7 @@
 import BgMessage, { StaticBGMessage } from "./bgMessage.js";
 import { enemySpawningInfo, getRandomPosWithMargins } from "./enemySpawning.js";
 import playField from "./playField.js";
+import { TaskPerformer } from "./taskBasedManager.js";
 
 const PLAYER_CLEARANCE = 300;
 export class WeightedSpawnTask {
@@ -159,5 +160,18 @@ export class WaitForBgParticleRetirementTask {
 
     timeStep(amount){
         this.concluded = this.particle.retired;
+    }
+}
+
+export class PerformTasksTask {
+    constructor(readonlyParams){
+        this.performer = new TaskPerformer(readonlyParams.tasks);
+        this.concluded = false;
+    }
+
+    timeStep(dt){
+        if(this.concluded) return;
+        this.performer.timeStep(dt);
+        if(this.performer.concluded) this.concluded = true;
     }
 }
