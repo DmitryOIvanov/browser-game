@@ -29,8 +29,37 @@ const level1 = [
     }
 ];
 
+const level2 = [
+    {
+        class: WeightedSpawnTask,
+        delayCoeff: 1,
+        enemies:[
+            {shuffle:[
+                {name:"SmallSquare",weight:1,num:5},
+                {name:"SmallTriangle",weight:1,num:5},
+                {name:"SmallCircle",weight:1,num:5},
+            ]},
+            {shuffle:[
+                {name:"SmallSquare",weight:1,num:5},
+                {name:"SmallTriangle",weight:1,num:5},
+                {name:"SmallCircle",weight:1,num:3},
+                {name:"MultiSquare",weight:2,num:2},
+                {name:"MultiTriangle",weight:2,num:2},
+                {name:"MultiCircle",weight:2,num:1},
+            ]}
+        ]
+    },{
+        class: WaitForConditionTask,
+        condition: ()=>(playField.isDangerFree())
+    },{
+        class: WaitTimeTask,
+        time: 30
+    }
+];
+
 const modeBLevels = [
-    level1
+    level1,
+    level2
 ];
 
 const modeBTasks = [
@@ -40,4 +69,4 @@ const modeBTasks = [
     }
 ];
 
-export default modeBTasks;
+export default modeBLevels;
