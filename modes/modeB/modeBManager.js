@@ -68,23 +68,3 @@ export default class ModeBManager {
         );
     }
 }
-
-// constructor(tasks){
-//         this.concluded = false;
-//         this.performer = new TaskPerformer(tasks);
-//     }
-
-//     onPlayfieldInit(){}
-
-//     onPlayerHit(){
-//         if(playField.player.hp <= 0){
-//             this.playerLost = true;
-//             this.concluded = true;
-//         }
-//     }
-
-//     timeStep(dt){
-//         if(this.concluded) return;
-//         this.performer.timeStep(dt);
-//         if(this.performer.concluded) this.concluded = true;
-//     }
