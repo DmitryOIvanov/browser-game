@@ -9,6 +9,9 @@ import ExplodingBallPProj from "../projectiles/player/explodingBallPProj.js";
 import FireworkProj from "../projectiles/player/fireworkProj.js";
 import PointPProj from "../projectiles/player/pointPProj.js";
 
+const PRIMARY_COLOR = new Color(false, '#7FF');
+const SECONDARY_COLOR = new Color(false, '#FFF');
+
 export class DualWeapon {
     constructor(lightComponent, heavyComponent){
         this.lightComponent = lightComponent;
@@ -17,7 +20,7 @@ export class DualWeapon {
         this.fireTimer = 0;
         this.wasRightClicking = false;
 
-        this.color = Color.WHITE;
+        this.color = PRIMARY_COLOR;
     }
 
     timeStep(dt){
@@ -53,7 +56,12 @@ export class DualWeapon {
         }else if(controls.mouse.rightHeld){
             this.fireTimer = Math.min(this.fireTimer, this.heavyComponent.getDelay());
         }
-        this.wasRightClicking = controls.mouse.rightHeld
+        if(this.heavyComponent.isContinuing() || (controls.mouse.rightHeld && this.fireTimer >= this.heavyComponent.getDelay())){
+            this.color = SECONDARY_COLOR;
+        }else{
+            this.color = PRIMARY_COLOR;
+        }
+        this.wasRightClicking = controls.mouse.rightHeld;
 
         if(!dtAdded){
             console.log("[!!!] Dual weapon: dt added later than expected");
@@ -192,8 +200,8 @@ export const stockLightComponents = {
                 0, // Spread
                 0.01, // Variance
                 20, // Speed
-                (x, y, dx, dy, color)=>(
-                    new PointPProj(x,y,dx,dy,color,()=>(createAttackProfile(
+                (x, y, dx, dy)=>(
+                    new PointPProj(x,y,dx,dy,PRIMARY_COLOR,()=>(createAttackProfile(
                         1, // Damage
                         3, // Overflow deduction coefficient
                         0, // Free hits (pierce-1)
@@ -210,8 +218,8 @@ export const stockLightComponents = {
                 0.1, // Spread
                 0, // Variance
                 20, // Speed
-                (x, y, dx, dy, color)=>(
-                    new PointPProj(x,y,dx,dy,color,()=>(createAttackProfile(
+                (x, y, dx, dy)=>(
+                    new PointPProj(x,y,dx,dy,PRIMARY_COLOR,()=>(createAttackProfile(
                         1, // Damage
                         3, // Overflow deduction coefficient
                         0, // Free hits (pierce-1)
@@ -228,12 +236,12 @@ export const stockLightComponents = {
                 0, // Spread
                 0, // Variance
                 20, // Speed
-                (x, y, dx, dy, color)=>(
+                (x, y, dx, dy)=>(
                     new BallPProj(x,y,dx,dy,
                         10, // Radius
                         -1, // Duration
                         0, // # Bounces
-                        color,()=>(createAttackProfile(
+                        PRIMARY_COLOR,()=>(createAttackProfile(
                             10, // Damage
                             1, // Overflow deduction coefficient
                             0, // Free hits (pierce-1)
@@ -262,8 +270,8 @@ export const stockLightComponents = {
                     25, // Speed
                     0, // Headstart
                     0, // (PartialDt)
-                    (x, y, dx, dy, color)=>(
-                        new PointPProj(x,y,dx,dy,color,()=>(createAttackProfile(
+                    (x, y, dx, dy)=>(
+                        new PointPProj(x,y,dx,dy,PRIMARY_COLOR,()=>(createAttackProfile(
                             1, // Damage
                             3, // Overflow deduction coefficient
                             0, // Free hits (pierce-1)
@@ -281,8 +289,8 @@ export const stockLightComponents = {
                     0, // Spread
                     0, // Variance
                     15, // Speed
-                    (x, y, dx, dy, color)=>(
-                        new ExplodingBallPProj(x,y,dx,dy,color,PROJECTILE_PARAMS)
+                    (x, y, dx, dy)=>(
+                        new ExplodingBallPProj(x,y,dx,dy,PRIMARY_COLOR,PROJECTILE_PARAMS)
                     )
                 );
             }
@@ -303,8 +311,8 @@ export const stockHeavyComponents = {
                 0.06, // Total spread
                 Math.PI/2, // Total offset spread
                 25, // Speed
-                (x, y, dx, dy, color)=>(
-                    new PointPProj(x,y,dx,dy,color,()=>(createAttackProfile(
+                (x, y, dx, dy)=>(
+                    new PointPProj(x,y,dx,dy,SECONDARY_COLOR,()=>(createAttackProfile(
                         1, // Damage
                         3, // Overflow deduction coefficient
                         0, // Free hits (pierce-1)
@@ -323,8 +331,8 @@ export const stockHeavyComponents = {
                 0.05, // Spread
                 0, // Variance
                 [25,22.5,20], // Speed
-                (x, y, dx, dy, color)=>(
-                    new PointPProj(x,y,dx,dy,color,()=>(createAttackProfile(
+                (x, y, dx, dy)=>(
+                    new PointPProj(x,y,dx,dy,SECONDARY_COLOR,()=>(createAttackProfile(
                         1, // Damage
                         3, // Overflow deduction coefficient
                         0, // Free hits (pierce-1)
@@ -341,12 +349,12 @@ export const stockHeavyComponents = {
                 0, // Spread
                 0, // Variance
                 15, // Speed
-                (x, y, dx, dy, color)=>(
+                (x, y, dx, dy)=>(
                     new BallPProj(x,y,dx,dy,
                         20, // Radius
                         -1, // Duration
                         0, // # Bounces
-                        color,()=>(createAttackProfile(
+                        SECONDARY_COLOR,()=>(createAttackProfile(
                             100, // Damage
                             1, // Overflow deduction coefficient
                             0, // Free hits (pierce-1)
@@ -364,14 +372,14 @@ export const stockHeavyComponents = {
                 0, // Spread
                 0, // Variance
                 20, // Speed
-                (x, y, dx, dy, color)=>(
+                (x, y, dx, dy)=>(
                     new FireworkProj(x,y,dx,dy,
                         12, // Radius
                         40, // Duration
                         50, // Projectiles in 1 of 2 rings
                         30, // Speed 1
                         25, // Speed 2
-                        color,
+                        SECONDARY_COLOR,
                         ()=>(createAttackProfile( // Primary
                             1, // Damage
                             3, // Overflow deduction coefficient

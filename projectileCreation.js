@@ -1,4 +1,3 @@
-import Color from "./color.js";
 import controls from "./controls.js";
 import Player from "./player.js";
 import playField from "./playField.js";
@@ -8,7 +7,7 @@ export const PLAYER_SHOT_HEAD_START = Player.IN_RAD;
 export function shoot(x, y, angle, speed, partialDt, projectileGenerator){
     const dx = speed * Math.cos(angle);
     const dy = speed * Math.sin(angle);
-    const newBullet = projectileGenerator(x, y, dx, dy, Color.WHITE);
+    const newBullet = projectileGenerator(x, y, dx, dy);
     playField.addPlayerProjectile(newBullet);
     newBullet.timeStep(partialDt);
 }
