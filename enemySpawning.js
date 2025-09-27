@@ -15,6 +15,7 @@ import FlowerTower from "./enemies/flowerTower.js";
 import HeavyTower from "./enemies/heavyTower.js";
 import LaserTower from "./enemies/laserTower.js";
 import BasicSpawnerParticle from "./particles/basicSpawnerParticle.js";
+import Lurcher from "./enemies/lurcher.js";
 
 export const enemySpawningInfo = {
     "SmallSquare":{
@@ -178,6 +179,18 @@ export const enemySpawningInfo = {
         spawn: (weight,x,y) => {
             const spawner = new BasicSpawnerParticle(x,y,1.5*TowerBase.RAD,10,"white",()=>{
                 const enemy = new LaserTower(x,y);
+                enemy.setWeight(weight);
+                return playField.addEnemy(enemy, false);
+            });
+            playField.addParticle(spawner);
+            return spawner.getEnemyRef();
+        }
+    },
+    "Lurcher":{
+        rad: Lurcher.RAD,
+        spawn: (weight,x,y) => {
+            const spawner = new BasicSpawnerParticle(x,y,1.5*Lurcher.RAD,10,"white",()=>{
+                const enemy = new Lurcher(x,y);
                 enemy.setWeight(weight);
                 return playField.addEnemy(enemy, false);
             });
