@@ -68,7 +68,7 @@ const specificSpawnInfo = [
         cooldown: 300
     },{
         name: "Lurcher",
-        probWeight: 80,
+        probWeight: 200,
         cooldown: 60
     }
 ];
