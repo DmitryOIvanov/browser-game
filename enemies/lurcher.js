@@ -2,7 +2,7 @@ import { CircleArea } from "../areas.js";
 import { createDefenseProfile } from "../attackAndDefense.js";
 import Color from "../color.js";
 import { ctx } from "../drawing.js";
-import { randomAngle } from "../extraMath.js";
+import { bounceBoundify, randomAngle } from "../extraMath.js";
 import ExplodingRingParticle from "../particles/explodingRingParticle.js";
 import playField from "../playField.js";
 import AbstractBasicCircle from "./abstractBasicCircle.js";
@@ -54,6 +54,13 @@ export default class Lurcher extends AbstractEnemy{
         this.targetY = this.y + lurchDist * aimPointY/aimPointDist;
     }
 
+    advanceTowardsTarget(portion){
+        this.x = this.prevX + portion*(this.targetX-this.prevX);
+        this.x = bounceBoundify(this.x, playField.x, MIN_RAD);
+        this.y = this.prevY + portion*(this.targetY-this.prevY);
+        this.y = bounceBoundify(this.y, playField.y, MIN_RAD);
+    }
+
     timeStep(dt){
         super.timeStep(dt);
         this.hitFlash -= dt;
@@ -73,8 +80,8 @@ export default class Lurcher extends AbstractEnemy{
             }else if(this.state == STATE_LURCH){
                 this.state = STATE_REST;
                 this.stateCountdown += BASE_REST_TIME + REST_TIME_VAR * Math.random();
-                this.x = this.targetX;
-                this.y = this.targetY;
+                this.curRad = MIN_RAD;
+                this.advanceTowardsTarget(1);
             }
         }
 
@@ -86,8 +93,7 @@ export default class Lurcher extends AbstractEnemy{
         }else if(this.state == STATE_LURCH){
             const t = this.stateCountdown/LURCH_TIME;
             this.curRad = MIN_RAD + (MAX_RAD-MIN_RAD)*t*t;
-            this.x = this.prevX + (1-t*t)*(this.targetX-this.prevX);
-            this.y = this.prevY + (1-t*t)*(this.targetY-this.prevY);
+            this.advanceTowardsTarget(1-t*t);
         }
 
         this.area.update(this.x, this.y, this.curRad);
