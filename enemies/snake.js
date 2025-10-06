@@ -5,12 +5,12 @@ import { normalizeAnglePMPI } from "../extraMath.js";
 import playField from "../playField.js";
 import AbstractEnemy from "./abstractEnemy.js";
 
-const SEG_RAD = 20;
+const SEG_RAD = 15;
 const SEG_MAX_HP = 10;
 const TURN_BASE_TIME = 30;
 const TURN_TIME_VAR = 10;
 const TURN_RAD = 50;
-const TURN_SPEED = 0.5;
+const TURN_SPEED = 0.01;
 const NUM_SEGS = 10;
 const SEG_TIME_DIFF = 10;
 
@@ -53,8 +53,8 @@ export default class Snake extends AbstractEnemy{
         }
         this.moveQueue.push(move);
         const angleChange = move.dir*TURN_SPEED*move.time
-        this.lastX = move.centerX + Math.cos(initArcAngle + angleChange);
-        this.lastY = move.centerY + Math.sin(initArcAngle + angleChange);
+        this.lastX = move.centerX + TURN_RAD*Math.cos(initArcAngle + angleChange);
+        this.lastY = move.centerY + TURN_RAD*Math.sin(initArcAngle + angleChange);
         this.lastAngle += angleChange;
     }
 
@@ -79,8 +79,8 @@ export default class Snake extends AbstractEnemy{
             }else{
                 const move = this.moveQueue[moveIndex];
                 const angleChange = move.dir*TURN_SPEED*timeOffset;
-                this.segX[segIndex] = move.centerX + Math.cos(move.initArcAngle + angleChange);
-                this.segY[segIndex] = move.centerY + Math.sin(move.initArcAngle + angleChange);
+                this.segX[segIndex] = move.centerX + TURN_RAD*Math.cos(move.initArcAngle + angleChange);
+                this.segY[segIndex] = move.centerY + TURN_RAD*Math.sin(move.initArcAngle + angleChange);
 
                 segIndex++;
                 this.numSegsVisible = segIndex;
