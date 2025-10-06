@@ -10,7 +10,7 @@ const SEG_MAX_HP = 10;
 const TURN_BASE_TIME = 30;
 const TURN_TIME_VAR = 10;
 const TURN_RAD = 50;
-const TURN_SPEED = 0.01;
+const TURN_SPEED = 0.05;
 const NUM_SEGS = 10;
 const SEG_TIME_DIFF = 10;
 
