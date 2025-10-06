@@ -84,10 +84,16 @@ export default class Snake extends AbstractEnemy{
 
                 segIndex++;
                 this.numSegsVisible = segIndex;
-                if(segIndex >= NUM_SEGS) break;
+                if(segIndex >= NUM_SEGS){
+                    for(let i=0; i<moveIndex; i++){
+                        this.moveQueue.shift();
+                    }
+                    break;
+                }
                 timeOffset -= SEG_TIME_DIFF;
             }
         }
+        console.log(this.moveQueue.length);
     }
 
     draw(){
