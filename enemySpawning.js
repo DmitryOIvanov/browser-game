@@ -16,6 +16,8 @@ import HeavyTower from "./enemies/heavyTower.js";
 import LaserTower from "./enemies/laserTower.js";
 import BasicSpawnerParticle from "./particles/basicSpawnerParticle.js";
 import Lurcher from "./enemies/lurcher.js";
+import Snake from "./enemies/snake.js";
+import { randomAngle } from "./extraMath.js";
 
 export const enemySpawningInfo = {
     "SmallSquare":{
@@ -191,6 +193,18 @@ export const enemySpawningInfo = {
         spawn: (weight,x,y) => {
             const spawner = new BasicSpawnerParticle(x,y,1.5*Lurcher.RAD,10,"white",()=>{
                 const enemy = new Lurcher(x,y);
+                enemy.setWeight(weight);
+                return playField.addEnemy(enemy, false);
+            });
+            playField.addParticle(spawner);
+            return spawner.getEnemyRef();
+        }
+    },
+    "Snake":{
+        rad: Snake.RAD,
+        spawn: (weight,x,y) => {
+            const spawner = new BasicSpawnerParticle(x,y,1.5*Snake.RAD,10,"white",()=>{
+                const enemy = new Snake(x,y,randomAngle());
                 enemy.setWeight(weight);
                 return playField.addEnemy(enemy, false);
             });
