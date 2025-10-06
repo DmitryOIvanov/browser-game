@@ -1,17 +1,17 @@
 import { CircleArea } from "../areas.js";
 import { createDefenseProfile } from "../attackAndDefense.js";
 import { ctx } from "../drawing.js";
-import { normalizeAnglePMPI } from "../extraMath.js";
+import { normalizeAngle, normalizeAnglePMPI } from "../extraMath.js";
 import playField from "../playField.js";
 import AbstractEnemy from "./abstractEnemy.js";
 
-const SEG_RAD = 15;
+const SEG_RAD = 18;
 const SEG_MAX_HP = 10;
-const TURN_BASE_TIME = 30;
-const TURN_TIME_VAR = 10;
-const TURN_RAD = 50;
+const TURN_BASE_TIME = 10;
+const TURN_TIME_VAR = 20;
+const TURN_RAD = 72;
 const TURN_SPEED = 0.05;
-const NUM_SEGS = 10;
+const NUM_SEGS = 20;
 const SEG_TIME_DIFF = 10;
 
 const LINE_THICK = 6;
@@ -43,11 +43,11 @@ export default class Snake extends AbstractEnemy{
         const dx = playField.player.x - this.lastX;
         const dy = playField.player.y - this.lastY;
         const newDir = normalizeAnglePMPI(Math.atan2(dy,dx) - this.lastAngle)>=0 ? 1 : -1;
-        const initArcAngle = this.lastAngle - newDir*Math.PI/2;
+        const initArcAngle = normalizeAngle(this.lastAngle - newDir*Math.PI/2);
         const move = {
             dir: newDir,
             initArcAngle: initArcAngle,
-            centerX: this.lastX + TURN_RAD*Math.cos(initArcAngle),
+            centerX: this.lastX - TURN_RAD*Math.cos(initArcAngle),
             centerY: this.lastY - TURN_RAD*Math.sin(initArcAngle),
             time: moveTime
         }
