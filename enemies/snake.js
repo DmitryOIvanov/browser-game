@@ -1,4 +1,4 @@
-import { CircleArea } from "../areas.js";
+import { CircleArea, SnakeArea } from "../areas.js";
 import { createDefenseProfile } from "../attackAndDefense.js";
 import { ctx } from "../drawing.js";
 import { normalizeAngle, normalizeAnglePMPI } from "../extraMath.js";
@@ -6,12 +6,13 @@ import playField from "../playField.js";
 import AbstractEnemy from "./abstractEnemy.js";
 
 const SEG_RAD = 18;
+const DEAD_SEG_RAD = 12;
 const SEG_MAX_HP = 10;
 const TURN_BASE_TIME = 10;
 const TURN_TIME_VAR = 20;
 const TURN_RAD = 72;
 const TURN_SPEED = 0.05;
-const NUM_SEGS = 20;
+const NUM_SEGS = 15;
 const SEG_TIME_DIFF = 10;
 
 const LINE_THICK = 6;
@@ -22,8 +23,6 @@ export default class Snake extends AbstractEnemy{
 
     constructor(x,y,angle){
         super();
-        this.defenseProfile = createDefenseProfile(SEG_MAX_HP);
-        this.area = new CircleArea(this.x, this.y, SEG_RAD);
 
         this.lastX = x;
         this.lastY = y;
@@ -32,8 +31,9 @@ export default class Snake extends AbstractEnemy{
         this.moveQueue = [];
 
         this.numSegsVisible = 0;
-        this.segX = new Array(NUM_SEGS);
-        this.segY = new Array(NUM_SEGS);
+        this.area = new SnakeArea(NUM_SEGS, SEG_RAD);
+        this.defenseProfiles = new Array(NUM_SEGS).fill(null).map(()=>createDefenseProfile(SEG_MAX_HP));
+        this.hitFlash = new Array(NUM_SEGS).fill(0);
     }
 
     chooseNextMove(){
@@ -60,8 +60,10 @@ export default class Snake extends AbstractEnemy{
 
     timeStep(dt){
         super.timeStep(dt);
-        this.hitFlash -= dt;
-        if(this.hitFlash < 0) this.hitFlash = 0;
+        for(let i=0; i<NUM_SEGS; i++){
+            this.hitFlash[i] -= dt;
+            if(this.hitFlash[i] < 0) this.hitFlash[i] = 0;
+        }
 
         this.turnCountdown -= dt;
         while(this.turnCountdown <= 0){
@@ -79,11 +81,14 @@ export default class Snake extends AbstractEnemy{
             }else{
                 const move = this.moveQueue[moveIndex];
                 const angleChange = move.dir*TURN_SPEED*timeOffset;
-                this.segX[segIndex] = move.centerX + TURN_RAD*Math.cos(move.initArcAngle + angleChange);
-                this.segY[segIndex] = move.centerY + TURN_RAD*Math.sin(move.initArcAngle + angleChange);
+                this.area.segX[segIndex] = move.centerX + TURN_RAD*Math.cos(move.initArcAngle + angleChange);
+                this.area.segY[segIndex] = move.centerY + TURN_RAD*Math.sin(move.initArcAngle + angleChange);
 
                 segIndex++;
-                this.numSegsVisible = segIndex;
+                if(this.numSegsVisible < segIndex){
+                    this.area.segExistence[this.numSegsVisible] = true;
+                    this.numSegsVisible++;
+                }
                 if(segIndex >= NUM_SEGS){
                     for(let i=0; i<moveIndex; i++){
                         this.moveQueue.shift();
@@ -93,26 +98,32 @@ export default class Snake extends AbstractEnemy{
                 timeOffset -= SEG_TIME_DIFF;
             }
         }
-        console.log(this.moveQueue.length);
     }
 
     draw(){
-        ctx.strokeStyle = (this.hitFlash>0)?'#fff':this.baseColor.getStr();
         ctx.lineWidth = LINE_THICK;
         for(let seg=0; seg<this.numSegsVisible; seg++){
+            const rad = this.area.segExistence[seg] ? SEG_RAD : DEAD_SEG_RAD;
+            if(!this.area.segExistence[seg]){
+                ctx.strokeStyle = this.dangerColor.getStr();
+            }else{
+                ctx.strokeStyle = (this.hitFlash[seg]>0)?'#fff':this.baseColor.getStr();
+            }
             ctx.beginPath();
-            ctx.arc(this.segX[seg],this.segY[seg],SEG_RAD,0,2*Math.PI);
+            ctx.arc(this.area.segX[seg],this.area.segY[seg],rad,0,2*Math.PI);
             ctx.closePath();
             ctx.stroke();
         }
     }
 
-    getHit(){
-        if(this.defenseProfile.expired){
-            this.retired = true;
-            // playField.addParticle(new ExplodingRingParticle(this.x, this.y, 1.5*Snake.RAD, 2*Snake.RAD, 6, Color.WHITE));
-            return;
+    getDefenseProfile(segID){
+        return this.defenseProfiles[segID];
+    }
+
+    getHit(segID){
+        this.hitFlash[segID] = HIT_FLASH_TIME;
+        if(this.defenseProfiles[segID].expired){
+            this.area.segExistence[segID] = false;
         }
-        this.hitFlash = HIT_FLASH_TIME;
     }
 }

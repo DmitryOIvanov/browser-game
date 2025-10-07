@@ -110,7 +110,7 @@ export class RayArea extends Area{
 
 // ---- "Partition" aka "Multi" Areas
 
-export class ShieldedCircleArea extends Area{
+export class ShieldedCircleArea extends Area {
     static ID = assignAreaID();
     constructor(x,y,rIn,rMid,rOut,numSegs,segExistence,rot){
         super(ShieldedCircleArea.ID, Area.TYPE_PARTITION);
@@ -122,6 +122,18 @@ export class ShieldedCircleArea extends Area{
         this.numSegs = numSegs;
         this.segExistence = segExistence;
         this.rot = rot
+    }
+}
+
+export class SnakeArea extends Area {
+    static ID = assignAreaID();
+    constructor(numSegs, segRad){
+        super(SnakeArea.ID, Area.TYPE_PARTITION);
+        this.numSegs = numSegs;
+        this.segRad = segRad;
+        this.segExistence = new Array(numSegs).fill(false);
+        this.segX = new Array(numSegs);
+        this.segY = new Array(numSegs);
     }
 }
 
