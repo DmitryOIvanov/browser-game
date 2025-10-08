@@ -87,39 +87,37 @@ multiIntersectFunctionTable[areas.ShieldedCircleArea.ID][areas.CircleArea.ID] = 
 };
 
 multiIntersectFunctionTable[areas.SnakeArea.ID][areas.PointArea.ID] = function(snake, point){
-    let result = null;
-    for(let i=0; i<snake.numSegs; i++){
-        if(snake.segExistence[i]){
-            const dx = point.x - snake.segX[i];
-            const dy = point.y - snake.segY[i];
-            if(dx*dx + dy*dy <= snake.segRad*snake.segRad){
-                if(result){
-                    result.push(i);
-                }else{
-                    result = [i];
-                }
-            }
-        }
-    }
-    return result;
+    // let result = null;
+    // for(let i=0; i<snake.numSegs; i++){
+    //     const dx = point.x - snake.segX[i];
+    //     const dy = point.y - snake.segY[i];
+    //     if(dx*dx + dy*dy <= snake.segRad*snake.segRad){
+    //         if(result){
+    //             result.push(i);
+    //         }else{
+    //             result = [i];
+    //         }
+    //     }
+    // }
+    // return result;
+    return null;
 };
 
 multiIntersectFunctionTable[areas.SnakeArea.ID][areas.CircleArea.ID] = function(snake, circle){
-    let result = null;
-    for(let i=0; i<snake.numSegs; i++){
-        if(snake.segExistence[i]){
-            const dx = circle.x - snake.segX[i];
-            const dy = circle.y - snake.segY[i];
-            if(dx*dx + dy*dy <= (snake.segRad+circle.r)*(snake.segRad+circle.r)){
-                if(result){
-                    result.push(i);
-                }else{
-                    result = [i];
-                }
-            }
-        }
-    }
-    return result;
+    // let result = null;
+    // for(let i=0; i<snake.numSegs; i++){
+    //     const dx = circle.x - snake.segX[i];
+    //     const dy = circle.y - snake.segY[i];
+    //     if(dx*dx + dy*dy <= (snake.segRad+circle.r)*(snake.segRad+circle.r)){
+    //         if(result){
+    //             result.push(i);
+    //         }else{
+    //             result = [i];
+    //         }
+    //     }
+    // }
+    // return result;
+    return null;
 };
 
 export default multiIntersectFunctionTable;

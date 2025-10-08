@@ -1,69 +1,74 @@
 import { CircleArea, SnakeArea } from "../areas.js";
 import { createDefenseProfile } from "../attackAndDefense.js";
+import controls from "../controls.js";
 import { ctx } from "../drawing.js";
 import { normalizeAngle, normalizeAnglePMPI } from "../extraMath.js";
 import playField from "../playField.js";
 import AbstractEnemy from "./abstractEnemy.js";
 
-const SEG_RAD = 18;
+const SEG_RAD = 15;
 const DEAD_SEG_RAD = 12;
 const SEG_MAX_HP = 10;
-const TURN_BASE_TIME = 10;
-const TURN_TIME_VAR = 20;
-const TURN_RAD = 72;
-const TURN_SPEED = 0.05;
-const NUM_SEGS = 15;
+const TURN_BASE_TIME = 12;
+const TURN_TIME_VAR = 15;
+const TURN_RAD = 45;
+const TURN_SPEED = 0.07;
+const DEFAULT_NUM_SEGS = 30;
 const SEG_TIME_DIFF = 10;
 
 const LINE_THICK = 6;
 const HIT_FLASH_TIME = 2;
 
-export default class Snake extends AbstractEnemy{
-    static RAD = SEG_RAD;
-
-    constructor(x,y,angle){
+// Dummy class with all the business logic but manual initialization of values only
+class CrudeSnake extends AbstractEnemy {
+    constructor(
+        numSegs, // num segments including ones yet to show up
+        minSegIndex, // starting point in shared arrays
+        moveQueue, // moves, not shared but copied
+        sharedSegArr // Shared segment data: x, y, defenseProfile, hitFlash
+    ){
         super();
 
-        this.lastX = x;
-        this.lastY = y;
-        this.lastAngle = angle;
+        // All dummy values
+        this.numSegs = numSegs;
+        this.minSegIndex = minSegIndex;
         this.turnCountdown = 0;
-        this.moveQueue = [];
-
+        this.moveQueue = moveQueue;
+        this.sharedSegArr = sharedSegArr;
+        this.area = new SnakeArea(numSegs, minSegIndex, SEG_RAD, sharedSegArr);
         this.numSegsVisible = 0;
-        this.area = new SnakeArea(NUM_SEGS, SEG_RAD);
-        this.defenseProfiles = new Array(NUM_SEGS).fill(null).map(()=>createDefenseProfile(SEG_MAX_HP));
-        this.hitFlash = new Array(NUM_SEGS).fill(0);
     }
 
     chooseNextMove(){
         const moveTime = TURN_BASE_TIME + TURN_TIME_VAR*Math.random();
         this.turnCountdown += moveTime;
 
-        const dx = playField.player.x - this.lastX;
-        const dy = playField.player.y - this.lastY;
-        const newDir = normalizeAnglePMPI(Math.atan2(dy,dx) - this.lastAngle)>=0 ? 1 : -1;
-        const initArcAngle = normalizeAngle(this.lastAngle - newDir*Math.PI/2);
+        const lastMove = this.moveQueue.at(-1);
+        const lastMoveEndArcAngle = lastMove.initArcAngle + lastMove.dir*TURN_SPEED*lastMove.time;
+        const lastX = lastMove.centerX + TURN_RAD*Math.cos(lastMoveEndArcAngle);
+        const lastY = lastMove.centerY + TURN_RAD*Math.sin(lastMoveEndArcAngle);
+        const lastAngle = lastMoveEndArcAngle + lastMove.dir*0.5*Math.PI;
+
+        const dx = playField.player.x - lastX;
+        const dy = playField.player.y - lastY;
+        const newDir = normalizeAnglePMPI(Math.atan2(dy,dx) - lastAngle)>=0 ? 1 : -1;
+        const initArcAngle = normalizeAngle(lastAngle - newDir*Math.PI*0.5);
         const move = {
             dir: newDir,
             initArcAngle: initArcAngle,
-            centerX: this.lastX - TURN_RAD*Math.cos(initArcAngle),
-            centerY: this.lastY - TURN_RAD*Math.sin(initArcAngle),
+            centerX: lastX - TURN_RAD*Math.cos(initArcAngle),
+            centerY: lastY - TURN_RAD*Math.sin(initArcAngle),
             time: moveTime
         }
         this.moveQueue.push(move);
-        const angleChange = move.dir*TURN_SPEED*move.time
-        this.lastX = move.centerX + TURN_RAD*Math.cos(initArcAngle + angleChange);
-        this.lastY = move.centerY + TURN_RAD*Math.sin(initArcAngle + angleChange);
-        this.lastAngle += angleChange;
     }
 
     timeStep(dt){
         super.timeStep(dt);
-        for(let i=0; i<NUM_SEGS; i++){
-            this.hitFlash[i] -= dt;
-            if(this.hitFlash[i] < 0) this.hitFlash[i] = 0;
-        }
+        // for(let i=0; i<this.numSegs; i++){
+        //     this.hitFlash[i] -= dt;
+        //     if(this.hitFlash[i] < 0) this.hitFlash[i] = 0;
+        // }
 
         this.turnCountdown -= dt;
         while(this.turnCountdown <= 0){
@@ -71,7 +76,7 @@ export default class Snake extends AbstractEnemy{
         }
         
         let moveIndex = this.moveQueue.length;
-        let segIndex = 0;
+        let segIndex = this.minSegIndex;
         let timeOffset = -this.turnCountdown;
         while(true){
             if(timeOffset < 0){
@@ -81,15 +86,12 @@ export default class Snake extends AbstractEnemy{
             }else{
                 const move = this.moveQueue[moveIndex];
                 const angleChange = move.dir*TURN_SPEED*timeOffset;
-                this.area.segX[segIndex] = move.centerX + TURN_RAD*Math.cos(move.initArcAngle + angleChange);
-                this.area.segY[segIndex] = move.centerY + TURN_RAD*Math.sin(move.initArcAngle + angleChange);
+                this.sharedSegArr[segIndex].x = move.centerX + TURN_RAD*Math.cos(move.initArcAngle + angleChange);
+                this.sharedSegArr[segIndex].y = move.centerY + TURN_RAD*Math.sin(move.initArcAngle + angleChange);
 
                 segIndex++;
-                if(this.numSegsVisible < segIndex){
-                    this.area.segExistence[this.numSegsVisible] = true;
-                    this.numSegsVisible++;
-                }
-                if(segIndex >= NUM_SEGS){
+                this.numSegsVisible = segIndex;
+                if(segIndex >= this.minSegIndex+this.numSegs || segIndex >= this.sharedSegArr.length){
                     for(let i=0; i<moveIndex; i++){
                         this.moveQueue.shift();
                     }
@@ -102,28 +104,53 @@ export default class Snake extends AbstractEnemy{
 
     draw(){
         ctx.lineWidth = LINE_THICK;
-        for(let seg=0; seg<this.numSegsVisible; seg++){
-            const rad = this.area.segExistence[seg] ? SEG_RAD : DEAD_SEG_RAD;
-            if(!this.area.segExistence[seg]){
-                ctx.strokeStyle = this.dangerColor.getStr();
-            }else{
-                ctx.strokeStyle = (this.hitFlash[seg]>0)?'#fff':this.baseColor.getStr();
-            }
+        for(let i=0; i<this.numSegsVisible; i++){
+            const sharedIndex = this.minSegIndex+i;
+            ctx.strokeStyle = (this.sharedSegArr[sharedIndex].hitFlash > 0) ? '#fff' : this.baseColor.getStr();
             ctx.beginPath();
-            ctx.arc(this.area.segX[seg],this.area.segY[seg],rad,0,2*Math.PI);
+            ctx.arc(this.sharedSegArr[sharedIndex].x,this.sharedSegArr[sharedIndex].y,SEG_RAD,0,2*Math.PI);
             ctx.closePath();
             ctx.stroke();
         }
     }
 
     getDefenseProfile(segID){
-        return this.defenseProfiles[segID];
+        return this.sharedSegArr[segID].defenseProfile;
     }
 
     getHit(segID){
-        this.hitFlash[segID] = HIT_FLASH_TIME;
-        if(this.defenseProfiles[segID].expired){
-            this.area.segExistence[segID] = false;
+        const segEntry = this.sharedSegArr[segID];
+        segEntry.hitFlash = HIT_FLASH_TIME;
+        if(segEntry.defenseProfile.expired){
+            //
         }
+    }
+}
+
+// Derived class with a nice constructor presented publicly
+export default class Snake extends CrudeSnake{
+    static RAD = SEG_RAD;
+
+    constructor(x,y,angle){
+        const InitializationMove = {
+            centerX: x + TURN_RAD*Math.cos(angle + 0.5*Math.PI),
+            centerY: y + TURN_RAD*Math.sin(angle + 0.5*Math.PI),
+            dir: 1,
+            initArcAngle: angle - 0.5*Math.PI,
+            time: 0
+        };
+
+        const segArr = new Array(DEFAULT_NUM_SEGS).fill(null).map(()=>({
+            x:0, y:0, //dummies
+            hitFlash: 0,
+            defenseProfile: createDefenseProfile(SEG_MAX_HP)
+        }));
+
+        super(
+            DEFAULT_NUM_SEGS,
+            0,
+            [InitializationMove],
+            segArr
+        );
     }
 }
