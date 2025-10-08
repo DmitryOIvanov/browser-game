@@ -127,13 +127,14 @@ export class ShieldedCircleArea extends Area {
 
 export class SnakeArea extends Area {
     static ID = assignAreaID();
-    constructor(numSegs, minSegIndex, segRad, segArr){
+    constructor(numSegs, segRad){
         super(SnakeArea.ID, Area.TYPE_PARTITION);
 
         this.numSegs = numSegs;
-        this.minSegIndex = minSegIndex;
         this.segRad = segRad;
-        this.segArr = segArr;
+        this.arr = new Array(numSegs).fill(null).map(()=>({
+            x:0, y:0, exists:false
+        }));
     }
 }
 
