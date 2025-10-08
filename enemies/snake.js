@@ -79,16 +79,17 @@ export default class Snake extends AbstractEnemy {
         for(let segIndex=0; segIndex<this.numSegs; segIndex++){
             const entry = this.segArr[segIndex];
             if(entry.defenseProfile.expired){
-                head = null;
                 if(head){
                     for(let i=0; i<moveIndex; i++) head.moves.shift();
                 }
+                head = null;
                 continue;
             }
             if(!head){
                 head = entry;
                 head.timeOffset += dt;
                 while(head.timeOffset >= head.moves.at(-1).time){
+                    head.timeOffset -= head.moves.at(-1).time;
                     head.moves.push(this.getNextMove(head.moves.at(-1)));
                 }
                 timeOffset = head.timeOffset;
@@ -105,36 +106,13 @@ export default class Snake extends AbstractEnemy {
             const pos = getPositionInMove(head.moves[moveIndex], timeOffset);
             this.area.arr[segIndex].x = pos.x;
             this.area.arr[segIndex].y = pos.y;
+
+            entry.hitFlash -= dt;
+            if(entry.hitFlash < 0) entry.hitFlash = 0;
         }
         if(head){
             for(let i=0; i<moveIndex; i++) head.moves.shift();
         }
-
-        // let moveIndex = this.moveQueue.length;
-        // let segIndex = this.minSegIndex;
-        // let timeOffset = -this.turnCountdown;
-        // while(true){
-        //     if(timeOffset < 0){
-        //         moveIndex--;
-        //         if(moveIndex < 0) break;
-        //         timeOffset += this.moveQueue[moveIndex].time;
-        //     }else{
-        //         const move = this.moveQueue[moveIndex];
-        //         const angleChange = move.dir*TURN_SPEED*timeOffset;
-        //         this.sharedSegArr[segIndex].x = move.centerX + TURN_RAD*Math.cos(move.initArcAngle + angleChange);
-        //         this.sharedSegArr[segIndex].y = move.centerY + TURN_RAD*Math.sin(move.initArcAngle + angleChange);
-
-        //         segIndex++;
-        //         this.numSegsVisible = segIndex;
-        //         if(segIndex >= this.minSegIndex+this.numSegs || segIndex >= this.sharedSegArr.length){
-        //             for(let i=0; i<moveIndex; i++){
-        //                 this.moveQueue.shift();
-        //             }
-        //             break;
-        //         }
-        //         timeOffset -= SEG_TIME_DIFF;
-        //     }
-        // }
     }
 
     draw(){
@@ -161,31 +139,3 @@ export default class Snake extends AbstractEnemy {
         }
     }
 }
-
-// Derived class with a nice constructor presented publicly
-// export default class Snake extends CrudeSnake{
-//     static RAD = SEG_RAD;
-
-//     constructor(x,y,angle){
-//         const InitializationMove = {
-//             centerX: x + TURN_RAD*Math.cos(angle + 0.5*Math.PI),
-//             centerY: y + TURN_RAD*Math.sin(angle + 0.5*Math.PI),
-//             dir: 1,
-//             initArcAngle: angle - 0.5*Math.PI,
-//             time: 0
-//         };
-
-//         const segArr = new Array(DEFAULT_NUM_SEGS).fill(null).map(()=>({
-//             x:0, y:0, //dummies
-//             hitFlash: 0,
-//             defenseProfile: createDefenseProfile(SEG_MAX_HP)
-//         }));
-
-//         super(
-//             DEFAULT_NUM_SEGS,
-//             0,
-//             [InitializationMove],
-//             segArr
-//         );
-//     }
-// }
