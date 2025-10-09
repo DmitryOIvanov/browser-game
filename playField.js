@@ -134,6 +134,7 @@ const playField = {
                     if(enemy.retired) continue;
                     if(enemy.area.type == Area.TYPE_SINGLE){
                         if(proj.excludes[enemy.id]) continue;
+                        if(enemy.defenseProfile.expired) continue;
                         if(intersects(proj.colSamples[step], enemy.area)){
                             attackAndDefend(proj.attackProfile, enemy.defenseProfile);
                             enemy.getHit();
@@ -149,9 +150,13 @@ const playField = {
                                 if(proj.excludes[enemy.id]){
                                     if(proj.excludes[enemy.id][part]) continue;
                                 }
-                                attackAndDefend(proj.attackProfile, enemy.getDefenseProfile(part));
+                                const defenseProfile = enemy.getDefenseProfile(part);
+                                if(defenseProfile.expired) continue;
+                                attackAndDefend(proj.attackProfile, defenseProfile);
                                 enemy.getHit(part);
+                                if(enemy.retired) break;
                                 proj.getHit(step);
+                                if(proj.retired) break;
                                 if(!proj.excludes[enemy.id]) proj.excludes[enemy.id] = {};
                                 proj.excludes[enemy.id][part] = true;
                             }

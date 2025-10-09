@@ -204,7 +204,7 @@ export const enemySpawningInfo = {
         rad: Snake.RAD,
         spawn: (weight,x,y) => {
             const spawner = new BasicSpawnerParticle(x,y,1.5*Snake.RAD,10,"white",()=>{
-                const enemy = new Snake(x,y,randomAngle(),30);
+                const enemy = new Snake(x,y,randomAngle(),50);
                 enemy.setWeight(weight);
                 return playField.addEnemy(enemy, false);
             });

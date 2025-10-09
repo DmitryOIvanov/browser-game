@@ -1,5 +1,6 @@
 import { SnakeArea } from "../areas.js";
 import { createDefenseProfile } from "../attackAndDefense.js";
+import controls from "../controls.js";
 import { ctx } from "../drawing.js";
 import { normalizeAngle, normalizeAnglePMPI } from "../extraMath.js";
 import playField from "../playField.js";
@@ -7,10 +8,10 @@ import AbstractEnemy from "./abstractEnemy.js";
 
 const SEG_RAD = 15;
 const SEG_MAX_HP = 10;
-const TURN_BASE_TIME = 15;
-const TURN_TIME_VAR = 12;
+const TURN_BASE_TIME = 150;
+const TURN_TIME_VAR = 120;
 const TURN_RAD = 45;
-const TURN_SPEED = 0.07;
+const TURN_SPEED = 0.007;
 const SEG_TIME_DIFF = 10;
 
 const LINE_THICK = 6;
@@ -32,8 +33,9 @@ export default class Snake extends AbstractEnemy {
         super();
 
         this.numSegs = numSegs;
-        this.segArr = new Array(numSegs).fill(null).map((_,i)=>({
-            defenseProfile: createDefenseProfile(SEG_MAX_HP)
+        this.segArr = new Array(numSegs).fill(null).map(()=>({
+            defenseProfile: createDefenseProfile(SEG_MAX_HP),
+            hitFlash: 0
         }));
         this.segArr[0].moves = [
             {
@@ -46,6 +48,7 @@ export default class Snake extends AbstractEnemy {
         ];
         this.segArr[0].timeOffset = 0;
         this.area = new SnakeArea(numSegs, SEG_RAD);
+        this.numSegsAlive = numSegs;
     }
 
     getNextMove(lastMove){
@@ -71,6 +74,10 @@ export default class Snake extends AbstractEnemy {
     }
 
     timeStep(dt){
+        if(controls.pressed["KeyO"]){
+            console.log(this.segArr);
+        }
+
         super.timeStep(dt);
         
         let head = null;
@@ -133,9 +140,31 @@ export default class Snake extends AbstractEnemy {
     }
 
     getHit(segID){
+        if(this.retired) return;
         this.segArr[segID].hitFlash = HIT_FLASH_TIME;
         if(this.segArr[segID].defenseProfile.expired){
-            //
+            this.numSegsAlive--;
+            if(this.numSegsAlive <= 0){
+                this.retired = true;
+                return;
+            }
+            this.area.arr[segID].exists = false;
+            if(segID+1 < this.numSegs && !this.segArr[segID+1].defenseProfile.expired){
+                const entry = this.segArr[segID+1];
+                let headIndex = segID;
+                while(headIndex-1 >= 0 && !this.segArr[headIndex-1].defenseProfile.expired) headIndex--;
+                const head = this.segArr[headIndex];
+                let lastMoveIndex = head.moves.length-1;
+                let timeOffset = head.timeOffset - (segID+1 - headIndex)*SEG_TIME_DIFF;
+                while(timeOffset < 0 && lastMoveIndex > 0){
+                    timeOffset += head.moves[lastMoveIndex].time;
+                    lastMoveIndex--;
+                }
+                entry.moves = head.moves.slice(0,lastMoveIndex+1);
+                entry.moves[entry.moves.length-1] = structuredClone(entry.moves.at(-1));
+                entry.moves[entry.moves.length-1].time = timeOffset;
+                entry.timeOffset = timeOffset;
+            }
         }
     }
 }
