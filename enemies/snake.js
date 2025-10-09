@@ -6,12 +6,12 @@ import { normalizeAngle, normalizeAnglePMPI } from "../extraMath.js";
 import playField from "../playField.js";
 import AbstractEnemy from "./abstractEnemy.js";
 
-const SEG_RAD = 15;
+const SEG_RAD = 18;
 const SEG_MAX_HP = 10;
-const TURN_BASE_TIME = 150;
-const TURN_TIME_VAR = 120;
-const TURN_RAD = 45;
-const TURN_SPEED = 0.007;
+const TURN_BASE_TIME = 15;
+const TURN_TIME_VAR = 10;
+const TURN_RAD = 54;
+const TURN_SPEED = 0.07;
 const SEG_TIME_DIFF = 10;
 
 const LINE_THICK = 6;
@@ -28,6 +28,7 @@ function getPositionInMove(move, time){
 
 export default class Snake extends AbstractEnemy {
     static RAD = SEG_RAD;
+    static DEFAULT_NUM_SEGS = 30;
 
     constructor(x, y, angle, numSegs){
         super();
@@ -74,10 +75,6 @@ export default class Snake extends AbstractEnemy {
     }
 
     timeStep(dt){
-        if(controls.pressed["KeyO"]){
-            console.log(this.segArr);
-        }
-
         super.timeStep(dt);
         
         let head = null;
@@ -85,6 +82,8 @@ export default class Snake extends AbstractEnemy {
         let moveIndex = 0;
         for(let segIndex=0; segIndex<this.numSegs; segIndex++){
             const entry = this.segArr[segIndex];
+            if(entry.defenseProfile.hp > SEG_MAX_HP) console.log(`HEALING -> ${entry.defenseProfile.hp}`);
+
             if(entry.defenseProfile.expired){
                 if(head){
                     for(let i=0; i<moveIndex; i++) head.moves.shift();
@@ -157,8 +156,8 @@ export default class Snake extends AbstractEnemy {
                 let lastMoveIndex = head.moves.length-1;
                 let timeOffset = head.timeOffset - (segID+1 - headIndex)*SEG_TIME_DIFF;
                 while(timeOffset < 0 && lastMoveIndex > 0){
-                    timeOffset += head.moves[lastMoveIndex].time;
                     lastMoveIndex--;
+                    timeOffset += head.moves[lastMoveIndex].time;
                 }
                 entry.moves = head.moves.slice(0,lastMoveIndex+1);
                 entry.moves[entry.moves.length-1] = structuredClone(entry.moves.at(-1));
