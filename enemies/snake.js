@@ -1,8 +1,10 @@
 import { SnakeArea } from "../areas.js";
 import { createDefenseProfile } from "../attackAndDefense.js";
+import Color from "../color.js";
 import controls from "../controls.js";
 import { ctx } from "../drawing.js";
 import { normalizeAngle, normalizeAnglePMPI } from "../extraMath.js";
+import ExplodingRingParticle from "../particles/explodingRingParticle.js";
 import playField from "../playField.js";
 import AbstractEnemy from "./abstractEnemy.js";
 
@@ -13,6 +15,8 @@ const TURN_TIME_VAR = 10;
 const TURN_RAD = 54;
 const TURN_SPEED = 0.07;
 const SEG_TIME_DIFF = 10;
+const EYE_RAD = 7;
+const EYE_OFFSET = 8;
 
 const LINE_THICK = 6;
 const HIT_FLASH_TIME = 2;
@@ -36,7 +40,8 @@ export default class Snake extends AbstractEnemy {
         this.numSegs = numSegs;
         this.segArr = new Array(numSegs).fill(null).map(()=>({
             defenseProfile: createDefenseProfile(SEG_MAX_HP),
-            hitFlash: 0
+            hitFlash: 0,
+            tangentAngle: 0
         }));
         this.segArr[0].moves = [
             {
@@ -112,6 +117,7 @@ export default class Snake extends AbstractEnemy {
             const pos = getPositionInMove(head.moves[moveIndex], timeOffset);
             this.area.arr[segIndex].x = pos.x;
             this.area.arr[segIndex].y = pos.y;
+            entry.tangentAngle = pos.tangentAngle;
 
             entry.hitFlash -= dt;
             if(entry.hitFlash < 0) entry.hitFlash = 0;
@@ -123,14 +129,28 @@ export default class Snake extends AbstractEnemy {
 
     draw(){
         ctx.lineWidth = LINE_THICK;
+        let prevExists = false;
         for(let i=0; i<this.numSegs; i++){
-            if(this.area.arr[i].exists){
+            const exists = this.area.arr[i].exists;
+            if(exists){
+                const x = this.area.arr[i].x;
+                const y = this.area.arr[i].y;
                 ctx.strokeStyle = (this.segArr[i].hitFlash > 0) ? '#fff' : this.baseColor.getStr();
                 ctx.beginPath();
-                ctx.arc(this.area.arr[i].x,this.area.arr[i].y,SEG_RAD,0,2*Math.PI);
+                ctx.arc(x,y,SEG_RAD,0,2*Math.PI);
                 ctx.closePath();
                 ctx.stroke();
+
+                if(!prevExists && exists){
+                    const tangentAngle = this.segArr[i].tangentAngle;
+                    ctx.fillStyle = (this.segArr[i].hitFlash > 0) ? '#fff' : this.baseColor.getStr();
+                    ctx.beginPath();
+                    ctx.arc(x+EYE_OFFSET*Math.cos(tangentAngle),y+EYE_OFFSET*Math.sin(tangentAngle),EYE_RAD,0,2*Math.PI);
+                    ctx.closePath();
+                    ctx.fill();
+                }
             }
+            prevExists = exists;
         }
     }
 
@@ -142,12 +162,14 @@ export default class Snake extends AbstractEnemy {
         if(this.retired) return;
         this.segArr[segID].hitFlash = HIT_FLASH_TIME;
         if(this.segArr[segID].defenseProfile.expired){
+            playField.addParticle(new ExplodingRingParticle(this.area.arr[segID].x, this.area.arr[segID].y, 24, 36, 6, Color.WHITE));
             this.numSegsAlive--;
             if(this.numSegsAlive <= 0){
                 this.retired = true;
                 return;
             }
             this.area.arr[segID].exists = false;
+
             if(segID+1 < this.numSegs && !this.segArr[segID+1].defenseProfile.expired){
                 const entry = this.segArr[segID+1];
                 let headIndex = segID;
