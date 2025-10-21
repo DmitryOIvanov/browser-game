@@ -58,13 +58,13 @@ export default class Snake extends AbstractEnemy {
 		this.area = new SnakeArea(numSegs, SEG_RAD);
 		this.numSegsAlive = numSegs;
 
-		console.log(this.getNextMove({
-			dir: 1,
-			initArcAngle: 0.5 * Math.PI,
-			centerX: 100,
-			centerY: 70,
-			time: 0
-		}));
+		// console.log(this.getNextMove({
+		// 	dir: 1,
+		// 	initArcAngle: 0.5 * Math.PI,
+		// 	centerX: 100,
+		// 	centerY: 70,
+		// 	time: 0
+		// }));
 	}
 
 	getNextMoveTemplateForDirection(lastMove, direction) {
@@ -75,23 +75,8 @@ export default class Snake extends AbstractEnemy {
 			initArcAngle: normalizeAngle(lastMoveEndArcAngle + correctionCoeff * Math.PI),
 			centerX: lastMove.centerX + correctionCoeff * 2 * TURN_RAD * Math.cos(lastMoveEndArcAngle),
 			centerY: lastMove.centerY + correctionCoeff * 2 * TURN_RAD * Math.sin(lastMoveEndArcAngle),
-			time: 0
+			time: TURN_BASE_TIME + TURN_TIME_VAR * Math.random()
 		}
-		return move;
-	}
-
-	getNextMove(lastMove) {
-		const lastMoveEndArcAngle = lastMove.initArcAngle + lastMove.dir * TURN_SPEED * lastMove.time;
-		const lastX = lastMove.centerX + TURN_RAD * Math.cos(lastMoveEndArcAngle);
-		const lastY = lastMove.centerY + TURN_RAD * Math.sin(lastMoveEndArcAngle);
-		const lastAngle = lastMoveEndArcAngle + lastMove.dir * 0.5 * Math.PI;
-
-		const dx = playField.player.x - lastX;
-		const dy = playField.player.y - lastY;
-		const newDir = normalizeAnglePMPI(Math.atan2(dy, dx) - lastAngle) >= 0 ? 1 : -1;
-
-		let move = this.getNextMoveTemplateForDirection(lastMove, newDir);
-		move.time = TURN_BASE_TIME + TURN_TIME_VAR * Math.random();
 		console.log("analyzing:");
 		console.log(move);
 		for (let i = 0; i < 4; i++) {
@@ -105,7 +90,8 @@ export default class Snake extends AbstractEnemy {
 			if (wallDistance >= TURN_RAD) continue;
 			console.log(`danger distance ${wallDistance} to ${i}`);
 			let curAngle = normalizeAngle(move.initArcAngle - i * 0.5 * Math.PI);
-			if (lastMove.dir == 1) curAngle = 2 * Math.PI - curAngle;
+			console.log(`curAngle unadjusted ${curAngle}`);
+			if (move.dir == 1) curAngle = 2 * Math.PI - curAngle;
 			console.log(`curAngle ${curAngle}`);
 			let okayRange = curAngle - 0.5 * Math.PI - Math.asin(0.5 * (1 - wallDistance / TURN_RAD));
 			console.log(`okay angular ${okayRange}`);
@@ -116,14 +102,33 @@ export default class Snake extends AbstractEnemy {
 				//console.log(`Danger ${i}`);
 			}
 		}
-		if (move.time < 0.01) {
-			console.log("move discarded");
-			move = this.getNextMoveTemplateForDirection(lastMove, -newDir);
-			move.time = TURN_BASE_TIME + TURN_TIME_VAR * Math.random();
-		}
 		console.log('result:');
 		console.log(move);
 		return move;
+	}
+
+	getNextMove(lastMove) {
+		const lastMoveEndArcAngle = lastMove.initArcAngle + lastMove.dir * TURN_SPEED * lastMove.time;
+		const lastX = lastMove.centerX + TURN_RAD * Math.cos(lastMoveEndArcAngle);
+		const lastY = lastMove.centerY + TURN_RAD * Math.sin(lastMoveEndArcAngle);
+		const lastAngle = lastMoveEndArcAngle + lastMove.dir * 0.5 * Math.PI;
+
+		const dx = playField.player.x - lastX;
+		const dy = playField.player.y - lastY;
+		const preferredDir = normalizeAnglePMPI(Math.atan2(dy, dx) - lastAngle) >= 0 ? 1 : -1;
+
+		const preferredMove = this.getNextMoveTemplateForDirection(lastMove, preferredDir);
+		if (preferredMove.time >= 0.01) {
+			return preferredMove;
+		}
+		console.log("preferred move discarded");
+		const backupMove = this.getNextMoveTemplateForDirection(lastMove, -preferredDir);
+		if (backupMove.time >= 0.01) {
+			return backupMove;
+		}
+		console.log("backup move discarded");
+		preferredMove.time = TURN_BASE_TIME + TURN_TIME_VAR * Math.random();
+		return preferredMove;
 		//const dx = playField.player.x - lastX;
 		//const dy = playField.player.y - lastY;
 		//const newDir = normalizeAnglePMPI(Math.atan2(dy, dx) - lastAngle) >= 0 ? 1 : -1;
