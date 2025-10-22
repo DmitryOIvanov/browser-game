@@ -17,11 +17,11 @@ const TURN_SPEED = 0.07;
 const SEG_TIME_DIFF = 10;
 const EYE_RAD = 7;
 const EYE_OFFSET = 8;
+const BACKUP_STEP = 0.01;
+const MOVE_CHOICE_TOLERANCE = 0.001;
 
 const LINE_THICK = 6;
 const HIT_FLASH_TIME = 2;
-
-const DIRECTION_TOWARDS_PLAYER = 0;
 
 const movePositionCache = {};
 function getPositionInMove(move, time) {
@@ -57,14 +57,10 @@ export default class Snake extends AbstractEnemy {
 		this.segArr[0].timeOffset = 0;
 		this.area = new SnakeArea(numSegs, SEG_RAD);
 		this.numSegsAlive = numSegs;
+	}
 
-		// console.log(this.getNextMove({
-		// 	dir: 1,
-		// 	initArcAngle: 0.5 * Math.PI,
-		// 	centerX: 100,
-		// 	centerY: 70,
-		// 	time: 0
-		// }));
+	getRandomMoveTime() {
+		return TURN_BASE_TIME + TURN_TIME_VAR * Math.random();
 	}
 
 	getNextMoveTemplateForDirection(lastMove, direction) {
@@ -75,7 +71,8 @@ export default class Snake extends AbstractEnemy {
 			initArcAngle: normalizeAngle(lastMoveEndArcAngle + correctionCoeff * Math.PI),
 			centerX: lastMove.centerX + correctionCoeff * 2 * TURN_RAD * Math.cos(lastMoveEndArcAngle),
 			centerY: lastMove.centerY + correctionCoeff * 2 * TURN_RAD * Math.sin(lastMoveEndArcAngle),
-			time: TURN_BASE_TIME + TURN_TIME_VAR * Math.random()
+			time: this.getRandomMoveTime(),
+			leastWallDistance: TURN_RAD + 1 // Functinoality +Inf
 		}
 		console.log("analyzing:");
 		console.log(move);
@@ -87,6 +84,7 @@ export default class Snake extends AbstractEnemy {
 				case 2: wallDistance = move.centerX - SEG_RAD; break;
 				case 3: wallDistance = move.centerY - SEG_RAD; break;
 			}
+			if (move.leastWallDistance > wallDistance) move.leastWallDistance = wallDistance;
 			if (wallDistance >= TURN_RAD) continue;
 			console.log(`danger distance ${wallDistance} to ${i}`);
 			let curAngle = normalizeAngle(move.initArcAngle - i * 0.5 * Math.PI);
@@ -97,10 +95,7 @@ export default class Snake extends AbstractEnemy {
 			console.log(`okay angular ${okayRange}`);
 			okayRange /= TURN_SPEED;
 			console.log(`okay time ${okayRange}`);
-			if (move.time > okayRange) {
-				move.time = okayRange;
-				//console.log(`Danger ${i}`);
-			}
+			if (move.time > okayRange) move.time = okayRange;
 		}
 		console.log('result:');
 		console.log(move);
@@ -118,29 +113,22 @@ export default class Snake extends AbstractEnemy {
 		const preferredDir = normalizeAnglePMPI(Math.atan2(dy, dx) - lastAngle) >= 0 ? 1 : -1;
 
 		const preferredMove = this.getNextMoveTemplateForDirection(lastMove, preferredDir);
-		if (preferredMove.time >= 0.01) {
+		if (preferredMove.time >= MOVE_CHOICE_TOLERANCE) {
 			return preferredMove;
 		}
 		console.log("preferred move discarded");
 		const backupMove = this.getNextMoveTemplateForDirection(lastMove, -preferredDir);
-		if (backupMove.time >= 0.01) {
+		if (backupMove.time >= MOVE_CHOICE_TOLERANCE) {
 			return backupMove;
 		}
 		console.log("backup move discarded");
-		preferredMove.time = TURN_BASE_TIME + TURN_TIME_VAR * Math.random();
-		return preferredMove;
-		//const dx = playField.player.x - lastX;
-		//const dy = playField.player.y - lastY;
-		//const newDir = normalizeAnglePMPI(Math.atan2(dy, dx) - lastAngle) >= 0 ? 1 : -1;
-		// const initArcAngle = normalizeAngle(lastAngle - newDir * Math.PI * 0.5);
-		// const move = {
-		// 	dir: newDir,
-		// 	initArcAngle: initArcAngle,
-		// 	centerX: lastX - TURN_RAD * Math.cos(initArcAngle),
-		// 	centerY: lastY - TURN_RAD * Math.sin(initArcAngle),
-		// 	time: moveTime
-		// }
-		// return move;
+		if (preferredMove.leastWallDistance >= backupMove.leastWallDistance) {
+			preferredMove.time = this.getRandomMoveTime();
+			return preferredMove;
+		} else {
+			backupMove.time = this.getRandomMoveTime();
+			return backupMove;
+		}
 	}
 
 	timeStep(dt) {
