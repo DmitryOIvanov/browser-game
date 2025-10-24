@@ -17,7 +17,7 @@ const TURN_SPEED = 0.07;
 const SEG_TIME_DIFF = 10;
 const EYE_RAD = 7;
 const EYE_OFFSET = 8;
-const BACKUP_STEP = 0.01;
+const BACKUP_STEP = 2;
 const MOVE_CHOICE_TOLERANCE = 0.001;
 
 const LINE_THICK = 6;
@@ -66,26 +66,28 @@ export default class Snake extends AbstractEnemy {
 	getNextMoveTemplateForDirection(lastMove, direction) {
 		const lastMoveEndArcAngle = lastMove.initArcAngle + lastMove.dir * TURN_SPEED * lastMove.time;
 		const correctionCoeff = lastMove.dir == direction ? 0 : 1;
+		const baseMoveTime = this.getRandomMoveTime();
 		const move = {
 			dir: direction,
 			initArcAngle: normalizeAngle(lastMoveEndArcAngle + correctionCoeff * Math.PI),
 			centerX: lastMove.centerX + correctionCoeff * 2 * TURN_RAD * Math.cos(lastMoveEndArcAngle),
 			centerY: lastMove.centerY + correctionCoeff * 2 * TURN_RAD * Math.sin(lastMoveEndArcAngle),
-			time: this.getRandomMoveTime(),
-			leastWallDistance: TURN_RAD + 1 // Functinoality +Inf
+			time: baseMoveTime
 		}
 		console.log("analyzing:");
 		console.log(move);
+		let pathCollides = false;
 		for (let i = 0; i < 4; i++) {
 			let wallDistance = 0;
 			switch (i) {
-				case 0: wallDistance = playField.x - move.centerX - SEG_RAD; break;
-				case 1: wallDistance = playField.y - move.centerY - SEG_RAD; break;
-				case 2: wallDistance = move.centerX - SEG_RAD; break;
-				case 3: wallDistance = move.centerY - SEG_RAD; break;
+				case 0: wallDistance = playField.x - move.centerX; break;
+				case 1: wallDistance = playField.y - move.centerY; break;
+				case 2: wallDistance = move.centerX; break;
+				case 3: wallDistance = move.centerY; break;
 			}
-			if (move.leastWallDistance > wallDistance) move.leastWallDistance = wallDistance;
-			if (wallDistance >= TURN_RAD) continue;
+			wallDistance -= SEG_RAD;
+			if (wallDistance >= 3 * TURN_RAD - MOVE_CHOICE_TOLERANCE) continue;
+			if (wallDistance < TURN_RAD - MOVE_CHOICE_TOLERANCE) pathCollides = true;
 			console.log(`danger distance ${wallDistance} to ${i}`);
 			let curAngle = normalizeAngle(move.initArcAngle - i * 0.5 * Math.PI);
 			console.log(`curAngle unadjusted ${curAngle}`);
@@ -97,6 +99,7 @@ export default class Snake extends AbstractEnemy {
 			console.log(`okay time ${okayRange}`);
 			if (move.time > okayRange) move.time = okayRange;
 		}
+		if (!pathCollides) move.time = baseMoveTime;
 		console.log('result:');
 		console.log(move);
 		return move;
@@ -122,11 +125,11 @@ export default class Snake extends AbstractEnemy {
 			return backupMove;
 		}
 		console.log("backup move discarded");
-		if (preferredMove.leastWallDistance >= backupMove.leastWallDistance) {
-			preferredMove.time = this.getRandomMoveTime();
+		if (preferredMove.time >= backupMove.time) {
+			preferredMove.time = BACKUP_STEP;
 			return preferredMove;
 		} else {
-			backupMove.time = this.getRandomMoveTime();
+			backupMove.time = BACKUP_STEP;
 			return backupMove;
 		}
 	}
