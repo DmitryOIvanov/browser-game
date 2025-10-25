@@ -74,8 +74,8 @@ export default class Snake extends AbstractEnemy {
 			centerY: lastMove.centerY + correctionCoeff * 2 * TURN_RAD * Math.sin(lastMoveEndArcAngle),
 			time: baseMoveTime
 		}
-		console.log("analyzing:");
-		console.log(move);
+		// console.log("analyzing:");
+		// console.log(move);
 		let pathCollides = false;
 		for (let i = 0; i < 4; i++) {
 			let wallDistance = 0;
@@ -88,20 +88,20 @@ export default class Snake extends AbstractEnemy {
 			wallDistance -= SEG_RAD;
 			if (wallDistance >= 3 * TURN_RAD - MOVE_CHOICE_TOLERANCE) continue;
 			if (wallDistance < TURN_RAD - MOVE_CHOICE_TOLERANCE) pathCollides = true;
-			console.log(`danger distance ${wallDistance} to ${i}`);
+			// console.log(`danger distance ${wallDistance} to ${i}`);
 			let curAngle = normalizeAngle(move.initArcAngle - i * 0.5 * Math.PI);
-			console.log(`curAngle unadjusted ${curAngle}`);
+			// console.log(`curAngle unadjusted ${curAngle}`);
 			if (move.dir == 1) curAngle = 2 * Math.PI - curAngle;
-			console.log(`curAngle ${curAngle}`);
+			// console.log(`curAngle ${curAngle}`);
 			let okayRange = curAngle - 0.5 * Math.PI - Math.asin(0.5 * (1 - wallDistance / TURN_RAD));
-			console.log(`okay angular ${okayRange}`);
+			// console.log(`okay angular ${okayRange}`);
 			okayRange /= TURN_SPEED;
-			console.log(`okay time ${okayRange}`);
+			// console.log(`okay time ${okayRange}`);
 			if (move.time > okayRange) move.time = okayRange;
 		}
 		if (!pathCollides) move.time = baseMoveTime;
-		console.log('result:');
-		console.log(move);
+		// console.log('result:');
+		// console.log(move);
 		return move;
 	}
 
@@ -119,12 +119,12 @@ export default class Snake extends AbstractEnemy {
 		if (preferredMove.time >= MOVE_CHOICE_TOLERANCE) {
 			return preferredMove;
 		}
-		console.log("preferred move discarded");
+		// console.log("preferred move discarded");
 		const backupMove = this.getNextMoveTemplateForDirection(lastMove, -preferredDir);
 		if (backupMove.time >= MOVE_CHOICE_TOLERANCE) {
 			return backupMove;
 		}
-		console.log("backup move discarded");
+		// console.log("backup move discarded");
 		if (preferredMove.time >= backupMove.time) {
 			preferredMove.time = BACKUP_STEP;
 			return preferredMove;
