@@ -45,15 +45,14 @@ export default class Snake extends AbstractEnemy {
 			hitFlash: 0,
 			tangentAngle: 0
 		}));
-		this.segArr[0].moves = [
-			{
-				centerX: x + TURN_RAD * Math.cos(angle + 0.5 * Math.PI),
-				centerY: y + TURN_RAD * Math.sin(angle + 0.5 * Math.PI),
-				dir: 1,
-				initArcAngle: angle - 0.5 * Math.PI,
-				time: 0
-			}
-		];
+		this.dummyFirstMove = {
+			centerX: x + TURN_RAD * Math.cos(angle + 0.5 * Math.PI),
+			centerY: y + TURN_RAD * Math.sin(angle + 0.5 * Math.PI),
+			dir: 1,
+			initArcAngle: angle - 0.5 * Math.PI,
+			time: 0
+		}
+		this.segArr[0].moves = [this.dummyFirstMove];
 		this.segArr[0].timeOffset = 0;
 		this.area = new SnakeArea(numSegs, SEG_RAD);
 		this.numSegsAlive = numSegs;
@@ -64,6 +63,8 @@ export default class Snake extends AbstractEnemy {
 	}
 
 	getNextMoveTemplateForDirection(lastMove, direction) {
+		if (!lastMove) lastMove = this.dummyFirstMove;
+
 		const lastMoveEndArcAngle = lastMove.initArcAngle + lastMove.dir * TURN_SPEED * lastMove.time;
 		const correctionCoeff = lastMove.dir == direction ? 0 : 1;
 		const baseMoveTime = this.getRandomMoveTime();
@@ -238,7 +239,7 @@ export default class Snake extends AbstractEnemy {
 				}
 				entry.moves = head.moves.slice(0, lastMoveIndex + 1);
 				entry.moves[entry.moves.length - 1] = structuredClone(entry.moves.at(-1));
-				entry.moves[entry.moves.length - 1].time = timeOffset;
+				entry.moves[entry.moves.length - 1].time = Math.max(timeOffset, 0);
 				entry.timeOffset = timeOffset;
 			}
 		}
