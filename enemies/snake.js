@@ -33,7 +33,11 @@ function getPositionInMove(move, time) {
 }
 
 export default class Snake extends AbstractEnemy {
-	static RAD = SEG_RAD;
+	static SPAWN_RAD = SEG_RAD + TURN_RAD;
+	static LINEAR_SPEED = TURN_RAD * TURN_SPEED;
+	static SEG_TIME_DIFF = SEG_TIME_DIFF;
+	static SEG_RAD = SEG_RAD;
+	static LINE_THICK = LINE_THICK;
 	static DEFAULT_NUM_SEGS = 30;
 
 	constructor(x, y, angle, numSegs) {
@@ -45,14 +49,14 @@ export default class Snake extends AbstractEnemy {
 			hitFlash: 0,
 			tangentAngle: 0
 		}));
-		this.dummyFirstMove = {
+		const dummyFirstMove = {
 			centerX: x + TURN_RAD * Math.cos(angle + 0.5 * Math.PI),
 			centerY: y + TURN_RAD * Math.sin(angle + 0.5 * Math.PI),
 			dir: 1,
 			initArcAngle: angle - 0.5 * Math.PI,
 			time: 0
 		}
-		this.segArr[0].moves = [this.dummyFirstMove];
+		this.segArr[0].moves = [dummyFirstMove];
 		this.segArr[0].timeOffset = 0;
 		this.area = new SnakeArea(numSegs, SEG_RAD);
 		this.numSegsAlive = numSegs;
@@ -63,8 +67,6 @@ export default class Snake extends AbstractEnemy {
 	}
 
 	getNextMoveTemplateForDirection(lastMove, direction) {
-		if (!lastMove) lastMove = this.dummyFirstMove;
-
 		const lastMoveEndArcAngle = lastMove.initArcAngle + lastMove.dir * TURN_SPEED * lastMove.time;
 		const correctionCoeff = lastMove.dir == direction ? 0 : 1;
 		const baseMoveTime = this.getRandomMoveTime();
