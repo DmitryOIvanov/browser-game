@@ -33,7 +33,7 @@ function getPositionInMove(move, time) {
 }
 
 export default class Snake extends AbstractEnemy {
-	static SPAWN_RAD = SEG_RAD + TURN_RAD;
+	static SPAWN_RAD = SEG_RAD + 2 * TURN_RAD + 0.1;
 	static LINEAR_SPEED = TURN_RAD * TURN_SPEED;
 	static SEG_TIME_DIFF = SEG_TIME_DIFF;
 	static SEG_RAD = SEG_RAD;
