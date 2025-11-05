@@ -39,6 +39,8 @@ export default class Snake extends AbstractEnemy {
 	static SEG_RAD = SEG_RAD;
 	static LINE_THICK = LINE_THICK;
 	static DEFAULT_NUM_SEGS = 30;
+	static EYE_RAD = EYE_RAD;
+	static EYE_OFFSET = EYE_OFFSET;
 
 	constructor(x, y, angle, numSegs) {
 		super();
@@ -135,6 +137,14 @@ export default class Snake extends AbstractEnemy {
 			backupMove.time = BACKUP_STEP;
 			return backupMove;
 		}
+	}
+
+	segIsHead(segID) {
+		if (this.area.arr[segID].exists) {
+			if (segID == 0) return true;
+			return !this.area.arr[segID - 1].exists;
+		}
+		return false;
 	}
 
 	timeStep(dt) {
