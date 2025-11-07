@@ -19,6 +19,7 @@ import Lurcher from "./enemies/lurcher.js";
 import Snake from "./enemies/snake.js";
 import { randomAngle } from "./extraMath.js";
 import SnakeSpawnerParticle from "./particles/snakeSpawnerParticle.js";
+import RingShooter from "./enemies/ringShooter.js";
 
 export const enemySpawningInfo = {
 	"SmallSquare": {
@@ -206,6 +207,18 @@ export const enemySpawningInfo = {
 		spawn: (weight, x, y) => {
 			const spawner = new SnakeSpawnerParticle(x, y, randomAngle(), Snake.DEFAULT_NUM_SEGS, weight);
 			playField.addBackgroundParticle(spawner);
+			return spawner.getEnemyRef();
+		}
+	},
+	"RingShooter": {
+		rad: RingShooter.RAD,
+		spawn: (weight, x, y) => {
+			const spawner = new BasicSpawnerParticle(x, y, 1.5 * RingShooter.RAD, 10, "white", () => {
+				const enemy = new RingShooter(x, y);
+				enemy.setWeight(weight);
+				return playField.addEnemy(enemy, false);
+			});
+			playField.addParticle(spawner);
 			return spawner.getEnemyRef();
 		}
 	},

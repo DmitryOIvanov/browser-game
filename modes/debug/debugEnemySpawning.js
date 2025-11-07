@@ -72,9 +72,14 @@ const specificSpawnInfo = [
 		cooldown: 60
 	}, {
 		name: "Snake",
-		probWeight: 300000,
-		cooldown: 60000
+		probWeight: 30,
+		cooldown: 600
+	}, {
+		name: "RingShooter",
+		probWeight: 10000000,
+		cooldown: 100000
 	}
+
 ];
 
 const WEIGHT_SUM = specificSpawnInfo.reduce((curSum, nextEntry) => (curSum + nextEntry.probWeight), 0);
