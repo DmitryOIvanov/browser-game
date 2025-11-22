@@ -108,22 +108,31 @@ export class RayArea extends Area {
 	}
 }
 
-export class IdenticalCircleCollection extends Area {
+export class IdenticalCircleCollectionArea extends Area {
 	static ID = assignAreaID();
-	constructor(numMembers, radius) {
-		super(IdenticalCircleCollection.ID, Area.TYPE_SINGLE);
+	constructor(numMembers, memberRadius, defaultExistence) {
+		super(IdenticalCircleCollectionArea.ID, Area.TYPE_SINGLE);
 		this.numMembers = numMembers;
-		this.radius = radius;
-		this.x = new Array(numMembers);
-		this.y = new Array(numMembers);
+		this.memberRadius = memberRadius;
+		this.members = new Array(numMembers).fill(null).map(() => ({
+			x: 0,
+			y: 0,
+			exists: defaultExistence
+		}));
 		this.bound = null;
 	}
 }
 
-export class RingOfCircles extends Area {
+export class RingOfCirclesArea extends Area {
 	static ID = assignAreaID();
 	constructor(numMembers, ringRadius, memberRadius, angle) {
-		super(RingOfCircles.ID, Area.TYPE_SINGLE);
+		super(RingOfCirclesArea.ID, Area.TYPE_SINGLE);
+		this.numMembers = numMembers;
+		this.ringRadius = ringRadius;
+		this.memberRadius = memberRadius;
+		this.angle = angle;
+	}
+	update(numMembers, ringRadius, memberRadius, angle) {
 		this.numMembers = numMembers;
 		this.ringRadius = ringRadius;
 		this.memberRadius = memberRadius;

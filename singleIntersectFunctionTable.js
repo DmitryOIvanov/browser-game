@@ -125,12 +125,15 @@ singleIntersectFunctionTable[areas.CircleArea.ID][areas.IdenticalCircleCollectio
 			return false;
 		}
 	}
-	const r = collection.radius + otherCircle.r;
+	const r = collection.memberRadius + otherCircle.r;
 	for (let i = 0; i < collection.numMembers; i++) {
-		const dx = collection.x[i] - otherCircle.x;
-		const dy = collection.y[i] - otherCircle.y;
-		if (dx * dx + dy * dy <= r * r) {
-			return true;
+		const member = collection.members[i];
+		if (member.exists) {
+			const dx = member.x - otherCircle.x;
+			const dy = member.y - otherCircle.y;
+			if (dx * dx + dy * dy <= r * r) {
+				return true;
+			}
 		}
 	}
 	return false;

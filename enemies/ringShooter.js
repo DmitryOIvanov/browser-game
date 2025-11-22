@@ -2,7 +2,7 @@ import { RegularPolygonArea } from "../areas.js";
 import { createDefenseProfile } from "../attackAndDefense.js";
 import Color from "../color.js";
 import { ctx } from "../drawing.js";
-import { bounceBoundify, normalizedAtan2, randomAngle } from "../extraMath.js";
+import { bounceBoundify, getAngleToPlayer, normalizedAtan2, randomAngle } from "../extraMath.js";
 import ExplodingRingParticle from "../particles/explodingRingParticle.js";
 import playField from "../playField.js";
 import BallEProj from "../projectiles/enemy/ballEProj.js";
@@ -18,16 +18,16 @@ const ROT_SPEED = 0.03;
 
 const BULLET_RAD = 6;
 const BULLET_LINE_THICK = 6;
-const NUM_BULLETS = 10;
+const NUM_BULLETS = 15;
 const BULLET_SKIP = 3;
-const BULLET_CREATE_TIME = 10;
+const BULLET_CREATE_TIME = 60 / 15;
 const RING_ROT_SPEED = 0.02;
 
 const STATE_IDLE = 0;
 const STATE_BUILD = 1;
 const STATE_SHOOT = 2;
-const STATE_BASE_TIMES = [60, 60, 30];
-const STATE_TIME_VARS = [0, 0, 0];
+const STATE_BASE_TIMES = [60, -1, 30];
+const STATE_TIME_VARS = [0, -1, 0];
 
 const LINE_THICK = 6;
 const MAX_HP = 20;
@@ -48,10 +48,16 @@ export default class RingShooter extends AbstractEnemy {
 		this.area = new RegularPolygonArea(x, y, BODY_RAD, this.bodyRot, NUM_SIDES);
 		this.defenseProfile = createDefenseProfile(MAX_HP);
 		this.state = STATE_IDLE;
+		this.updateStateDuration();
 		this.stateProgress = 0;
-		this.stateDuration = 0;
+		this.startAngle = 0;
+		this.bulletsSpawned = 0;
 
 		this.bulletProgress = new Array(NUM_BULLETS).fill(-1);
+	}
+
+	updateStateDuration() {
+		this.stateDuration = STATE_BASE_TIMES[this.state] + Math.random() * STATE_TIME_VARS[this.state];
 	}
 
 	timeStep(dt) {
@@ -67,11 +73,34 @@ export default class RingShooter extends AbstractEnemy {
 				if (this.stateProgress >= this.stateDuration) {
 					this.stateProgress -= this.stateDuration;
 					this.state = STATE_BUILD;
-					this.stateDuration = getStateDuration(this.state);
+					this.updateStateDuration();
+					this.startAngle = getAngleToPlayer(this.x, this.y);
+					this.bulletsSpawned = 0;
 					continue;
 				}
 			} else if (this.state == STATE_BUILD) {
-
+				for (let i = 0; i < this.bulletsSpawned; i++) {
+					this.bulletProgress[(BULLET_SKIP * i) % NUM_BULLETS] += dt;
+				}
+				while (true) {
+					if (this.bulletsSpawned == NUM_BULLETS) break;
+					const bulletNetTime = this.stateProgress - this.bulletsSpawned * BULLET_CREATE_TIME;
+					if (bulletNetTime < 0) break;
+					this.bulletProgress[(BULLET_SKIP * this.bulletsSpawned) % NUM_BULLETS] = bulletNetTime;
+					this.bulletsSpawned++;
+				}
+				let allSpawned = (this.bulletsSpawned == NUM_BULLETS);
+				for (let i = 0; i < this.bulletsSpawned; i++) {
+					const index = (BULLET_SKIP * i) % NUM_BULLETS;
+					if (this.bulletProgress[index] >= BULLET_CREATE_TIME) {
+						this.bulletProgress[index] = BULLET_CREATE_TIME;
+					} else {
+						allSpawned = false;
+					}
+				}
+				if (allSpawned) {
+					this.state = STATE_SHOOT;
+				}
 			} else if (this.state == STATE_SHOOT) {
 			}
 			break;
@@ -104,14 +133,26 @@ export default class RingShooter extends AbstractEnemy {
 		ctx.closePath();
 		ctx.stroke();
 
+		let pupilX = this.x;
+		let pupilY = this.y;
+		if (this.state == STATE_IDLE) {
+			const playerAngle = getAngleToPlayer(this.x, this.y);
+			pupilX += PUPIL_MAX_OFFSET * Math.cos(playerAngle);
+			pupilY += PUPIL_MAX_OFFSET * Math.sin(playerAngle);
+		} else if (this.state == STATE_BUILD) {
+			const angle = this.startAngle + this.rotDir * this.stateProgress * 2 * Math.PI * BULLET_SKIP / NUM_BULLETS / BULLET_CREATE_TIME;
+			pupilX += PUPIL_MAX_OFFSET * Math.cos(angle);
+			pupilY += PUPIL_MAX_OFFSET * Math.sin(angle);
+		}
 		ctx.fillStyle = ctx.strokeStyle;
-		const playerAngle = Math.atan2(playField.player.y - this.y, playField.player.x - this.x);
-		const pupilX = this.x + PUPIL_MAX_OFFSET * Math.cos(playerAngle);
-		const pupilY = this.y + PUPIL_MAX_OFFSET * Math.sin(playerAngle);
 		ctx.beginPath();
 		ctx.arc(pupilX, pupilY, PUPIL_RAD, 0, 2 * Math.PI);
 		ctx.closePath();
 		ctx.fill();
+
+		if (this.state == STATE_BUILD) {
+
+		}
 	}
 
 	getHit() {

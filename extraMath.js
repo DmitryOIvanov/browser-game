@@ -80,7 +80,7 @@ export function timeStepBouncyMovement(mvmt, r, amount) {
 
 export function getAngleToPlayer(x, y) {
 	return normalizedAtan2(
-		playField.player.x - x,
-		playField.player.y - y
+		playField.player.y - y,
+		playField.player.x - x
 	);
 }
