@@ -121,18 +121,19 @@ export class IdenticalCircleCollectionArea extends Area {
 		}));
 		this.bound = null;
 	}
+	setExistenceForAll(value) {
+		for (let i = 0; i < this.numMembers; i++) {
+			this.members[i].exists = value;
+		}
+	}
 }
 
 export class RingOfCirclesArea extends Area {
 	static ID = assignAreaID();
-	constructor(numMembers, ringRadius, memberRadius, angle) {
+	constructor(x, y, numMembers, ringRadius, memberRadius, angle) {
 		super(RingOfCirclesArea.ID, Area.TYPE_SINGLE);
-		this.numMembers = numMembers;
-		this.ringRadius = ringRadius;
-		this.memberRadius = memberRadius;
-		this.angle = angle;
-	}
-	update(numMembers, ringRadius, memberRadius, angle) {
+		this.x = x;
+		this.y = y;
 		this.numMembers = numMembers;
 		this.ringRadius = ringRadius;
 		this.memberRadius = memberRadius;

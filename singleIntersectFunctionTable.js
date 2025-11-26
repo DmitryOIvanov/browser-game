@@ -119,7 +119,7 @@ singleIntersectFunctionTable[areas.CircleArea.ID][areas.RayArea.ID] = function(c
 	return targetDX * targetDX + targetDY * targetDY <= (c.r + r.thick) * (c.r + r.thick);
 };
 
-singleIntersectFunctionTable[areas.CircleArea.ID][areas.IdenticalCircleCollection.ID] = function(otherCircle, collection) {
+singleIntersectFunctionTable[areas.CircleArea.ID][areas.IdenticalCircleCollectionArea.ID] = function(otherCircle, collection) {
 	if (collection.bound) {
 		if (!intersects(collection.bound, otherCircle)) {
 			return false;
@@ -139,23 +139,25 @@ singleIntersectFunctionTable[areas.CircleArea.ID][areas.IdenticalCircleCollectio
 	return false;
 }
 
-singleIntersectFunctionTable[areas.CircleArea.ID][areas.RingOfCircles.ID] = function(circle, ring) {
+singleIntersectFunctionTable[areas.CircleArea.ID][areas.RingOfCirclesArea.ID] = function(circle, ring) {
 	const centerDx = circle.x - ring.x;
 	const centerDy = circle.y - ring.y;
 	const centerDistSqr = centerDx * centerDx + centerDy * centerDy;
-	const outerRad = ring.radius + circle.r;
+	const collisionRadius = ring.memberRadius + circle.r;
+	const outerRad = ring.ringRadius + collisionRadius;
 	if (centerDistSqr > outerRad * outerRad) {
 		return false;
 	}
-	const innerRad = ring.radius - circle.r;
-	if (innerRad >= 0 && centerDistSqr < innerRad) {
+	const innerRad = ring.ringRadius - collisionRadius;
+	if (innerRad >= 0 && centerDistSqr < innerRad * innerRad) {
 		return false;
 	}
+	const collisionRadiusSqr = collisionRadius * collisionRadius;
 	for (let i = 0; i < ring.numMembers; i++) {
 		const angle = ring.angle + 2 * Math.PI * i / ring.numMembers;
-		const dx = circle.x - ring.ringRadius * Math.cos(angle);
-		const dy = circle.y - ring.ringRadius * Math.sin(angle);
-		if (dx * dx + dy * dy <= ring.memberRadius * ring.memberRadius) {
+		const dx = centerDx - ring.ringRadius * Math.cos(angle);
+		const dy = centerDy - ring.ringRadius * Math.sin(angle);
+		if (dx * dx + dy * dy <= collisionRadiusSqr) {
 			return true;
 		}
 	}
