@@ -76,8 +76,8 @@ const specificSpawnInfo = [
 		cooldown: 600
 	}, {
 		name: "RingShooter",
-		probWeight: 10000000,
-		cooldown: 100000
+		probWeight: 30,
+		cooldown: 250
 	}
 
 ];

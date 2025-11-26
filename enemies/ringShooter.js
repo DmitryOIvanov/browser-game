@@ -1,4 +1,4 @@
-import { IdenticalCircleCollectionArea, RegularPolygonArea } from "../areas.js";
+import { CircleArea, IdenticalCircleCollectionArea, RegularPolygonArea } from "../areas.js";
 import { createDefenseProfile } from "../attackAndDefense.js";
 import Color from "../color.js";
 import { ctx } from "../drawing.js";
@@ -71,6 +71,7 @@ export default class RingShooter extends AbstractEnemy {
 		this.bulletProgress = new Array(NUM_BULLETS).fill(-1);
 		this.partialArea = new IdenticalCircleCollectionArea(NUM_BULLETS, BULLET_RAD, false);
 		this.partialRing = new BallCollectionEProj(this.partialArea, BULLET_LINE_THICK, this.dangerColor);
+		this.partialRing.bound = new CircleArea(x, y, RING_RAD + BULLET_RAD);
 		this.fullRing = null;
 
 		this.lastPupilX = 0;
@@ -121,6 +122,8 @@ export default class RingShooter extends AbstractEnemy {
 					continue;
 				}
 			} else if (this.state == STATE_BUILD) {
+				this.partialRing.bound.x = this.x;
+				this.partialRing.bound.y = this.y;
 				for (let i = 0; i < this.bulletsSpawned; i++) {
 					this.bulletProgress[(BULLET_SKIP * i) % NUM_BULLETS] += dt;
 				}
