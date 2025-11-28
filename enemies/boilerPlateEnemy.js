@@ -11,7 +11,7 @@ const LINE_THICK = 6;
 const MAX_HP = 10;
 const HIT_FLASH_TIME = 2;
 
-export default class ShockwaveShooter extends AbstractEnemy {
+export default class BoilerPlateEnemy extends AbstractEnemy {
 	static RAD = 20;
 
 	constructor(x, y) {
@@ -19,7 +19,7 @@ export default class ShockwaveShooter extends AbstractEnemy {
 		this.x = x;
 		this.y = y;
 		this.defenseProfile = createDefenseProfile(MAX_HP);
-		this.area = new CircleArea(this.x, this.y, ShockwaveShooter.RAD);
+		this.area = new CircleArea(this.x, this.y, BoilerPlateEnemy.RAD);
 	}
 
 	timeStep(dt) {
@@ -27,14 +27,14 @@ export default class ShockwaveShooter extends AbstractEnemy {
 		this.hitFlash -= dt;
 		if (this.hitFlash < 0) this.hitFlash = 0;
 
-		this.area.update(this.x, this.y, ShockwaveShooter.RAD);
+		this.area.update(this.x, this.y, BoilerPlateEnemy.RAD);
 	}
 
 	draw() {
 		ctx.strokeStyle = (this.hitFlash > 0) ? '#fff' : this.baseColor.getStr();
 		ctx.lineWidth = LINE_THICK;
 		ctx.beginPath();
-		ctx.arc(this.x, this.y, ShockwaveShooter.RAD, 0, 2 * Math.PI);
+		ctx.arc(this.x, this.y, BoilerPlateEnemy.RAD, 0, 2 * Math.PI);
 		ctx.closePath();
 		ctx.stroke();
 	}
@@ -42,7 +42,7 @@ export default class ShockwaveShooter extends AbstractEnemy {
 	getHit() {
 		if (this.defenseProfile.expired) {
 			this.retired = true;
-			playField.addParticle(new ExplodingRingParticle(this.x, this.y, 1.5 * ShockwaveShooter.RAD, 2 * ShockwaveShooter.RAD, 6, Color.WHITE));
+			playField.addParticle(new ExplodingRingParticle(this.x, this.y, 1.5 * BoilerPlateEnemy.RAD, 2 * BoilerPlateEnemy.RAD, 6, Color.WHITE));
 			return;
 		}
 		this.hitFlash = HIT_FLASH_TIME;

@@ -1,4 +1,5 @@
 import * as areas from "./areas.js";
+import controls from "./controls.js";
 import { posMod } from "./extraMath.js";
 import { intersects } from "./intersection.js";
 
@@ -162,6 +163,40 @@ singleIntersectFunctionTable[areas.CircleArea.ID][areas.RingOfCirclesArea.ID] = 
 		}
 	}
 	return false;
+}
+
+singleIntersectFunctionTable[areas.PointArea.ID][areas.MovableConvexPolygon.ID] = function(point, polygon) {
+	const relativeX = polygon.cos * (point.x - polygon.x) + polygon.sin * (point.y - polygon.y);
+	const relativeY = polygon.cos * (point.y - polygon.y) - polygon.sin * (point.x - polygon.x);
+	const relativeDistSqr = relativeX * relativeX + relativeY * relativeY;
+	if (relativeDistSqr > polygon.boundingRadSqr) return false;
+	for (let i = 0; i < polygon.baseVerts.length; i++) {
+		const vert = polygon.baseVerts[i];
+		const normal = polygon.baseNormals[i];
+		const dotProd = (relativeX - vert.x) * normal.x + (relativeY - vert.y) * normal.y;
+		if (dotProd >= 0) return false
+	}
+	return true;
+}
+
+singleIntersectFunctionTable[areas.CircleArea.ID][areas.MovableConvexPolygon.ID] = function(circle, polygon) {
+	const relativeX = polygon.cos * (circle.x - polygon.x) + polygon.sin * (circle.y - polygon.y);
+	const relativeY = polygon.cos * (circle.y - polygon.y) - polygon.sin * (circle.x - polygon.x);
+	const relativeDistSqr = relativeX * relativeX + relativeY * relativeY;
+	const checkRad = polygon.boundingRad + circle.r;
+	if (relativeDistSqr > checkRad * checkRad) return false;
+	for (let i = 0; i < polygon.baseVerts.length; i++) {
+		const vert = polygon.baseVerts[i];
+		const normal = polygon.baseNormals[i];
+		const dotProd = (relativeX - vert.x) * normal.x + (relativeY - vert.y) * normal.y;
+		if (controls.held["KeyJ"]) console.log(dotProd);
+		if (dotProd >= circle.r) return false;
+		const dx = relativeX - vert.x;
+		const dy = relativeY - vert.y;
+		if (dx * dx + dy * dy <= circle.rSqr) return true;
+	}
+	return true;
+
 }
 
 export default singleIntersectFunctionTable;

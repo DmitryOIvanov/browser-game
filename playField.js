@@ -177,6 +177,7 @@ const playField = {
 		}
 		// Check for player-enemy collisions
 		for (let i = 0; i < this.enemies.length; i++) {
+			if (this.enemies[i].retired) continue;
 			if (intersects(player.area, this.enemies[i].area)) {
 				player.getHit();
 				if (this.manager) this.manager.onPlayerHit();

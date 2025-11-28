@@ -141,6 +141,42 @@ export class RingOfCirclesArea extends Area {
 	}
 }
 
+export class MovableConvexPolygon extends Area {
+	static ID = assignAreaID();
+	constructor(x, y, angle, baseVerts) {
+		super(MovableConvexPolygon.ID, Area.TYPE_SINGLE);
+		this.x = x;
+		this.y = y;
+		this.setAngle(angle);
+		this.baseVerts = baseVerts;
+
+		this.boundingRad = 0;
+		this.boundingRadSqr = 0;
+		for (let i = 0; i < baseVerts.length; i++) {
+			const vert = baseVerts[i];
+			const distSqr = vert.x * vert.x + vert.y * vert.y;
+			if (distSqr > this.boundingRadSqr) {
+				this.boundingRad = Math.sqrt(distSqr);
+				this.boundingRadSqr = distSqr;
+			}
+		}
+		this.baseNormals = new Array(baseVerts.length);
+		for (let i = 0; i < baseVerts.length; i++) {
+			let x = baseVerts[(i + 1) % baseVerts.length].y - baseVerts[i].y;
+			let y = baseVerts[i].x - baseVerts[(i + 1) % baseVerts.length].x;
+			const length = Math.sqrt(x * x + y * y);
+			x /= length;
+			y /= length;
+			this.baseNormals[i] = { x: x, y: y };
+		}
+	}
+	setAngle(value) {
+		this.angle = value;
+		this.sin = Math.sin(value);
+		this.cos = Math.cos(value);
+	}
+}
+
 // ---- "Partition" aka "Multi" Areas
 
 export class ShieldedCircleArea extends Area {
