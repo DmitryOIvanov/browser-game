@@ -2,6 +2,7 @@ import { CircleArea, MovableConvexPolygon } from "../areas.js";
 import { createDefenseProfile } from "../attackAndDefense.js";
 import Color from "../color.js";
 import { ctx } from "../drawing.js";
+import rangerMovementPattern from "../enemyMovementPatterns/rangerMovementPattern.js";
 import { bounceBoundify, getAngleToPlayer, randomAngle } from "../extraMath.js";
 import ExplodingRingParticle from "../particles/explodingRingParticle.js";
 import playField from "../playField.js";
@@ -17,14 +18,28 @@ const BASE_VERTS = [
 	{ x: -1, y: 0 },
 	{ x: 0, y: -1 },
 ];
-const VERT_SCALE_FACTOR = 22;
+const VERT_SCALE_FACTOR = 25;
 BASE_VERTS.forEach(function(vert) {
 	vert.x *= VERT_SCALE_FACTOR;
 	vert.y *= VERT_SCALE_FACTOR;
 });
 
+const SPAWN_RAD = 2 * VERT_SCALE_FACTOR;
+
+const RANGER_PARAMS = {
+	moodTime: 20,
+	moodTimeVar: 40,
+	turnSpeed: 0.035,
+	moveSpeed: 2.1,
+	outerOrbit: 400,
+	innerOrbit: 200,
+	orbitChance: 0.5,
+	chaseChance: 0.25,
+	bounceRad: 0.8 * VERT_SCALE_FACTOR,
+};
+
 export default class ShockwaveShooter extends AbstractEnemy {
-	static RAD = 20;
+	static RAD = SPAWN_RAD;
 
 	constructor(x, y) {
 		super();
@@ -33,6 +48,8 @@ export default class ShockwaveShooter extends AbstractEnemy {
 		this.bodyAngle = getAngleToPlayer(x, y);
 		this.defenseProfile = createDefenseProfile(MAX_HP);
 		this.area = new MovableConvexPolygon(this.x, this.y, this.bodyAngle, BASE_VERTS);
+
+		this.rangerState = rangerMovementPattern.getNewState();
 	}
 
 	timeStep(dt) {
@@ -40,7 +57,9 @@ export default class ShockwaveShooter extends AbstractEnemy {
 		this.hitFlash -= dt;
 		if (this.hitFlash < 0) this.hitFlash = 0;
 
-		// this.bodyAngle = getAngleToPlayer(this.x, this.y);
+		this.bodyAngle = getAngleToPlayer(this.x, this.y);
+
+		rangerMovementPattern.timeStep(dt, this, this.rangerState, RANGER_PARAMS);
 
 		this.area.x = this.x;
 		this.area.y = this.y;
