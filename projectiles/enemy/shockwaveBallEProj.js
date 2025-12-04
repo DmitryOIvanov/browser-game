@@ -37,7 +37,6 @@ export default class ShockwaveBallEProj {
 		if (dSqr <= PLAYFIELD_OUTER_RAD_SQR) return false;
 		const angleToCenter = Math.atan2(dy, dx);
 		const acceptableDeviation = Math.atan(PLAYFIELD_OUTER_RAD / Math.sqrt(dSqr));
-		console.log(this.shockAngle + acceptableDeviation, normalizeAngle(angleToCenter - this.angle), normalizeAngle(this.angle - angleToCenter));
 		if (normalizeAngle(angleToCenter - this.angle) < this.shockAngle + acceptableDeviation) return false;
 		if (normalizeAngle(this.angle - angleToCenter) < this.shockAngle + acceptableDeviation) return false;
 		return true;

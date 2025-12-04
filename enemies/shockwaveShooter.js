@@ -4,6 +4,7 @@ import Color from "../color.js";
 import { ctx } from "../drawing.js";
 import rangerMovementPattern from "../enemyMovementPatterns/rangerMovementPattern.js";
 import { bounceBoundify, getAngleToPlayer, randomAngle } from "../extraMath.js";
+import ArrowIndicatorParticle from "../particles/arrowIndicatorParticle.js";
 import ExplodingRingParticle from "../particles/explodingRingParticle.js";
 import playField from "../playField.js";
 import ShockwaveBallEProj from "../projectiles/enemy/shockwaveBallEProj.js";
@@ -11,7 +12,7 @@ import AbstractEnemy from "./abstractEnemy.js";
 
 const LINE_THICK = 6;
 const SECONDARY_LINE_THICK = 5;
-const MAX_HP = 50;
+const MAX_HP = 20;
 const HIT_FLASH_TIME = 2;
 
 const BASE_VERTS = [
@@ -45,15 +46,27 @@ const RANGER_PARAMS = {
 const STATE_MOVING = 0;
 const STATE_SLOWING = 1;
 const STATE_SHOOTING = 2;
-const STATE_SPEEDING = 3;
+const STATE_REST = 3;
+const STATE_SPEEDING = 4;
+const STATE_TIMES = [120, 20, 80, 20, 20];
+const STATE_TIME_VAR = [60, 0, 0, 0, 0];
+function getStateTime(state) {
+	return STATE_TIMES[state] + STATE_TIME_VAR[state] * Math.random();
+}
 
-const PROJ_SPEED = 20;
+const PROJ_SPEED = 25;
 const PROJ_RAD = 10;
-const SHOCK_ANGLE = Math.PI / 2;
-const SHOCK_SPEED = 5;
+const SHOCK_ANGLE = Math.PI * 2 / 3;
+const SHOCK_SPEED = 7;
 const SHOCK_RAD = 6;
-const SHOCK_PERIOD = 8;
+const SHOCK_PERIOD = 7;
 const PROJ_THICK = 6;
+
+const ARROW_INTERVAL = 100;
+const ARROW_ANGLE = Math.PI * 0.2;
+const ARROW_RADIUS = 14;
+const ARROW_LINE_THICK = 2;
+const ARROW_SPEED = 3;
 
 export default class ShockwaveShooter extends AbstractEnemy {
 	static RAD = SPAWN_RAD;
@@ -65,9 +78,13 @@ export default class ShockwaveShooter extends AbstractEnemy {
 		this.bodyAngle = getAngleToPlayer(x, y);
 		this.defenseProfile = createDefenseProfile(MAX_HP);
 		this.area = new MovableConvexPolygon(this.x, this.y, this.bodyAngle, BASE_VERTS);
-		this.shootCountdown = 180;
 
 		this.rangerState = rangerMovementPattern.getNewState();
+
+		this.state = STATE_MOVING;
+		this.stateDuration = getStateTime(this.state);
+		this.stateProgress = 0;
+		this.indicator = null;
 	}
 
 	timeStep(dt) {
@@ -75,15 +92,39 @@ export default class ShockwaveShooter extends AbstractEnemy {
 		this.hitFlash -= dt;
 		if (this.hitFlash < 0) this.hitFlash = 0;
 
-		this.bodyAngle = getAngleToPlayer(this.x, this.y);
+		this.stateProgress += dt;
+		if (this.stateProgress >= this.stateDuration) {
+			this.stateProgress -= this.stateDuration;
+			this.state = (this.state + 1) % STATE_TIMES.length;
+			this.stateDuration = getStateTime(this.state);
 
-		rangerMovementPattern.timeStep(dt, this, this.rangerState, RANGER_PARAMS);
+			if (this.state == STATE_SHOOTING) {
+				this.indicator = new ArrowIndicatorParticle(
+					this.x + BASE_VERTS[0].x * Math.cos(this.bodyAngle),
+					this.y + BASE_VERTS[0].x * Math.sin(this.bodyAngle),
+					this.bodyAngle, ARROW_INTERVAL, ARROW_ANGLE, ARROW_RADIUS, ARROW_SPEED, ARROW_LINE_THICK, this.dangerColor);
+				playField.addParticle(this.indicator);
+			} else if (this.state == STATE_REST) {
+				this.indicator.retired = true;
+				this.inducator = null;
+				const proj = new ShockwaveBallEProj(this.x, this.y, this.bodyAngle, PROJ_SPEED, PROJ_RAD, SHOCK_ANGLE, SHOCK_SPEED, SHOCK_RAD, SHOCK_PERIOD, PROJ_THICK, this.dangerColor);
+				proj.timeStep(this.stateProgress);
+				playField.addEnemyProjectile(proj);
+			} else if (this.state == STATE_SHOOTING) {
+			}
+		}
 
-		this.shootCountdown -= dt;
-		if (this.shootCountdown <= 0) {
-			const proj = new ShockwaveBallEProj(this.x, this.y, this.bodyAngle, PROJ_SPEED, PROJ_RAD, SHOCK_ANGLE, SHOCK_SPEED, SHOCK_RAD, SHOCK_PERIOD, PROJ_THICK, this.dangerColor);
-			playField.addEnemyProjectile(proj);
-			this.shootCountdown += 180;
+		if (this.state == STATE_SHOOTING) {
+			//
+		} else if (this.state != STATE_REST) {
+			this.bodyAngle = getAngleToPlayer(this.x, this.y);
+			let speedMult = 1;
+			if (this.state == STATE_SLOWING) {
+				speedMult = 1 - (this.stateProgress / this.stateDuration);
+			} else if (this.state == STATE_SPEEDING) {
+				speedMult = (this.stateProgress / this.stateDuration);
+			}
+			rangerMovementPattern.timeStep(speedMult * dt, this, this.rangerState, RANGER_PARAMS);
 		}
 
 		this.area.x = this.x;
@@ -114,17 +155,6 @@ export default class ShockwaveShooter extends AbstractEnemy {
 		);
 		ctx.stroke();
 
-		// ctx.beginPath();
-		// ctx.moveTo(
-		// 	this.x - this.area.cos * (EYE_RAD - EYE_OFFSET),
-		// 	this.y - this.area.sin * (EYE_RAD - EYE_OFFSET),
-		// );
-		// ctx.lineTo(
-		// 	this.x + this.area.cos * BASE_VERTS[2].x,
-		// 	this.y + this.area.sin * BASE_VERTS[2].x,
-		// );
-		// ctx.stroke();
-
 		ctx.strokeStyle = (this.hitFlash > 0) ? '#fff' : this.baseColor.getStr();
 		ctx.beginPath();
 		for (let i = 0; i < BASE_VERTS.length; i++) {
@@ -143,6 +173,7 @@ export default class ShockwaveShooter extends AbstractEnemy {
 	getHit() {
 		if (this.defenseProfile.expired) {
 			this.retired = true;
+			if (this.indicator) this.indicator.retired = true;
 			playField.addParticle(new ExplodingRingParticle(this.x, this.y, 1.5 * ShockwaveShooter.RAD, 2 * ShockwaveShooter.RAD, 6, Color.WHITE));
 			return;
 		}
