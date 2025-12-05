@@ -80,8 +80,8 @@ const specificSpawnInfo = [
 		cooldown: 250
 	}, {
 		name: "ShockwaveShooter",
-		probWeight: 30,
-		cooldown: 250
+		probWeight: 300000,
+		cooldown: 2500000
 	}
 ];
 

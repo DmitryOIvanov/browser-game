@@ -3,9 +3,10 @@ import { createDefenseProfile } from "../attackAndDefense.js";
 import Color from "../color.js";
 import { ctx } from "../drawing.js";
 import rangerMovementPattern from "../enemyMovementPatterns/rangerMovementPattern.js";
-import { bounceBoundify, getAngleToPlayer, randomAngle } from "../extraMath.js";
+import { bounceBoundify, getAngleToPlayer, normalizeAnglePMPI, randomAngle } from "../extraMath.js";
 import ArrowIndicatorParticle from "../particles/arrowIndicatorParticle.js";
 import ExplodingRingParticle from "../particles/explodingRingParticle.js";
+import ShrinkingRingParticle from "../particles/shrinkingRingParticle.js";
 import playField from "../playField.js";
 import ShockwaveBallEProj from "../projectiles/enemy/shockwaveBallEProj.js";
 import AbstractEnemy from "./abstractEnemy.js";
@@ -26,10 +27,6 @@ BASE_VERTS.forEach(function(vert) {
 	vert.x *= VERT_SCALE_FACTOR;
 	vert.y *= VERT_SCALE_FACTOR;
 });
-
-const SPAWN_RAD = 2 * VERT_SCALE_FACTOR;
-const EYE_RAD = 12;
-const EYE_OFFSET = 4;
 
 const RANGER_PARAMS = {
 	moodTime: 20,
@@ -54,6 +51,10 @@ function getStateTime(state) {
 	return STATE_TIMES[state] + STATE_TIME_VAR[state] * Math.random();
 }
 
+const SPAWN_RAD = 2 * VERT_SCALE_FACTOR;
+const EYE_RAD = 12;
+const EYE_OFFSET = 4;
+
 const PROJ_SPEED = 25;
 const PROJ_RAD = 10;
 const SHOCK_ANGLE = Math.PI * 2 / 3;
@@ -62,11 +63,14 @@ const SHOCK_RAD = 6;
 const SHOCK_PERIOD = 7;
 const PROJ_THICK = 6;
 
-const ARROW_INTERVAL = 100;
+const ARROW_INTERVAL = 60;
 const ARROW_ANGLE = Math.PI * 0.2;
 const ARROW_RADIUS = 14;
 const ARROW_LINE_THICK = 2;
 const ARROW_SPEED = 3;
+const RING_R1 = 30;
+const RING_R2 = 12;
+const RING_THICK = 4;
 
 export default class ShockwaveShooter extends AbstractEnemy {
 	static RAD = SPAWN_RAD;
@@ -84,7 +88,11 @@ export default class ShockwaveShooter extends AbstractEnemy {
 		this.state = STATE_MOVING;
 		this.stateDuration = getStateTime(this.state);
 		this.stateProgress = 0;
-		this.indicator = null;
+		this.arrowIndicator = null;
+		this.ringIndicator = null;
+		this.restStartAngle = 0;
+		this.angleCorrection = 0;
+		this.lastTargetAngle = 0;
 	}
 
 	timeStep(dt) {
@@ -99,24 +107,40 @@ export default class ShockwaveShooter extends AbstractEnemy {
 			this.stateDuration = getStateTime(this.state);
 
 			if (this.state == STATE_SHOOTING) {
-				this.indicator = new ArrowIndicatorParticle(
+				this.arrowIndicator = new ArrowIndicatorParticle(
 					this.x + BASE_VERTS[0].x * Math.cos(this.bodyAngle),
 					this.y + BASE_VERTS[0].x * Math.sin(this.bodyAngle),
-					this.bodyAngle, ARROW_INTERVAL, ARROW_ANGLE, ARROW_RADIUS, ARROW_SPEED, ARROW_LINE_THICK, this.dangerColor);
-				playField.addParticle(this.indicator);
+					this.bodyAngle, ARROW_INTERVAL, ARROW_ANGLE, ARROW_RADIUS, ARROW_SPEED, ARROW_LINE_THICK, this.dangerColor
+				);
+				playField.addParticle(this.arrowIndicator);
+				this.ringIndicator = new ShrinkingRingParticle(
+					this.x + EYE_OFFSET * Math.cos(this.bodyAngle),
+					this.y + EYE_OFFSET * Math.sin(this.bodyAngle),
+					RING_R1, RING_R2, RING_THICK, this.stateDuration, this.dangerColor
+				);
+				playField.addParticle(this.ringIndicator);
 			} else if (this.state == STATE_REST) {
-				this.indicator.retired = true;
-				this.inducator = null;
+				this.arrowIndicator.retired = true;
+				this.indicator = null;
 				const proj = new ShockwaveBallEProj(this.x, this.y, this.bodyAngle, PROJ_SPEED, PROJ_RAD, SHOCK_ANGLE, SHOCK_SPEED, SHOCK_RAD, SHOCK_PERIOD, PROJ_THICK, this.dangerColor);
 				proj.timeStep(this.stateProgress);
 				playField.addEnemyProjectile(proj);
-			} else if (this.state == STATE_SHOOTING) {
+
+				this.restStartAngle = this.bodyAngle;
+				const targetAngle = getAngleToPlayer(this.x, this.y);
+				this.lastTargetAngle = targetAngle;
+				this.angleCorrection = normalizeAnglePMPI(targetAngle - this.restStartAngle);
 			}
 		}
 
-		if (this.state == STATE_SHOOTING) {
-			//
-		} else if (this.state != STATE_REST) {
+		if (this.state == STATE_REST) {
+			const targetAngle = getAngleToPlayer(this.x, this.y);
+			this.angleCorrection += normalizeAnglePMPI(targetAngle - this.lastTargetAngle);
+			this.lastTargetAngle = targetAngle;
+
+			const t = this.stateProgress / this.stateDuration;
+			this.bodyAngle = this.restStartAngle + this.angleCorrection * t * t * (3 - 2 * t);
+		} else if (this.state != STATE_SHOOTING) {
 			this.bodyAngle = getAngleToPlayer(this.x, this.y);
 			let speedMult = 1;
 			if (this.state == STATE_SLOWING) {
@@ -173,7 +197,8 @@ export default class ShockwaveShooter extends AbstractEnemy {
 	getHit() {
 		if (this.defenseProfile.expired) {
 			this.retired = true;
-			if (this.indicator) this.indicator.retired = true;
+			if (this.arrowIndicator) this.arrowIndicator.retired = true;
+			if (this.ringIndicator) this.ringIndicator.retired = true;
 			playField.addParticle(new ExplodingRingParticle(this.x, this.y, 1.5 * ShockwaveShooter.RAD, 2 * ShockwaveShooter.RAD, 6, Color.WHITE));
 			return;
 		}
