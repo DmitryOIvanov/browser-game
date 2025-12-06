@@ -155,11 +155,13 @@ singleIntersectFunctionTable[areas.CircleArea.ID][areas.RingOfCirclesArea.ID] = 
 	}
 	const collisionRadiusSqr = collisionRadius * collisionRadius;
 	for (let i = 0; i < ring.numMembers; i++) {
-		const angle = ring.angle + 2 * Math.PI * i / ring.numMembers;
-		const dx = centerDx - ring.ringRadius * Math.cos(angle);
-		const dy = centerDy - ring.ringRadius * Math.sin(angle);
-		if (dx * dx + dy * dy <= collisionRadiusSqr) {
-			return true;
+		if (ring.memberExists[i]) {
+			const angle = ring.angle + 2 * Math.PI * i / ring.numMembers;
+			const dx = centerDx - ring.ringRadius * Math.cos(angle);
+			const dy = centerDy - ring.ringRadius * Math.sin(angle);
+			if (dx * dx + dy * dy <= collisionRadiusSqr) {
+				return true;
+			}
 		}
 	}
 	return false;
@@ -196,7 +198,6 @@ singleIntersectFunctionTable[areas.CircleArea.ID][areas.MovableConvexPolygon.ID]
 		if (dx * dx + dy * dy <= circle.rSqr) return true;
 	}
 	return true;
-
 }
 
 export default singleIntersectFunctionTable;

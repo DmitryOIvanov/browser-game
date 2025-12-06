@@ -32,6 +32,7 @@ const IDLE_TIME = 80;
 const IDLE_TIME_VAR = 40;
 const RING_MOVE_SPEED = 3;
 const RING_GROWTH = 0.7;
+const CULL_DELAY = 70;
 
 const TURN_TIME = 30;
 const TURN_TIME_VAR = 100;
@@ -159,7 +160,7 @@ export default class RingShooter extends AbstractEnemy {
 					this.pupilLerp = 0;
 
 					this.partialRing.retired = true;
-					this.fullRing = new RingOfBallsEProj(NUM_BULLETS, RING_RAD, BULLET_RAD, 0, 0, 0, 0, 0, 0, 0, BULLET_LINE_THICK, this.dangerColor);
+					this.fullRing = new RingOfBallsEProj(NUM_BULLETS, RING_RAD, BULLET_RAD, 0, 0, 0, 0, 0, 0, 0, CULL_DELAY, BULLET_LINE_THICK, this.dangerColor);
 					playField.addEnemyProjectile(this.fullRing);
 					continue;
 				}

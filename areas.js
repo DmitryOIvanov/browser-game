@@ -1,3 +1,6 @@
+import { isInBounds } from "./extraMath.js";
+import playField from "./playField.js";
+
 export class Area {
 	static TYPE_SINGLE = 0;
 	static TYPE_PARTITION = 1;
@@ -138,6 +141,19 @@ export class RingOfCirclesArea extends Area {
 		this.ringRadius = ringRadius;
 		this.memberRadius = memberRadius;
 		this.angle = angle;
+
+		this.memberExists = new Array(numMembers).fill(true);
+	}
+	updateExistence() {
+		for (let i = 0; i < this.numMembers; i++) {
+			if (this.memberExists[i]) {
+				const angle = this.angle + 2 * Math.PI * i / this.numMembers;
+				const x = this.x + this.ringRadius * Math.cos(angle);
+				const y = this.y + this.ringRadius * Math.sin(angle);
+				const memberInBounds = isInBounds(x, playField.x, -this.memberRadius) && isInBounds(y, playField.y, -this.memberRadius);
+				if (!memberInBounds) this.memberExists[i] = false;
+			}
+		}
 	}
 }
 
@@ -190,7 +206,7 @@ export class ShieldedCircleArea extends Area {
 		this.rIn = rIn; this.rMid = rMid; this.rOut = rOut;
 		this.numSegs = numSegs;
 		this.segExistence = segExistence;
-		this.rot = rot
+		this.rot = rot;
 	}
 }
 
