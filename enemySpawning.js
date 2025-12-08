@@ -21,6 +21,7 @@ import { randomAngle } from "./extraMath.js";
 import SnakeSpawnerParticle from "./particles/snakeSpawnerParticle.js";
 import RingShooter from "./enemies/ringShooter.js";
 import ShockwaveShooter from "./enemies/shockwaveShooter.js";
+import WallBurstShooter from "./enemies/wallBurstShooter.js";
 
 export const enemySpawningInfo = {
 	"SmallSquare": {
@@ -228,6 +229,18 @@ export const enemySpawningInfo = {
 		spawn: (weight, x, y) => {
 			const spawner = new BasicSpawnerParticle(x, y, 1.5 * ShockwaveShooter.RAD, 10, "white", () => {
 				const enemy = new ShockwaveShooter(x, y);
+				enemy.setWeight(weight);
+				return playField.addEnemy(enemy, false);
+			});
+			playField.addParticle(spawner);
+			return spawner.getEnemyRef();
+		}
+	},
+	"WallBurstShooter": {
+		rad: WallBurstShooter.RAD,
+		spawn: (weight, x, y) => {
+			const spawner = new BasicSpawnerParticle(x, y, 1.5 * WallBurstShooter.RAD, 10, "white", () => {
+				const enemy = new WallBurstShooter(x, y);
 				enemy.setWeight(weight);
 				return playField.addEnemy(enemy, false);
 			});
