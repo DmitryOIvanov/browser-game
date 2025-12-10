@@ -49,7 +49,7 @@ const STATE_SLOWING = 1;
 const STATE_SHOOTING = 2;
 const STATE_REST = 3;
 const STATE_SPEEDING = 4;
-const STATE_TIMES = [120, 20, 80, 20, 20];
+const STATE_TIMES = [120, 20, 60, 20, 20];
 const STATE_TIME_VAR = [60, 0, 0, 0, 0];
 function getStateTime(state) {
 	return STATE_TIMES[state] + STATE_TIME_VAR[state] * Math.random();
