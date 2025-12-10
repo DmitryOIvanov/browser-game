@@ -3,9 +3,12 @@ import { createDefenseProfile } from "../attackAndDefense.js";
 import Color from "../color.js";
 import { ctx } from "../drawing.js";
 import rangerMovementPattern from "../enemyMovementPatterns/rangerMovementPattern.js";
-import { bounceBoundify, getAngleToPlayer, normalizeAnglePMPI, randomAngle } from "../extraMath.js";
+import { bounceBoundify, getAngleToPlayer, getRayWallIntersection, normalizeAnglePMPI, randomAngle } from "../extraMath.js";
 import ArrowIndicatorParticle from "../particles/arrowIndicatorParticle.js";
+import DashedLineIndicatorParticle from "../particles/dashedLineIndicatorParticle.js";
 import ExplodingRingParticle from "../particles/explodingRingParticle.js";
+import LineIndicatorParticle from "../particles/lineIndicatorParticle.js";
+import PulsingIndicatorParticle from "../particles/pulsingIndicatorParticle.js";
 import ShrinkingRingParticle from "../particles/shrinkingRingParticle.js";
 import playField from "../playField.js";
 import ShockwaveBallEProj from "../projectiles/enemy/shockwaveBallEProj.js";
@@ -63,14 +66,18 @@ const BURST_RAD = 6;
 const BURST_SPEED = 10;
 const PROJ_THICK = 6;
 
-const ARROW_INTERVAL = 60;
-const ARROW_ANGLE = Math.PI * 0.2;
-const ARROW_RADIUS = 14;
-const ARROW_LINE_THICK = 2;
-const ARROW_SPEED = 3;
 const RING_R1 = 30;
 const RING_R2 = 12;
 const RING_THICK = 4;
+
+const PULSE_PERIOD = 30;
+const PULSE_DURATION = 50;
+const PULSE_MAX_RAD = 100;
+const PULSE_MAX_LINE_WIDTH = 3;
+const DASH_LENGTH = 70;
+const GAP_LENGTH = 30;
+const DASH_SPEED = 2;
+const DASH_LINE_WIDTH = 0.5;
 
 export default class WallBurstShooter extends AbstractEnemy {
 	static RAD = SPAWN_RAD;
@@ -88,8 +95,9 @@ export default class WallBurstShooter extends AbstractEnemy {
 		this.state = STATE_MOVING;
 		this.stateDuration = getStateTime(this.state);
 		this.stateProgress = 0;
-		this.arrowIndicator = null;
+		this.lineIndicator = null;
 		this.ringIndicator = null;
+		this.pulseIndicator = null;
 		this.restStartAngle = 0;
 		this.angleCorrection = 0;
 		this.lastTargetAngle = 0;
@@ -107,12 +115,16 @@ export default class WallBurstShooter extends AbstractEnemy {
 			this.stateDuration = getStateTime(this.state);
 
 			if (this.state == STATE_SHOOTING) {
-				this.arrowIndicator = new ArrowIndicatorParticle(
-					this.x + BASE_VERTS[0].x * Math.cos(this.bodyAngle),
-					this.y + BASE_VERTS[0].x * Math.sin(this.bodyAngle),
-					this.bodyAngle, ARROW_INTERVAL, ARROW_ANGLE, ARROW_RADIUS, ARROW_SPEED, ARROW_LINE_THICK, this.dangerColor
+				this.lineIndicator = LineIndicatorParticle.createRayWithAngle(this.x, this.y, this.bodyAngle, 0.5, this.dangerColor);
+				this.lineIndicator = new DashedLineIndicatorParticle(
+					this.x + EYE_OFFSET * Math.cos(this.bodyAngle),
+					this.y + EYE_OFFSET * Math.sin(this.bodyAngle),
+					this.bodyAngle, DASH_LENGTH, GAP_LENGTH, DASH_SPEED, DASH_LINE_WIDTH, this.dangerColor
 				);
-				playField.addParticle(this.arrowIndicator);
+				playField.addParticle(this.lineIndicator);
+				const rayHit = getRayWallIntersection(this.x, this.y, this.bodyAngle);
+				this.pulseIndicator = new PulsingIndicatorParticle(rayHit.x, rayHit.y, PULSE_PERIOD, PULSE_DURATION, PULSE_MAX_RAD, PULSE_MAX_LINE_WIDTH, this.dangerColor);
+				playField.addParticle(this.pulseIndicator);
 				this.ringIndicator = new ShrinkingRingParticle(
 					this.x + EYE_OFFSET * Math.cos(this.bodyAngle),
 					this.y + EYE_OFFSET * Math.sin(this.bodyAngle),
@@ -120,9 +132,13 @@ export default class WallBurstShooter extends AbstractEnemy {
 				);
 				playField.addParticle(this.ringIndicator);
 			} else if (this.state == STATE_REST) {
-				this.arrowIndicator.retired = true;
-				this.indicator = null;
-				const proj = new WallBurstEProj(this.x, this.y, this.bodyAngle, PROJ_SPEED, PROJ_RAD, NUM_BURSTS, BURST_RAD, BURST_SPEED, PROJ_THICK, this.dangerColor);
+				this.lineIndicator.retired = true;
+				this.pulseIndicator.retired = true;
+				const proj = new WallBurstEProj(
+					this.x + EYE_OFFSET * Math.cos(this.bodyAngle),
+					this.y + EYE_OFFSET * Math.sin(this.bodyAngle),
+					this.bodyAngle, PROJ_SPEED, PROJ_RAD, NUM_BURSTS, BURST_RAD, BURST_SPEED, PROJ_THICK, this.dangerColor
+				);
 				proj.timeStep(this.stateProgress);
 				playField.addEnemyProjectile(proj);
 
@@ -197,8 +213,9 @@ export default class WallBurstShooter extends AbstractEnemy {
 	getHit() {
 		if (this.defenseProfile.expired) {
 			this.retired = true;
-			if (this.arrowIndicator) this.arrowIndicator.retired = true;
+			if (this.lineIndicator) this.lineIndicator.retired = true;
 			if (this.ringIndicator) this.ringIndicator.retired = true;
+			if (this.pulseIndicator) this.pulseIndicator.retired = true;
 			playField.addParticle(new ExplodingRingParticle(this.x, this.y, 1.5 * WallBurstShooter.RAD, 2 * WallBurstShooter.RAD, 6, Color.WHITE));
 			return;
 		}

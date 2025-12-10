@@ -84,3 +84,19 @@ export function getAngleToPlayer(x, y) {
 		playField.player.x - x
 	);
 }
+
+const rayWallIntersectCache = { x: 0, y: 0 };
+export function getRayWallIntersection(x, y, angle) {
+	const dx = Math.cos(angle);
+	const wallX = dx >= 0 ? playField.x : 0;
+	const dy = Math.sin(angle);
+	const wallY = dy >= 0 ? playField.y : 0;
+	if (Math.abs(dy * (x - wallX)) <= Math.abs(dx * (y - wallY))) {
+		rayWallIntersectCache.x = wallX;
+		rayWallIntersectCache.y = y + dy * Math.abs((x - wallX) / dx);
+	} else {
+		rayWallIntersectCache.x = x + dx * Math.abs((y - wallY) / dy);
+		rayWallIntersectCache.y = wallY;
+	}
+	return rayWallIntersectCache;
+}
