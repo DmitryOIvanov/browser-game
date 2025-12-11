@@ -147,16 +147,15 @@ const playField = {
 								if (defenseProfile.expired) continue;
 								attackAndDefend(proj.attackProfile, defenseProfile);
 								enemy.getHit(part);
-								if (enemy.retired) break;
 								proj.getHit(step);
-								if (proj.retired) break;
+								if (enemy.retired || proj.retired) break;
 								if (!proj.excludes[enemy.id]) proj.excludes[enemy.id] = {};
 								proj.excludes[enemy.id][part] = true;
 							}
 						}
 					}
-					if (enemy.retired) break;
 					if (proj.retired) break;
+					if (enemy.retired) break;
 				}
 				if (proj.retired) break;
 			}
