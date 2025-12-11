@@ -49,7 +49,7 @@ const STATE_SLOWING = 1;
 const STATE_SHOOTING = 2;
 const STATE_REST = 3;
 const STATE_SPEEDING = 4;
-const STATE_TIMES = [120, 20, 60, 20, 20];
+const STATE_TIMES = [120, 20, 80, 20, 20];
 const STATE_TIME_VAR = [60, 0, 0, 0, 0];
 function getStateTime(state) {
 	return STATE_TIMES[state] + STATE_TIME_VAR[state] * Math.random();
@@ -77,7 +77,7 @@ const PULSE_MAX_LINE_WIDTH = 3;
 const DASH_LENGTH = 70;
 const GAP_LENGTH = 30;
 const DASH_SPEED = 2;
-const DASH_LINE_WIDTH = 0.5;
+const DASH_LINE_WIDTH = 1;
 
 export default class WallBurstShooter extends AbstractEnemy {
 	static RAD = SPAWN_RAD;
@@ -117,8 +117,8 @@ export default class WallBurstShooter extends AbstractEnemy {
 			if (this.state == STATE_SHOOTING) {
 				this.lineIndicator = LineIndicatorParticle.createRayWithAngle(this.x, this.y, this.bodyAngle, 0.5, this.dangerColor);
 				this.lineIndicator = new DashedLineIndicatorParticle(
-					this.x + EYE_OFFSET * Math.cos(this.bodyAngle),
-					this.y + EYE_OFFSET * Math.sin(this.bodyAngle),
+					this.x + BASE_VERTS[0].x * Math.cos(this.bodyAngle),
+					this.y + BASE_VERTS[0].x * Math.sin(this.bodyAngle),
 					this.bodyAngle, DASH_LENGTH, GAP_LENGTH, DASH_SPEED, DASH_LINE_WIDTH, this.dangerColor
 				);
 				playField.addParticle(this.lineIndicator);
