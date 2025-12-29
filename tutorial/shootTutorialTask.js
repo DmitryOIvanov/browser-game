@@ -6,14 +6,17 @@ import { TutorialTask } from "./tutorialTask.js";
 export class ShootTutorialTask extends TutorialTask {
     constructor() {
         super();
-        this.satisfied = false;
+        this.mouseHeldTime = 0;
     }
 
-    getSatisfaction() {
+    timeStep(dt) {
         if (controls.mouse.leftHeld) {
-            this.satisfied = true;
+            this.mouseHeldTime += dt;
+            if (this.mouseHeldTime >= 30) {
+                this.satisfy();
+            }
         }
-        return this.satisfied;
+        super.timeStep(dt);
     }
 
     drawRaw() {

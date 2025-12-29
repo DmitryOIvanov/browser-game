@@ -15,7 +15,7 @@ export class TutorialTask {
         this.extraEndTime = extraEndTime || 0;
         this.totalEndTime = HIGHLIGHT_TIME + this.extraEndTime + DISAPPEAR_TIME;
 
-        this.satisfactionAchieved = false;
+        this.satisfied = false;
         this.state = STATE_APPEAR;
         this.stateProgress = 0;
         this.retired = false;
@@ -24,17 +24,13 @@ export class TutorialTask {
     timeStep(dt) {
         if (this.retired) return;
 
-        if (this.getSatisfaction()) {
-            this.satisfactionAchieved = true;
-        }
-
         if (this.state == STATE_APPEAR) {
             this.stateProgress += dt;
             if (this.stateProgress >= APPEAR_TIME) {
                 this.state++;
             }
         }
-        if (this.state == STATE_UNSATISFIED && this.satisfactionAchieved) {
+        if (this.state == STATE_UNSATISFIED && this.satisfied) {
             this.state++;
             this.stateProgress = 0;
         }
@@ -44,6 +40,10 @@ export class TutorialTask {
                 this.retired = true;
             }
         }
+    }
+
+    satisfy() {
+        this.satisfied = true;
     }
 
     draw() {

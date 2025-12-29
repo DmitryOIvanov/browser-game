@@ -230,19 +230,18 @@ export default class TimeSlowTutorialTask extends TutorialTask {
     constructor() {
         super();
         this.gears = new TutorialGearBackground();
-        this.satisfactionAchieved = false;
+        this.spaceHeldTime = 0;
     }
 
     timeStep(dt) {
-        super.timeStep(dt);
-        this.gears.timeStep(dt);
-    }
-
-    getSatisfaction() {
         if (controls.held["Space"]) {
-            this.satisfactionAchieved = true;
+            this.spaceHeldTime += dt;
+            if (this.spaceHeldTime >= 6) {
+                this.satisfy();
+            }
         }
-        return this.satisfactionAchieved;
+        this.gears.timeStep(dt);
+        super.timeStep(dt);
     }
 
     drawRaw() {

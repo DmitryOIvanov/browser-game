@@ -8,14 +8,17 @@ const KEY_OFFSETS_Y = [-1, 0, 0, 0];
 export class WasdTutorialTask extends TutorialTask {
     constructor() {
         super();
-        this.satisfied = false;
+        this.keyHeldTime = 0;
     }
 
-    getSatisfaction() {
+    timeStep(dt) {
         if (controls.held["KeyW"] || controls.held["KeyA"] || controls.held["KeyS"] || controls.held["KeyD"]) {
-            this.satisfied = true;
+            this.keyHeldTime += dt;
+            if (this.keyHeldTime >= 30) {
+                this.satisfy();
+            }
         }
-        return this.satisfied;
+        super.timeStep(dt);
     }
 
     drawRaw() {
