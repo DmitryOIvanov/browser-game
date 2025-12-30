@@ -1,14 +1,19 @@
 import { canv, ctx, fillTextCenteredXY, fillTextFromCorner } from "../drawing.js";
+import playField from "../playField.js";
 import drawTutorialMouse from "./drawTutorialMouse.js";
 import { TutorialTask } from "./tutorialTask.js";
 
+const EXTRA_END_TIME = 30;
+
 export class SpecialTutorialTask extends TutorialTask {
     constructor() {
-        super();
+        super(EXTRA_END_TIME);
     }
 
     timeStep(dt) {
-        // this.satisfy();
+        if (playField.player.weapon.hasFinishedAHeavyAttack) {
+            this.satisfy();
+        }
         super.timeStep(dt);
     }
 

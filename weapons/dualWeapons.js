@@ -13,76 +13,84 @@ const PRIMARY_COLOR = new Color(false, '#7FF');
 const SECONDARY_COLOR = new Color(false, '#FFF');
 
 export class DualWeapon {
-    constructor(lightComponent, heavyComponent){
+    constructor(lightComponent, heavyComponent) {
         this.lightComponent = lightComponent;
         this.heavyComponent = heavyComponent;
 
         this.fireTimer = 0;
         this.wasRightClicking = false;
 
+        // For tutorial
+        this.hasStartedAHeavyAttack = false;
+        this.hasFinishedAHeavyAttack = false;
+
         this.color = PRIMARY_COLOR;
     }
 
-    timeStep(dt){
+    timeStep(dt) {
         let dtAdded = false;
         let forcedHeavyShot = (this.wasRightClicking && !controls.mouse.rightHeld);
-        if(this.heavyComponent.isContinuing() || controls.mouse.rightHeld || forcedHeavyShot){
+        if (this.heavyComponent.isContinuing() || controls.mouse.rightHeld || forcedHeavyShot) {
             this.fireTimer += dt;
             dtAdded = true;
-            while(true){
-                if(!this.heavyComponent.isContinuing() && !forcedHeavyShot){
-                    if(!controls.mouse.rightHeld || !controls.mouse.leftHeld) break;
+            while (true) {
+                if (!this.heavyComponent.isContinuing()) {
+                    if (this.hasStartedAHeavyAttack) {
+                        this.hasFinishedAHeavyAttack = true;
+                    }
+                    if (!forcedHeavyShot && !controls.mouse.leftHeld) break;
                 }
-                if(this.fireTimer >= this.heavyComponent.getDelay()){
+                if (this.fireTimer >= this.heavyComponent.getDelay()) {
                     this.fireTimer -= this.heavyComponent.getDelay();
                     this.heavyComponent.fire(this.fireTimer);
-                }else{
+                    this.hasStartedAHeavyAttack = true;
+                } else {
                     break;
                 }
                 forcedHeavyShot = false;
             }
         }
 
-        if(!this.heavyComponent.isContinuing() && !controls.mouse.rightHeld){
+        if (!this.heavyComponent.isContinuing() && !controls.mouse.rightHeld) {
             this.fireTimer = Math.min(this.fireTimer, this.lightComponent.getDelay());
-            if(!dtAdded) this.fireTimer += dt;
+            if (!dtAdded) this.fireTimer += dt;
             dtAdded = true;
-            if(controls.mouse.leftHeld){
-                while(this.fireTimer >= this.lightComponent.getDelay()){
+            if (controls.mouse.leftHeld) {
+                while (this.fireTimer >= this.lightComponent.getDelay()) {
                     this.fireTimer -= this.lightComponent.getDelay();
                     this.lightComponent.fire(this.fireTimer);
                 }
             }
-        }else if(controls.mouse.rightHeld){
+        } else if (controls.mouse.rightHeld) {
             this.fireTimer = Math.min(this.fireTimer, this.heavyComponent.getDelay());
         }
-        if(this.heavyComponent.isContinuing() || (controls.mouse.rightHeld && this.fireTimer >= this.heavyComponent.getDelay())){
+        if (this.heavyComponent.isContinuing() || (controls.mouse.rightHeld && this.fireTimer >= this.heavyComponent.getDelay())) {
             this.color = SECONDARY_COLOR;
-        }else{
+        } else {
             this.color = PRIMARY_COLOR;
         }
         this.wasRightClicking = controls.mouse.rightHeld;
 
-        if(!dtAdded){
+        if (!dtAdded) {
             console.log("[!!!] Dual weapon: dt added later than expected");
             this.fireTimer += dt;
         }
     }
 }
 
-function getFromArrayOrSingleValue(source, index){
+function getFromArrayOrSingleValue(source, index) {
     return Array.isArray(source) ? source[index] : source;
 }
 
 export class DummyDualWeaponComponent {
-     constructor(){}
-    fire(partialDt){}
-    getDelay(){ return Infinity; }
-    isContinuing(){ return false; }
+    constructor() { }
+    fire(partialDt) { }
+    getDelay() { return Infinity; }
+    isContinuing() { return false; }
 }
 
 export class BasicDualWeaponComponent {
-    constructor(fireTime, numShots, spread, variance, speed, projectileGenerator){
+    constructor(fireTime, numShots, spread, variance, speed, projectileGenerator) {
         this.fireTime = fireTime;
         this.numShots = numShots;
         this.spread = spread;
@@ -91,21 +99,21 @@ export class BasicDualWeaponComponent {
         this.projectileGenerator = projectileGenerator;
     }
 
-    fire(partialDt){
+    fire(partialDt) {
         shootSpreadAsPlayer(this.numShots, this.spread, this.variance, this.speed, partialDt, this.projectileGenerator);
     }
 
-    getDelay(){
+    getDelay() {
         return this.fireTime;
     }
 
-    isContinuing(){
+    isContinuing() {
         return false;
     }
 }
 
 export class MultiDualWeaponComponent {
-    constructor(numRounds, mainDelay, subDelays, projCounts, spreads, variances, speeds, projectileGenerators){
+    constructor(numRounds, mainDelay, subDelays, projCounts, spreads, variances, speeds, projectileGenerators) {
         this.numRounds = numRounds;
         this.mainDelay = mainDelay;
         this.subDelays = subDelays;
@@ -118,7 +126,7 @@ export class MultiDualWeaponComponent {
         this.roundIndex = 0;
     }
 
-    fire(partialDt){
+    fire(partialDt) {
         shootSpreadAsPlayer(
             getFromArrayOrSingleValue(this.projCounts, this.roundIndex),
             getFromArrayOrSingleValue(this.spreads, this.roundIndex),
@@ -127,24 +135,24 @@ export class MultiDualWeaponComponent {
             partialDt,
             getFromArrayOrSingleValue(this.projectileGenerators, this.roundIndex)
         );
-        this.roundIndex = (this.roundIndex+1)%this.numRounds;
+        this.roundIndex = (this.roundIndex + 1) % this.numRounds;
     }
 
-    getDelay(){
-        if(this.roundIndex == 0){
+    getDelay() {
+        if (this.roundIndex == 0) {
             return this.mainDelay;
-        }else{
-            return getFromArrayOrSingleValue(this.subDelays, this.roundIndex-1);
+        } else {
+            return getFromArrayOrSingleValue(this.subDelays, this.roundIndex - 1);
         }
     }
 
-    isContinuing(){
+    isContinuing() {
         return this.roundIndex != 0;
     }
 }
 
 export class VolleyDualWeaponComponent {
-    constructor(numRounds, mainDelay, subDelay, sideProjCount, spread, offsetSpread, speed, projectileGenerator){
+    constructor(numRounds, mainDelay, subDelay, sideProjCount, spread, offsetSpread, speed, projectileGenerator) {
         this.numRounds = numRounds;
         this.mainDelay = mainDelay;
         this.subDelay = subDelay;
@@ -158,50 +166,50 @@ export class VolleyDualWeaponComponent {
         this.roundIndex = 0;
     }
 
-    fire(partialDt){
-        const dx = controls.mouse.x-playField.player.x;
-        const dy = controls.mouse.y-playField.player.y;
-        const baseAngle = Math.atan2(dy,dx);
-        if(this.subRound == 0){
+    fire(partialDt) {
+        const dx = controls.mouse.x - playField.player.x;
+        const dy = controls.mouse.y - playField.player.y;
+        const baseAngle = Math.atan2(dy, dx);
+        if (this.subRound == 0) {
             shootWithAngularOffset(playField.player.x, playField.player.y, baseAngle, this.speed, 0, partialDt, this.projectileGenerator);
-        }else{
-            const angleChange = this.spread * this.subRound/this.sideProjCount;
-            const offset = this.offsetSpread * this.subRound/this.sideProjCount;
-            shootWithAngularOffset(playField.player.x, playField.player.y, baseAngle+angleChange, this.speed, offset, partialDt, this.projectileGenerator);
-            shootWithAngularOffset(playField.player.x, playField.player.y, baseAngle-angleChange, this.speed, -offset, partialDt, this.projectileGenerator);
+        } else {
+            const angleChange = this.spread * this.subRound / this.sideProjCount;
+            const offset = this.offsetSpread * this.subRound / this.sideProjCount;
+            shootWithAngularOffset(playField.player.x, playField.player.y, baseAngle + angleChange, this.speed, offset, partialDt, this.projectileGenerator);
+            shootWithAngularOffset(playField.player.x, playField.player.y, baseAngle - angleChange, this.speed, -offset, partialDt, this.projectileGenerator);
         }
 
         this.subRound++;
-        if(this.subRound >= this.sideProjCount){
+        if (this.subRound >= this.sideProjCount) {
             this.subRound = 0;
-            this.roundIndex = (this.roundIndex+1)%this.numRounds;
+            this.roundIndex = (this.roundIndex + 1) % this.numRounds;
         }
     }
 
-    getDelay(){
-        if(this.roundIndex == 0 && this.subRound == 0){
+    getDelay() {
+        if (this.roundIndex == 0 && this.subRound == 0) {
             return this.mainDelay;
-        }else{
+        } else {
             return this.subDelay;
         }
     }
 
-    isContinuing(){
+    isContinuing() {
         return !(this.roundIndex == 0 && this.subRound == 0);
     }
 }
 
 export const stockLightComponents = {
-    MachineGun: class extends BasicDualWeaponComponent{
-        constructor(){
+    MachineGun: class extends BasicDualWeaponComponent {
+        constructor() {
             super(
                 3, // Delay
                 1, // # Bullets
                 0, // Spread
                 0.01, // Variance
                 20, // Speed
-                (x, y, dx, dy)=>(
-                    new PointPProj(x,y,dx,dy,PRIMARY_COLOR,()=>(createAttackProfile(
+                (x, y, dx, dy) => (
+                    new PointPProj(x, y, dx, dy, PRIMARY_COLOR, () => (createAttackProfile(
                         1, // Damage
                         3, // Overflow deduction coefficient
                         0, // Free hits (pierce-1)
@@ -210,16 +218,16 @@ export const stockLightComponents = {
             );
         }
     },
-    Spread: class extends BasicDualWeaponComponent{
-        constructor(){
+    Spread: class extends BasicDualWeaponComponent {
+        constructor() {
             super(
                 22, // Delay
                 7, // # Bullets
                 0.1, // Spread
                 0, // Variance
                 20, // Speed
-                (x, y, dx, dy)=>(
-                    new PointPProj(x,y,dx,dy,PRIMARY_COLOR,()=>(createAttackProfile(
+                (x, y, dx, dy) => (
+                    new PointPProj(x, y, dx, dy, PRIMARY_COLOR, () => (createAttackProfile(
                         1, // Damage
                         3, // Overflow deduction coefficient
                         0, // Free hits (pierce-1)
@@ -228,20 +236,20 @@ export const stockLightComponents = {
             );
         }
     },
-    Heavy: class extends BasicDualWeaponComponent{
-        constructor(){
+    Heavy: class extends BasicDualWeaponComponent {
+        constructor() {
             super(
                 30, // Delay
                 1, // # Bullets
                 0, // Spread
                 0, // Variance
                 20, // Speed
-                (x, y, dx, dy)=>(
-                    new BallPProj(x,y,dx,dy,
+                (x, y, dx, dy) => (
+                    new BallPProj(x, y, dx, dy,
                         10, // Radius
                         -1, // Duration
                         0, // # Bounces
-                        PRIMARY_COLOR,()=>(createAttackProfile(
+                        PRIMARY_COLOR, () => (createAttackProfile(
                             10, // Damage
                             1, // Overflow deduction coefficient
                             0, // Free hits (pierce-1)
@@ -251,16 +259,16 @@ export const stockLightComponents = {
             );
         }
     },
-    Splitter: (function(){
+    Splitter: (function () {
         const PROJECTILE_PARAMS = {
             radius: 10,
             duration: 20,
-            attackProfileGenerator: ()=>(createAttackProfile(
+            attackProfileGenerator: () => (createAttackProfile(
                 1, // Damage
                 3, // Overflow deduction coefficient
                 0, // Free hits (pierce-1)
             )),
-            explode: (x, y, angle)=>{
+            explode: (x, y, angle) => {
                 shootSpread(
                     x, y,
                     7, // # Sub bullets
@@ -270,8 +278,8 @@ export const stockLightComponents = {
                     25, // Speed
                     0, // Headstart
                     0, // (PartialDt)
-                    (x, y, dx, dy)=>(
-                        new PointPProj(x,y,dx,dy,PRIMARY_COLOR,()=>(createAttackProfile(
+                    (x, y, dx, dy) => (
+                        new PointPProj(x, y, dx, dy, PRIMARY_COLOR, () => (createAttackProfile(
                             1, // Damage
                             3, // Overflow deduction coefficient
                             0, // Free hits (pierce-1)
@@ -281,16 +289,16 @@ export const stockLightComponents = {
             },
         };
 
-        class Splitter extends BasicDualWeaponComponent{
-            constructor(){
+        class Splitter extends BasicDualWeaponComponent {
+            constructor() {
                 super(
                     20, // Delay
                     1, // # Bullets
                     0, // Spread
                     0, // Variance
                     15, // Speed
-                    (x, y, dx, dy)=>(
-                        new ExplodingBallPProj(x,y,dx,dy,PRIMARY_COLOR,PROJECTILE_PARAMS)
+                    (x, y, dx, dy) => (
+                        new ExplodingBallPProj(x, y, dx, dy, PRIMARY_COLOR, PROJECTILE_PARAMS)
                     )
                 );
             }
@@ -301,18 +309,18 @@ export const stockLightComponents = {
 };
 
 export const stockHeavyComponents = {
-    Volley: class extends VolleyDualWeaponComponent{
-        constructor(){
+    Volley: class extends VolleyDualWeaponComponent {
+        constructor() {
             super(
                 15, // # Rounds
                 120, // Main delay
                 0.5, // Time between bullets
                 8, // Bullets from center including center
                 0.06, // Total spread
-                Math.PI/2, // Total offset spread
+                Math.PI / 2, // Total offset spread
                 25, // Speed
-                (x, y, dx, dy)=>(
-                    new PointPProj(x,y,dx,dy,SECONDARY_COLOR,()=>(createAttackProfile(
+                (x, y, dx, dy) => (
+                    new PointPProj(x, y, dx, dy, SECONDARY_COLOR, () => (createAttackProfile(
                         1, // Damage
                         3, // Overflow deduction coefficient
                         0, // Free hits (pierce-1)
@@ -321,18 +329,18 @@ export const stockHeavyComponents = {
             );
         }
     },
-    Wave: class extends MultiDualWeaponComponent{
-        constructor(){
+    Wave: class extends MultiDualWeaponComponent {
+        constructor() {
             super(
                 3, // # Rounds
                 120, // Main Delay
                 0, // Sub delay
-                [31,30,29], // # Bullets
+                [31, 30, 29], // # Bullets
                 0.05, // Spread
                 0, // Variance
-                [25,22.5,20], // Speed
-                (x, y, dx, dy)=>(
-                    new PointPProj(x,y,dx,dy,SECONDARY_COLOR,()=>(createAttackProfile(
+                [25, 22.5, 20], // Speed
+                (x, y, dx, dy) => (
+                    new PointPProj(x, y, dx, dy, SECONDARY_COLOR, () => (createAttackProfile(
                         1, // Damage
                         3, // Overflow deduction coefficient
                         0, // Free hits (pierce-1)
@@ -341,20 +349,20 @@ export const stockHeavyComponents = {
             );
         }
     },
-    Buster: class extends BasicDualWeaponComponent{
-        constructor(){
+    Buster: class extends BasicDualWeaponComponent {
+        constructor() {
             super(
                 120, // Delay
                 1, // # Bullets
                 0, // Spread
                 0, // Variance
                 15, // Speed
-                (x, y, dx, dy)=>(
-                    new BallPProj(x,y,dx,dy,
+                (x, y, dx, dy) => (
+                    new BallPProj(x, y, dx, dy,
                         20, // Radius
                         -1, // Duration
                         0, // # Bounces
-                        SECONDARY_COLOR,()=>(createAttackProfile(
+                        SECONDARY_COLOR, () => (createAttackProfile(
                             100, // Damage
                             1, // Overflow deduction coefficient
                             0, // Free hits (pierce-1)
@@ -364,28 +372,28 @@ export const stockHeavyComponents = {
             );
         }
     },
-    Firework: class extends BasicDualWeaponComponent{
-        constructor(){
+    Firework: class extends BasicDualWeaponComponent {
+        constructor() {
             super(
                 120, // Delay
                 1, // # Bullets
                 0, // Spread
                 0, // Variance
                 20, // Speed
-                (x, y, dx, dy)=>(
-                    new FireworkProj(x,y,dx,dy,
+                (x, y, dx, dy) => (
+                    new FireworkProj(x, y, dx, dy,
                         12, // Radius
                         40, // Duration
                         50, // Projectiles in 1 of 2 rings
                         30, // Speed 1
                         25, // Speed 2
                         SECONDARY_COLOR,
-                        ()=>(createAttackProfile( // Primary
+                        () => (createAttackProfile( // Primary
                             1, // Damage
                             3, // Overflow deduction coefficient
                             0, // Free hits (pierce-1)
                         )),
-                        ()=>(createAttackProfile( // Secondary
+                        () => (createAttackProfile( // Secondary
                             1, // Damage
                             3, // Overflow deduction coefficient
                             0, // Free hits (pierce-1)
