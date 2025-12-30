@@ -2,14 +2,13 @@ import { createAttackProfile } from "../../attackAndDefense.js";
 import Color from "../../color.js";
 import { canv } from "../../drawing.js";
 import playField from "../../playField.js";
-import { BallPProjWeapon } from "../../weapons/ballProjWeapons.js";
-import { MemeWeapon2 } from "../../weapons/fireworkWeapons.js";
-import { MachineGunWeapon, MemeWeapon1, PointPProjWeapon, ShotgunWeapon } from "../../weapons/pointProjWeapons.js";
-import { CreateBgParticleAndWaitForRetirementTask, CreateStaticBgParticleTask, DeleteStaticBgParticleTask, MessageTask, WaitForConditionTask, WaitTimeTask, WeightedSpawnTask } from "../../tasks.js";
-import BgMessage, { StaticBGMessage } from "../../bgMessage.js";
-import { WasdTutorialTask } from "../../tutorial/wasdTutorialTask.js";
+import { CreateBgParticleAndWaitForRetirementTask, MessageTask, WaitForConditionTask, WaitTimeTask, WeightedSpawnTask } from "../../tasks.js";
 import { ShootTutorialTask } from "../../tutorial/shootTutorialTask.js";
 import TimeSlowTutorialTask from "../../tutorial/timeSlowTutorialTask.js";
+import { WasdTutorialTask } from "../../tutorial/wasdTutorialTask.js";
+import { BallPProjWeapon } from "../../weapons/ballProjWeapons.js";
+import { MemeWeapon2 } from "../../weapons/fireworkWeapons.js";
+import { MemeWeapon1, PointPProjWeapon } from "../../weapons/pointProjWeapons.js";
 
 export default class ModeAGame {
     constructor() {
@@ -89,20 +88,12 @@ const level1 = {
             class: CreateBgParticleAndWaitForRetirementTask,
             particleClass: TimeSlowTutorialTask
         }, {
-            //     class: CreateStaticBgParticleTask,
-            //     particleClass: StaticBGMessage,
-            //     centerX: canv.width/2,
-            //     centerY: canv.height/2+100,
-            //     text: "Test",
-            //     fontSizePx: 100,
-            //     id: "MSG_TEST"
-            // },{
             class: MessageTask,
             centerX: canv.width / 2,
             centerY: canv.height / 2 - 200,
             text: "Level 1",
             fontSizePx: 100,
-            duration: 60
+            showTime: 60,
         }, {
             class: WaitTimeTask,
             time: 30
@@ -225,7 +216,7 @@ const level2 = {
             centerY: canv.height / 2 - 200,
             text: "Level 2",
             fontSizePx: 100,
-            duration: 60
+            showTime: 60
         }, {
             class: WaitTimeTask,
             time: 30

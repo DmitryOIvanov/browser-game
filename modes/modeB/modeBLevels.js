@@ -1,5 +1,6 @@
+import { canv } from "../../drawing.js";
 import playField from "../../playField.js";
-import { CreateBgParticleAndWaitForRetirementTask, PerformTasksTask, WaitForConditionTask, WaitTimeTask, WeightedSpawnTask } from "../../tasks.js";
+import { CreateBgParticleAndWaitForRetirementTask, MessageTask, PerformTasksTask, WaitForConditionTask, WaitTimeTask, WeightedSpawnTask } from "../../tasks.js";
 import { ShootTutorialTask } from "../../tutorial/shootTutorialTask.js";
 import { SpecialTutorialTask } from "../../tutorial/specialTutorialTask.js";
 import TimeSlowTutorialTask from "../../tutorial/timeSlowTutorialTask.js";
@@ -7,12 +8,24 @@ import { WasdTutorialTask } from "../../tutorial/wasdTutorialTask.js";
 
 const tutorial = [
     {
+        class: MessageTask,
+        centerX: canv.width / 2,
+        centerY: canv.height / 2 - 200,
+        text: "Level 2",
+        fontSizePx: 100,
+        fadeInTime: 30,
+        showTime: 60,
+        fadeOutTime: 30,
+    },
+    {
         class: CreateBgParticleAndWaitForRetirementTask,
         particleClass: WasdTutorialTask
-    }, {
+    },
+    {
         class: CreateBgParticleAndWaitForRetirementTask,
         particleClass: ShootTutorialTask
-    }, {
+    },
+    {
         class: CreateBgParticleAndWaitForRetirementTask,
         particleClass: TimeSlowTutorialTask
     },

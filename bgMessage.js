@@ -1,49 +1,70 @@
 import Color from "./color.js";
 import { addToGlobalAlphaStack, ctx, popFromGlobalStack } from "./drawing.js";
 
-export default class BgMessage{
-    constructor(text, fontSizePx, color, opacity, centerX, centerY, duration){
-        this.text = text;
-        this.fontSizePx = fontSizePx;
-        this.color = color || Color.WHITE;
-        this.opacity = opacity || 1;
-        this.centerX = centerX;
-        this.centerY = centerY;
-        this.duration = duration || -1;
-        this.fontStr = `${this.fontSizePx}px Arial`;
-        this.isStatic = this.duration && this.duration < 0;
+const STATE_FADE_IN = 0;
+const STATE_IDLE = 1;
+const STATE_FADE_OUT = 2;
 
+export default class BgMessage {
+    constructor(params) {
+        this.text = params.text;
+        this.fontSizePx = params.fontSizePx;
+        this.color = params.color || Color.WHITE;
+        this.opacity = params.opacity || 1;
+        this.centerX = params.centerX;
+        this.centerY = params.centerY;
+
+        this.doesWait = params.doesWait;
+        this.fadeInTime = params.fadeInTime || 0;
+        this.showTime = params.showTime || 0;
+        this.fadeOutTime = params.fadeOutTime || 0;
+
+        this.fontStr = `${this.fontSizePx}px Arial`;
         this.retired = false;
-        this.timeElapsed = 0;
+        this.state = STATE_FADE_IN;
+        this.stateProgress = 0;
     }
 
-    timeStep(amount){
-        if(!this.isStatic){
-            this.timeElapsed += amount;
-            if(this.timeElapsed >= this.duration) this.retired = true;
+    stopWaiting() {
+        this.doesWait = false;
+    }
+
+    timeStep(dt) {
+        this.stateProgress += dt;
+        if (this.state == STATE_FADE_IN) {
+            if (this.stateProgress >= this.fadeInTime) {
+                this.stateProgress -= this.fadeInTime;
+                this.state++;
+            }
+        }
+        if (this.state == STATE_IDLE) {
+            if (this.stateProgress >= this.showTime) {
+                if (this.doesWait) {
+                    this.stateProgress = this.showTime;
+                } else {
+                    this.stateProgress -= this.showTime;
+                    this.state++;
+                }
+            }
+        }
+        if (this.state == STATE_FADE_OUT) {
+            if (this.stateProgress >= this.fadeOutTime) {
+                this.stateProgress -= this.fadeOutTime;
+                this.retired = true;
+            }
         }
     }
 
-    draw(){
-        addToGlobalAlphaStack(this.opacity);
+    draw() {
+        let opacity = this.opacity;
+        if (this.state == STATE_FADE_IN) opacity *= this.stateProgress / this.fadeInTime;
+        if (this.state == STATE_FADE_OUT) opacity *= 1 - (this.stateProgress / this.fadeOutTime);
+        if (isNaN(opacity)) opacity = this.opacity;
+        addToGlobalAlphaStack(opacity);
         ctx.textAlign = "center";
         ctx.font = this.fontStr;
         ctx.fillStyle = this.color.getStr();
-        ctx.fillText(this.text,this.centerX,this.centerY+this.fontSizePx*0.25);
+        ctx.fillText(this.text, this.centerX, this.centerY + this.fontSizePx * 0.25);
         popFromGlobalStack();
-    }
-}
-
-export class StaticBGMessage extends BgMessage{
-    constructor(params){
-        super(
-            params.text,
-            params.fontSizePx,
-            params.color,
-            params.opacity,
-            params.centerX,
-            params.centerY,
-            -1
-        );
     }
 }
