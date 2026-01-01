@@ -7,7 +7,7 @@ import { SpecialTutorialTask } from "../../tutorial/specialTutorialTask.js";
 import TimeSlowTutorialTask from "../../tutorial/timeSlowTutorialTask.js";
 import { WasdTutorialTask } from "../../tutorial/wasdTutorialTask.js";
 
-const tutorial = [
+const tutorialPart1 = [
     {
         class: CreateBgParticleAndWaitForRetirementTask,
         particleClass: WasdTutorialTask
@@ -56,6 +56,9 @@ const tutorial = [
         ]
     },
     { class: CheckpointTask },
+];
+
+const tutorialPart2 = [
     {
         class: CreateBgParticleAndWaitForRetirementTask,
         particleClass: TimeSlowTutorialTask
@@ -81,11 +84,25 @@ const tutorial = [
     },
     {
         class: WeightedSpawnTask,
-        delayCoeff: 20,
+        delayCoeff: 15,
         enemies: [
-            { name: "SmallSquare", weight: 1, num: 8 },
-            { name: "SmallTriangle", weight: 1, num: 8 },
-            { name: "SmallCircle", weight: 1, num: 5 },
+            {
+                shuffle: [
+                    { name: "SmallSquare", weight: 1, num: 5 },
+                    { name: "SmallTriangle", weight: 1, num: 5 },
+                    { name: "SmallCircle", weight: 1, num: 5 },
+                ]
+            },
+            {
+                shuffle: [
+                    { name: "SmallSquare", weight: 1, num: 5 },
+                    { name: "SmallTriangle", weight: 1, num: 5 },
+                    { name: "SmallCircle", weight: 1, num: 3 },
+                    { name: "MultiSquare", weight: 2, num: 2 },
+                    { name: "MultiTriangle", weight: 2, num: 2 },
+                    { name: "MultiCircle", weight: 2, num: 1 },
+                ]
+            }
         ]
     },
     { class: CheckpointTask },
@@ -186,7 +203,8 @@ const level2 = [
 ];
 
 const modeBLevels = [
-    tutorial,
+    tutorialPart1,
+    tutorialPart2,
     level1,
     level2,
 ];
