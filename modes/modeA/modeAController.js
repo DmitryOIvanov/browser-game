@@ -11,7 +11,7 @@ const STATE_PLAYING = 1;
 const STATE_END = 2;
 
 export default class ModeAController {
-    constructor(){
+    constructor() {
         this.concluded = false;
         this.game = new ModeAGame();
         this.subController = null;
@@ -19,52 +19,53 @@ export default class ModeAController {
         this.startWeaponSelect();
     }
 
-    nextFrame(){
-        if(this.concluded) return;
-        if(this.state == STATE_WEAPON_SELECT){
+    nextFrame() {
+        if (this.concluded) return;
+        if (this.state == STATE_WEAPON_SELECT) {
             this.subController.nextFrame();
-            if(this.subController.concluded){
+            if (this.subController.concluded) {
                 this.startPlay();
             }
-        }else if(this.state == STATE_PLAYING){
+        } else if (this.state == STATE_PLAYING) {
             playField.advanceOneFrame();
-            if(playField.manager.concluded){
-                if(playField.manager.playerLost){
+            if (playField.manager.concluded) {
+                if (playField.manager.playerLost) {
                     this.startEndScreen("Game Over");
-                }else{
+                } else {
                     this.game.level++;
-                    if(this.game.level >= modeALevelList.length){
+                    if (this.game.level >= modeALevelList.length) {
                         this.startEndScreen("You Win");
-                    }else{
-                        this.startWeaponSelect(); 
+                    } else {
+                        this.startWeaponSelect();
                     }
                 }
-            }else{
+            } else {
                 playField.redraw();
             }
-        }else if(this.state == STATE_END){
+        } else if (this.state == STATE_END) {
             this.subController.nextFrame();
-            if(this.subController.concluded){
+            if (this.subController.concluded) {
                 this.concluded = true;
                 return;
             }
         }
     }
 
-    startWeaponSelect(){
+    startWeaponSelect() {
         this.state = STATE_WEAPON_SELECT;
         this.subController = new ModeAWeaponSelectController(this.game);
     }
 
-    startPlay(){
+    startPlay() {
         controls.mouse.lPressed = false;
         controls.mouse.leftHeld = false;
         this.state = STATE_PLAYING;
         this.subController = null;
-        playField.initialize(new TaskBasedManager(this.game));
+        playField.initialize();
+        playField.setManager(new TaskBasedManager(this.game));
     }
 
-    startEndScreen(message){
+    startEndScreen(message) {
         controls.mouse.lPressed = false;
         controls.mouse.leftHeld = false;
         this.state = STATE_END;

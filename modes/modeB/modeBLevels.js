@@ -1,22 +1,13 @@
 import { canv } from "../../drawing.js";
 import playField from "../../playField.js";
-import { CreateBgParticleAndWaitForRetirementTask, MessageTask, PerformTasksTask, WaitForConditionTask, WaitTimeTask, WeightedSpawnTask } from "../../tasks.js";
+import { CreateBgParticleAndWaitForRetirementTask, CreateMessageAndWaitTask, CreateMessageTask, CreateTrackedMessageTask, PerformTasksTask, WaitForConditionTask, WaitTimeTask, WeightedSpawnTask } from "../../tasks.js";
+import CheckpointTask from "../../tasks/checkpointTask.js";
 import { ShootTutorialTask } from "../../tutorial/shootTutorialTask.js";
 import { SpecialTutorialTask } from "../../tutorial/specialTutorialTask.js";
 import TimeSlowTutorialTask from "../../tutorial/timeSlowTutorialTask.js";
 import { WasdTutorialTask } from "../../tutorial/wasdTutorialTask.js";
 
 const tutorial = [
-    {
-        class: MessageTask,
-        centerX: canv.width / 2,
-        centerY: canv.height / 2 - 200,
-        text: "Level 2",
-        fontSizePx: 100,
-        fadeInTime: 30,
-        showTime: 60,
-        fadeOutTime: 30,
-    },
     {
         class: CreateBgParticleAndWaitForRetirementTask,
         particleClass: WasdTutorialTask
@@ -26,12 +17,107 @@ const tutorial = [
         particleClass: ShootTutorialTask
     },
     {
+        class: CreateMessageTask,
+        centerX: canv.width / 2,
+        centerY: canv.height / 2 - 200,
+        text: "Defeat all Enemies",
+        fontSizePx: 60,
+        fadeInTime: 30,
+        showTime: 210,
+        fadeOutTime: 180,
+        opacity: 0.6,
+    },
+    {
+        class: WaitTimeTask,
+        time: 90
+    },
+    {
+        class: CreateMessageTask,
+        centerX: canv.width / 2,
+        centerY: canv.height / 2 + 200,
+        text: "5 Hits and You're Out",
+        fontSizePx: 50,
+        fadeInTime: 30,
+        showTime: 120,
+        fadeOutTime: 180,
+        opacity: 0.6,
+    },
+    {
+        class: WaitTimeTask,
+        time: 90
+    },
+    {
+        class: WeightedSpawnTask,
+        delayCoeff: 20,
+        enemies: [
+            { name: "SmallSquare", weight: 1, num: 8 },
+            { name: "SmallTriangle", weight: 1, num: 8 },
+            { name: "SmallCircle", weight: 1, num: 5 },
+        ]
+    },
+    { class: CheckpointTask },
+    {
         class: CreateBgParticleAndWaitForRetirementTask,
         particleClass: TimeSlowTutorialTask
     },
     {
         class: CreateBgParticleAndWaitForRetirementTask,
         particleClass: SpecialTutorialTask
+    },
+    {
+        class: CreateMessageTask,
+        centerX: canv.width / 2,
+        centerY: canv.height / 2 - 200,
+        text: "Try out Your New Abilities",
+        fontSizePx: 60,
+        fadeInTime: 30,
+        showTime: 120,
+        fadeOutTime: 180,
+        opacity: 0.6,
+    },
+    {
+        class: WaitTimeTask,
+        time: 60
+    },
+    {
+        class: WeightedSpawnTask,
+        delayCoeff: 20,
+        enemies: [
+            { name: "SmallSquare", weight: 1, num: 8 },
+            { name: "SmallTriangle", weight: 1, num: 8 },
+            { name: "SmallCircle", weight: 1, num: 5 },
+        ]
+    },
+    { class: CheckpointTask },
+    {
+        class: CreateMessageTask,
+        centerX: canv.width / 2,
+        centerY: canv.height / 2 - 200,
+        text: "Tutorial Complete",
+        fontSizePx: 60,
+        fadeInTime: 30,
+        showTime: 210,
+        fadeOutTime: 45,
+        opacity: 0.6,
+    },
+    {
+        class: WaitTimeTask,
+        time: 90
+    },
+    {
+        class: CreateMessageTask,
+        centerX: canv.width / 2,
+        centerY: canv.height / 2 + 200,
+        text: "Good Luck",
+        fontSizePx: 50,
+        fadeInTime: 30,
+        showTime: 120,
+        fadeOutTime: 45,
+        opacity: 0.6,
+    },
+    {
+        class: WaitTimeTask,
+        time: 195
     },
 ];
 

@@ -87,14 +87,27 @@ export class WaitTimeTask {
     }
 }
 
-export class MessageTask {
+export class CreateMessageTask {
+    constructor(readonlyParams) {
+        playField.addBackgroundParticle(new BgMessage(readonlyParams));
+        this.concluded = true;
+    }
+}
+
+export class CreateTrackedMessageTask {
+    constructor(readonlyParams) {
+        playField.addTrackedBackgroundParticle(new BgMessage(readonlyParams), readonlyParams.id);
+        this.concluded = true;
+    }
+}
+
+export class CreateMessageAndWaitTask {
     constructor(readonlyParams) {
         this.messageObject = new BgMessage(readonlyParams);
         this.msgAdded = false;
         this.concluded = false;
     }
-
-    timeStep(amount) {
+    timeStep(dt) {
         if (!this.msgAdded) {
             playField.addBackgroundParticle(this.messageObject);
             this.msgAdded = true;

@@ -2,7 +2,7 @@ import { createAttackProfile } from "../../attackAndDefense.js";
 import Color from "../../color.js";
 import { canv } from "../../drawing.js";
 import playField from "../../playField.js";
-import { CreateBgParticleAndWaitForRetirementTask, MessageTask, WaitForConditionTask, WaitTimeTask, WeightedSpawnTask } from "../../tasks.js";
+import { CreateBgParticleAndWaitForRetirementTask, CreateMessageAndWaitTask, WaitForConditionTask, WaitTimeTask, WeightedSpawnTask } from "../../tasks.js";
 import { ShootTutorialTask } from "../../tutorial/shootTutorialTask.js";
 import TimeSlowTutorialTask from "../../tutorial/timeSlowTutorialTask.js";
 import { WasdTutorialTask } from "../../tutorial/wasdTutorialTask.js";
@@ -88,7 +88,7 @@ const level1 = {
             class: CreateBgParticleAndWaitForRetirementTask,
             particleClass: TimeSlowTutorialTask
         }, {
-            class: MessageTask,
+            class: CreateMessageAndWaitTask,
             centerX: canv.width / 2,
             centerY: canv.height / 2 - 200,
             text: "Level 1",
@@ -211,7 +211,7 @@ const level2 = {
         }
     ], tasks: [
         {
-            class: MessageTask,
+            class: CreateMessageAndWaitTask,
             centerX: canv.width / 2,
             centerY: canv.height / 2 - 200,
             text: "Level 2",
