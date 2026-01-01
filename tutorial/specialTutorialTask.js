@@ -8,6 +8,8 @@ const EXTRA_END_TIME = 30;
 export class SpecialTutorialTask extends TutorialTask {
     constructor() {
         super(EXTRA_END_TIME);
+        playField.player.weapon.hasStartedAHeavyAttack = false;
+        playField.player.weapon.hasFinishedAHeavyAttack = false;
     }
 
     timeStep(dt) {
