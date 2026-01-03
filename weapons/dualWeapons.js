@@ -1,6 +1,7 @@
 import { createAttackProfile } from "../attackAndDefense.js";
 import Color from "../color.js";
 import controls from "../controls.js";
+import { ctx } from "../drawing.js";
 import Player from "../player.js";
 import playField from "../playField.js";
 import { shootSpread, shootSpreadAsPlayer, shootWithAngularOffset } from "../projectileCreation.js";
@@ -12,6 +13,12 @@ import PointPProj from "../projectiles/player/pointPProj.js";
 const PRIMARY_COLOR = new Color(false, '#7FF');
 const SECONDARY_COLOR = new Color(false, '#FFF');
 
+const NUM_CROSSHAIRS = 4;
+const CROSSHAIR_IN_RAD_NORMAL = 12;
+const CROSSHAIR_SPECIAL_EXTRA_RAD = 20;
+const CROSSHAIR_LENGTH = 15;
+const CROSSHAIR_SWITCH_RATE = 0.2;
+
 export class DualWeapon {
     constructor(lightComponent, heavyComponent) {
         this.lightComponent = lightComponent;
@@ -20,17 +27,52 @@ export class DualWeapon {
         this.fireTimer = 0;
         this.wasRightClicking = false;
 
+        this.color = PRIMARY_COLOR;
+
         // For tutorial
         this.hasStartedAHeavyAttack = false;
         this.hasFinishedAHeavyAttack = false;
 
-        this.color = PRIMARY_COLOR;
+        // Cursor
+        this.cursorSwitch = 0;
+    }
+
+    drawCursor() {
+        if (!controls.mouse.inBounds) return;
+        const mouse = controls.mouse;
+
+        ctx.strokeStyle = this.color.getStr();
+        ctx.lineWidth = 5;
+        ctx.fillStyle = this.color.getStr();
+
+        const inRad = CROSSHAIR_IN_RAD_NORMAL + this.cursorSwitch * CROSSHAIR_SPECIAL_EXTRA_RAD;
+        const outRad = inRad + CROSSHAIR_LENGTH;
+
+        for (let i = 0; i < NUM_CROSSHAIRS; i++) {
+            const angle = 2 * Math.PI * i / NUM_CROSSHAIRS;
+            ctx.beginPath();
+            ctx.moveTo(mouse.x + inRad * Math.cos(angle), mouse.y + inRad * Math.sin(angle));
+            ctx.lineTo(mouse.x + outRad * Math.cos(angle), mouse.y + outRad * Math.sin(angle));
+            ctx.stroke();
+        }
+
+        // for (let i = 0; i < 3; i++) {
+        //     let startAngle = 2 * Math.PI * (playField.player.cursorRot + i / 3);
+        //     ctx.beginPath();
+        //     ctx.arc(mouse.x, mouse.y, 15, startAngle, startAngle + 0.4 * Math.PI);
+        //     ctx.stroke();
+        // }
+        ctx.beginPath();
+        ctx.arc(mouse.x, mouse.y, 5, 0, 2 * Math.PI);
+        ctx.fill();
     }
 
     timeStep(dt) {
         let dtAdded = false;
         let forcedHeavyShot = (this.wasRightClicking && !controls.mouse.rightHeld);
         if (this.heavyComponent.isContinuing() || controls.mouse.rightHeld || forcedHeavyShot) {
+            this.cursorSwitch = Math.min(1, this.cursorSwitch + dt * CROSSHAIR_SWITCH_RATE);
+
             this.fireTimer += dt;
             dtAdded = true;
             while (true) {
@@ -49,6 +91,8 @@ export class DualWeapon {
                 }
                 forcedHeavyShot = false;
             }
+        } else {
+            this.cursorSwitch = Math.max(0, this.cursorSwitch - dt * CROSSHAIR_SWITCH_RATE);
         }
 
         if (!this.heavyComponent.isContinuing() && !controls.mouse.rightHeld) {
