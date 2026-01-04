@@ -4,6 +4,7 @@ const RADIUS = 40;
 const BAR_HEIGHT = 40;
 const BUTTON_OFFSET = 10;
 const LINE_WIDTH = 8;
+const BUTTON_EXTRA_TRANSPARENCY = 0.7;
 
 export default function drawTutorialMouse(centerX, centerY, leftPressed, rightPressed) {
     ctx.lineWidth = LINE_WIDTH;
@@ -20,7 +21,7 @@ export default function drawTutorialMouse(centerX, centerY, leftPressed, rightPr
     ctx.lineTo(centerX, centerY - 0.5 * BAR_HEIGHT - RADIUS);
     ctx.stroke();
 
-    addToGlobalAlphaStack(0.5);
+    addToGlobalAlphaStack(BUTTON_EXTRA_TRANSPARENCY);
     if (leftPressed) {
         ctx.beginPath();
         ctx.arc(centerX, centerY - 0.5 * BAR_HEIGHT, RADIUS, Math.PI, 1.5 * Math.PI);
