@@ -15,9 +15,13 @@ const SECONDARY_COLOR = new Color(false, '#FFF');
 
 const NUM_CROSSHAIRS = 4;
 const CROSSHAIR_IN_RAD_NORMAL = 12;
-const CROSSHAIR_SPECIAL_EXTRA_RAD = 20;
+const CROSSHAIR_SPECIAL_EXTRA_RAD = 16;
 const CROSSHAIR_LENGTH = 15;
 const CROSSHAIR_SWITCH_RATE = 0.2;
+
+function lerp(t) {
+    return t * t * (3 - 2 * t);
+}
 
 export class DualWeapon {
     constructor(lightComponent, heavyComponent) {
@@ -35,6 +39,8 @@ export class DualWeapon {
 
         // Cursor
         this.cursorSwitch = 0;
+        this.cursorSpecialCharge = 0;
+        this.cursorSpecialRot = 0;
     }
 
     drawCursor() {
@@ -45,7 +51,7 @@ export class DualWeapon {
         ctx.lineWidth = 5;
         ctx.fillStyle = this.color.getStr();
 
-        const inRad = CROSSHAIR_IN_RAD_NORMAL + this.cursorSwitch * CROSSHAIR_SPECIAL_EXTRA_RAD;
+        const inRad = CROSSHAIR_IN_RAD_NORMAL + lerp(this.cursorSwitch) * CROSSHAIR_SPECIAL_EXTRA_RAD;
         const outRad = inRad + CROSSHAIR_LENGTH;
 
         for (let i = 0; i < NUM_CROSSHAIRS; i++) {
@@ -56,15 +62,14 @@ export class DualWeapon {
             ctx.stroke();
         }
 
-        // for (let i = 0; i < 3; i++) {
-        //     let startAngle = 2 * Math.PI * (playField.player.cursorRot + i / 3);
-        //     ctx.beginPath();
-        //     ctx.arc(mouse.x, mouse.y, 15, startAngle, startAngle + 0.4 * Math.PI);
-        //     ctx.stroke();
-        // }
         ctx.beginPath();
         ctx.arc(mouse.x, mouse.y, 5, 0, 2 * Math.PI);
         ctx.fill();
+
+        ctx.lineWidth = 10;
+        ctx.beginPath();
+        ctx.arc(mouse.x, mouse.y, 16, 0, this.cursorSpecialCharge * 2 * Math.PI);
+        ctx.stroke();
     }
 
     timeStep(dt) {
@@ -74,6 +79,12 @@ export class DualWeapon {
             this.cursorSwitch = Math.min(1, this.cursorSwitch + dt * CROSSHAIR_SWITCH_RATE);
 
             this.fireTimer += dt;
+            if (this.heavyComponent.isContinuing()) {
+                this.cursorSpecialCharge = 1;
+            } else {
+                this.cursorSpecialCharge = Math.min(1, this.fireTimer / this.heavyComponent.getDelay());
+            }
+
             dtAdded = true;
             while (true) {
                 if (!this.heavyComponent.isContinuing()) {
@@ -93,6 +104,7 @@ export class DualWeapon {
             }
         } else {
             this.cursorSwitch = Math.max(0, this.cursorSwitch - dt * CROSSHAIR_SWITCH_RATE);
+            this.cursorSpecialCharge = 0;
         }
 
         if (!this.heavyComponent.isContinuing() && !controls.mouse.rightHeld) {
