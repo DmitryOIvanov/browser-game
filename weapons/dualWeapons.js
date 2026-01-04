@@ -18,6 +18,10 @@ const CROSSHAIR_IN_RAD_NORMAL = 10;
 const CROSSHAIR_SPECIAL_EXTRA_RAD = 14;
 const CROSSHAIR_LENGTH = 15;
 const CROSSHAIR_SWITCH_RATE = 0.2;
+const CROSSHAIR_LINE_WIDTH = 5;
+const CROSSHAIR_CENTER_RAD = 5;
+const CROSSHAIR_SPECIAL_LINE_WIDTH = 8;
+const CROSSHAIR_SPECIAL_RADIUS = 16;
 
 function lerp(t) {
     return t * t * (3 - 2 * t);
@@ -47,7 +51,7 @@ export class DualWeapon {
         const mouse = controls.mouse;
 
         ctx.strokeStyle = this.color.getStr();
-        ctx.lineWidth = 5;
+        ctx.lineWidth = CROSSHAIR_LINE_WIDTH;
         ctx.fillStyle = this.color.getStr();
 
         const inRad = CROSSHAIR_IN_RAD_NORMAL + lerp(this.cursorSwitch) * CROSSHAIR_SPECIAL_EXTRA_RAD;
@@ -62,13 +66,13 @@ export class DualWeapon {
         }
 
         ctx.beginPath();
-        ctx.arc(mouse.x, mouse.y, 5, 0, 2 * Math.PI);
+        ctx.arc(mouse.x, mouse.y, CROSSHAIR_CENTER_RAD, 0, 2 * Math.PI);
         ctx.fill();
 
-        ctx.lineWidth = 8;
+        ctx.lineWidth = CROSSHAIR_SPECIAL_LINE_WIDTH;
         const deviation = this.cursorSpecialCharge * Math.PI;
         ctx.beginPath();
-        ctx.arc(mouse.x, mouse.y, 16, 0.5 * Math.PI - deviation, 0.5 * Math.PI + deviation);
+        ctx.arc(mouse.x, mouse.y, CROSSHAIR_SPECIAL_RADIUS, 0.5 * Math.PI - deviation, 0.5 * Math.PI + deviation);
         ctx.stroke();
     }
 
