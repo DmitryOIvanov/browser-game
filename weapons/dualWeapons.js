@@ -14,20 +14,13 @@ const PRIMARY_COLOR = new Color(false, '#7FF');
 const SECONDARY_COLOR = new Color(false, '#FFF');
 
 const NUM_CROSSHAIRS = 4;
-const CROSSHAIR_IN_RAD_NORMAL = 12;
-const CROSSHAIR_SPECIAL_EXTRA_RAD = 16;
+const CROSSHAIR_IN_RAD_NORMAL = 10;
+const CROSSHAIR_SPECIAL_EXTRA_RAD = 14;
 const CROSSHAIR_LENGTH = 15;
 const CROSSHAIR_SWITCH_RATE = 0.2;
-const CROSSHAIR_SPECIAL_BASE_SPIN = 0.15;
-const CROSSHAIR_SPECIAL_SPIN_UP = 0.3;
-const CROSSHAIR_SPECIAL_NUM_BARS = 2;
 
 function lerp(t) {
     return t * t * (3 - 2 * t);
-}
-
-function barSizeModifier(t) {
-    return 0.5 * t * (1 + t * t * t);
 }
 
 export class DualWeapon {
@@ -47,7 +40,6 @@ export class DualWeapon {
         // Cursor
         this.cursorSwitch = 0;
         this.cursorSpecialCharge = 0;
-        this.cursorSpecialRot = 0;
     }
 
     drawCursor() {
@@ -73,14 +65,11 @@ export class DualWeapon {
         ctx.arc(mouse.x, mouse.y, 5, 0, 2 * Math.PI);
         ctx.fill();
 
-        ctx.lineWidth = 10;
-        const arcPortion = 2 * Math.PI / CROSSHAIR_SPECIAL_NUM_BARS;
-        for (let i = 0; i < CROSSHAIR_SPECIAL_NUM_BARS; i++) {
-            const angle = this.cursorSpecialRot + i * arcPortion;
-            ctx.beginPath();
-            ctx.arc(mouse.x, mouse.y, 16, angle, angle + barSizeModifier(this.cursorSpecialCharge) * arcPortion);
-            ctx.stroke();
-        }
+        ctx.lineWidth = 8;
+        const deviation = this.cursorSpecialCharge * Math.PI;
+        ctx.beginPath();
+        ctx.arc(mouse.x, mouse.y, 16, 0.5 * Math.PI - deviation, 0.5 * Math.PI + deviation);
+        ctx.stroke();
     }
 
     timeStep(dt) {
@@ -94,10 +83,6 @@ export class DualWeapon {
                 this.cursorSpecialCharge = 0;
             } else {
                 this.cursorSpecialCharge = Math.min(1, this.fireTimer / this.heavyComponent.getDelay());
-                // const maxChange = this.heavyComponent.getDelay() - this.fireTimer;
-                // const change = Math.min(0, Math.max(maxChange, dt));
-                const rotSpeedCoeff = this.cursorSpecialCharge;
-                this.cursorSpecialRot += (CROSSHAIR_SPECIAL_BASE_SPIN + this.cursorSpecialCharge * CROSSHAIR_SPECIAL_SPIN_UP) * dt;
             }
 
             dtAdded = true;
