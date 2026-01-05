@@ -34,6 +34,7 @@ export class DualWeapon {
 
         this.fireTimer = 0;
         this.wasRightClicking = false;
+        this.prevFrameHeavy = false;
 
         this.color = PRIMARY_COLOR;
 
@@ -81,6 +82,10 @@ export class DualWeapon {
         let forcedHeavyShot = (this.wasRightClicking && !controls.mouse.rightHeld);
         if (this.heavyComponent.isContinuing() || controls.mouse.rightHeld || forcedHeavyShot) {
             this.cursorSwitch = Math.min(1, this.cursorSwitch + dt * CROSSHAIR_SWITCH_RATE);
+            if (!this.prevFrameHeavy) {
+                this.fireTimer = 0;
+            }
+            this.prevFrameHeavy = true;
 
             this.fireTimer += dt;
             if (this.heavyComponent.isContinuing()) {
@@ -109,6 +114,7 @@ export class DualWeapon {
         } else {
             this.cursorSwitch = Math.max(0, this.cursorSwitch - dt * CROSSHAIR_SWITCH_RATE);
             this.cursorSpecialCharge = 0;
+            this.prevFrameHeavy = false;
         }
 
         if (!this.heavyComponent.isContinuing() && !controls.mouse.rightHeld) {
