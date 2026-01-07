@@ -56,6 +56,7 @@ export default class Player {
     getColor() { return this.weapon == null ? Color.WHITE : this.weapon.color; }
 
     draw() {
+        // --- Player body ---
         ctx.strokeStyle = this.getColor().getStr();
         ctx.lineWidth = OUT_THICK;
         ctx.beginPath();
@@ -74,6 +75,7 @@ export default class Player {
         ctx.closePath();
         ctx.stroke();
 
+        // --- HP bars ---
         if (this.hitCooldown <= 0) this.hpMeterDir = 0;
         if (this.hitCooldown > 0) {
             ctx.lineWidth = 5 * this.hitCooldown / HIT_COOLDOWN_DUR;
@@ -108,6 +110,7 @@ export default class Player {
             }
         }
 
+        // --- Slow mo meter ---
         if (this.slowMoCharge >= SLOWMO_FULL_CHARGE) this.slowMeterDir = 0;
         if (this.slowMoCharge > 0 && this.slowMoCharge < SLOWMO_FULL_CHARGE) {
             if (this.slowMeterDir == 0) {
