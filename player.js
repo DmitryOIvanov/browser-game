@@ -5,6 +5,7 @@ import { ctx } from "./drawing.js";
 import { decToZero, normalizeAngle } from "./extraMath.js";
 import ShrinkingCircleParticle from "./particles/shrinkingCircleParticle.js";
 import playField from "./playField.js";
+import ShockAuraEffect from "./shockAuraEffect.js";
 
 const HIT_RAD = 10;
 const ROT_SPEED = 0.01;
@@ -51,11 +52,15 @@ export default class Player {
 
         this.weapon = null;
         this.exp = 0;
+
+        this.shockAura = new ShockAuraEffect(300, 300);
     }
 
     getColor() { return this.weapon == null ? Color.WHITE : this.weapon.color; }
 
     draw() {
+        this.shockAura.drawUpper();
+
         // --- Player body ---
         ctx.strokeStyle = this.getColor().getStr();
         ctx.lineWidth = OUT_THICK;
@@ -164,6 +169,7 @@ export default class Player {
     }
 
     timeStep(dt) {
+        this.shockAura.timeStep(dt);
         this.hitCooldown = decToZero(this.hitCooldown, dt);
         this.hitSlowCooldown = decToZero(this.hitSlowCooldown, 1);
         if (this.hitSlowCooldown == 0) {
