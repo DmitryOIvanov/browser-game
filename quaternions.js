@@ -1,3 +1,7 @@
+export const QT_I = [0, 1, 0, 0];
+export const QT_J = [0, 0, 1, 0];
+export const QT_K = [0, 0, 0, 1];
+
 export function qtAdd(a, b) {
     return [
         a[0] + b[0],
@@ -39,4 +43,3 @@ export function qtRandomUnit() {
         a2 * Math.sin(c),
     ];
 }
-
