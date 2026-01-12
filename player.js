@@ -29,6 +29,20 @@ const HIT_COOLDOWN_DUR = 120;
 
 const MAX_HP = 5;
 
+const SHOCK_AURA_PARAMS = {
+    radius: 30,
+    arcDelayBase: 1,
+    arcDelayVar: 2,
+    arcDuration: 6.5,
+    minMoves: 6,
+    extraMoveChance: 0.75,
+    moveSizeBase: 0.1,
+    moveSizeVar: 0.1,
+    redirectionAmount: 0.5,
+    arcThickness: 5,
+    radDeviation: 0.5,
+};
+
 export default class Player {
     static SLOWMO_SPEED = SLOWMO_SPEED;
     static IN_RAD = IN_RAD;
@@ -53,7 +67,7 @@ export default class Player {
         this.weapon = null;
         this.exp = 0;
 
-        this.shockAura = new ShockAuraEffect(300, 300);
+        this.shockAura = new ShockAuraEffect(this.x, this.y, SHOCK_AURA_PARAMS);
     }
 
     getColor() { return this.weapon == null ? Color.WHITE : this.weapon.color; }
@@ -169,7 +183,6 @@ export default class Player {
     }
 
     timeStep(dt) {
-        this.shockAura.timeStep(dt);
         this.hitCooldown = decToZero(this.hitCooldown, dt);
         this.hitSlowCooldown = decToZero(this.hitSlowCooldown, 1);
         if (this.hitSlowCooldown == 0) {
@@ -222,6 +235,8 @@ export default class Player {
             this.cursorRot = normalizeAngle(this.cursorRot + dt * DEFAULT_CURSOR_SPEED);
         }
 
+        this.shockAura.updatePosition(this.x, this.y);
+        this.shockAura.timeStep(dt);
     }
 
     getHit() {
