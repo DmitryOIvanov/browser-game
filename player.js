@@ -31,6 +31,7 @@ const MAX_HP = 5;
 
 const SHOCK_SPAWN_RATE_ON_HIT = 2.5;
 const SHOCK_AURA_PARAMS = {
+    color: Color.WHITE,
     radius: 25,
     arcSpawnRate: 0,
     arcSpawnVariance: 2,
@@ -75,7 +76,7 @@ export default class Player {
     getColor() { return this.weapon == null ? Color.WHITE : this.weapon.color; }
 
     draw() {
-        this.shockAura.drawUpper();
+        this.shockAura.drawLower();
 
         // --- Player body ---
         ctx.strokeStyle = this.getColor().getStr();
@@ -156,6 +157,8 @@ export default class Player {
             ctx.arc(this.x, this.y, 30, angle1, angle2);
             ctx.stroke();
         }
+
+        this.shockAura.drawUpper();
     }
 
     drawCursor() {

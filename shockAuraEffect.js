@@ -1,11 +1,16 @@
+import Color from "./color.js";
 import { ctx } from "./drawing.js";
 import { QT_I, qtInv, qtMult, qtRandomUnit } from "./quaternions.js";
+
+let topDebug = false;
+let bottomDebug = false;
 
 export default class ShockAuraEffect {
     constructor(x, y, params) {
         this.x = x;
         this.y = y;
 
+        this.color = params.color != undefined ? params.color : Color.WHITE;
         this.radius = params.radius != undefined ? params.radius : 100;
         this.arcSpawnRate = params.arcSpawnRate != undefined ? params.arcSpawnRate : 1 / 60;
         this.arcSpawnVariance = params.arcSpawnVariance != undefined ? params.arcSpawnVariance : 0;
@@ -41,7 +46,7 @@ export default class ShockAuraEffect {
             newArc.points.push([
                 this.x + nextQt[1] * rad,
                 this.y + nextQt[2] * rad,
-                nextQt[3] * rad,
+                (nextQt[3] >= 0), // Belongs to top layer or not
             ]);
 
             if (i < this.minMoves || Math.random() < this.extraMoveChance) {
@@ -73,25 +78,38 @@ export default class ShockAuraEffect {
         }
     }
 
-    drawUpper() {
-        ctx.strokeStyle = "#FFF";
+    drawPortion(isUpper) {
+        ctx.lineCap = "round";
+        ctx.strokeStyle = this.color.getStr();
         for (let i = 0; i < this.arcs.length; i++) {
             const arc = this.arcs[i];
             ctx.lineWidth = this.arcThickness * arc.timeLeft / this.arcDuration;
+
+            let pathStarted = false;
             ctx.beginPath();
-            for (let i = 0; i < arc.points.length; i++) {
+            for (let i = 0; i < arc.points.length - 1; i++) {
                 const point = arc.points[i];
-                if (i > 0) {
-                    ctx.lineTo(point[0], point[1]);
+                const nextPoint = arc.points[i + 1];
+                if ((point[2] && nextPoint[2]) == isUpper) { // Belongs to top layer or not
+                    if (!pathStarted) {
+                        ctx.moveTo(point[0], point[1]);
+                    }
+                    ctx.lineTo(nextPoint[0], nextPoint[1]);
+                    pathStarted = true;
                 } else {
-                    ctx.moveTo(point[0], point[1]);
+                    pathStarted = false;
                 }
             }
             ctx.stroke();
         }
+        ctx.lineCap = "butt";
+    }
+
+    drawUpper() {
+        this.drawPortion(true);
     }
 
     drawLower() {
-
+        this.drawPortion(false);
     }
 }
