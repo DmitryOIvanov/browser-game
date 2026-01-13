@@ -6,20 +6,21 @@ export default class ShockAuraEffect {
         this.x = x;
         this.y = y;
 
-        this.radius = params.radius;
-        this.arcDelayBase = params.arcDelayBase;
-        this.arcDelayVar = params.arcDelayVar;
-        this.arcDuration = params.arcDuration;
-        this.minMoves = params.minMoves;
-        this.extraMoveChance = params.extraMoveChance;
-        this.moveSizeBase = params.moveSizeBase;
-        this.moveSizeVar = params.moveSizeVar;
-        this.redirectionAmount = params.redirectionAmount;
-        this.arcThickness = params.arcThickness;
-        this.radDeviation = params.radDeviation;
+        this.radius = params.radius != undefined ? params.radius : 100;
+        this.arcSpawnRate = params.arcSpawnRate != undefined ? params.arcSpawnRate : 1 / 60;
+        this.arcSpawnVariance = params.arcSpawnVariance != undefined ? params.arcSpawnVariance : 0;
+        this.arcSpawnAutoDecay = params.arcSpawnAutoDecay != undefined ? params.arcSpawnAutoDecay : 0;
+        this.arcDuration = params.arcDuration != undefined ? params.arcDuration : 60;
+        this.minMoves = params.minMoves != undefined ? params.minMoves : 5;
+        this.extraMoveChance = params.extraMoveChance != undefined ? params.extraMoveChance : 0.5;
+        this.moveSizeBase = params.moveSizeBase != undefined ? params.moveSizeBase : 1;
+        this.moveSizeVar = params.moveSizeVar != undefined ? params.moveSizeVar : 0;
+        this.redirectionAmount = params.redirectionAmount != undefined ? params.redirectionAmount : 1;
+        this.arcThickness = params.arcThickness != undefined ? params.arcThickness : 5;
+        this.radDeviation = params.radDeviation != undefined ? params.radDeviation : 0;
 
         this.arcs = [];
-        this.timeToNextArc = 0;
+        this.arcSpawnValue = 1;
     }
 
     updatePosition(x, y) {
@@ -63,10 +64,12 @@ export default class ShockAuraEffect {
         while (this.arcs.length > 0 && this.arcs[0].timeLeft <= 0) {
             this.arcs.shift();
         }
-        this.timeToNextArc -= dt;
-        while (this.timeToNextArc <= 0) {
+        this.arcSpawnValue -= this.arcSpawnRate * dt;
+        this.arcSpawnRate -= this.arcSpawnAutoDecay * dt;
+        if (this.arcSpawnRate < 0) this.arcSpawnRate = 0;
+        while (this.arcSpawnValue <= 0) {
             this.addArc();
-            this.timeToNextArc += this.arcDelayBase + this.arcDelayBase * Math.random();
+            this.arcSpawnValue += 1 + this.arcSpawnVariance * Math.random();
         }
     }
 

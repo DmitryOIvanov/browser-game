@@ -29,13 +29,15 @@ const HIT_COOLDOWN_DUR = 120;
 
 const MAX_HP = 5;
 
+const SHOCK_SPAWN_RATE_ON_HIT = 2.5;
 const SHOCK_AURA_PARAMS = {
-    radius: 30,
-    arcDelayBase: 1,
-    arcDelayVar: 2,
-    arcDuration: 6.5,
-    minMoves: 6,
-    extraMoveChance: 0.75,
+    radius: 25,
+    arcSpawnRate: 0,
+    arcSpawnVariance: 2,
+    arcSpawnAutoDecay: SHOCK_SPAWN_RATE_ON_HIT / HIT_COOLDOWN_DUR,
+    arcDuration: 6,
+    minMoves: 4,
+    extraMoveChance: 0.6,
     moveSizeBase: 0.1,
     moveSizeVar: 0.1,
     redirectionAmount: 0.5,
@@ -254,6 +256,8 @@ export default class Player {
             }
             this.hitCooldown = HIT_COOLDOWN_DUR;
             this.hitSlowCooldown = HIT_SLOW_DUR;
+            this.shockAura.arcSpawnValue = 0;
+            this.shockAura.arcSpawnRate = SHOCK_SPAWN_RATE_ON_HIT;
         }
     }
 }
