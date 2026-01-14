@@ -26,6 +26,7 @@ const SLOWMO_COOLDOWN = 60;
 const HIT_SLOW_MAG = 0.1;
 const HIT_SLOW_DUR = 50;
 const HIT_COOLDOWN_DUR = 120;
+const HIT_EXTRA_ROT_SPEED = 0.04;
 
 const MAX_HP = 5;
 
@@ -101,10 +102,11 @@ export default class Player {
         if (this.hitCooldown <= 0) this.hpMeterDir = 0;
         if (this.hitCooldown > 0) {
             ctx.lineWidth = 5 * this.hitCooldown / HIT_COOLDOWN_DUR;
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, 40, 0, 2 * Math.PI);
-            ctx.closePath();
-            ctx.stroke();
+            // -- Draw shield ring --
+            // ctx.beginPath();
+            // ctx.arc(this.x, this.y, 40, 0, 2 * Math.PI);
+            // ctx.closePath();
+            // ctx.stroke();
 
             if (this.hpMeterDir == 0) {
                 this.hpMeterDir = this.x <= 0.5 * playField.x ? 1 : -1;
@@ -209,7 +211,8 @@ export default class Player {
             }
         }
 
-        this.rot += dt * ROT_SPEED;
+        const hitFactor = this.hitCooldown / HIT_COOLDOWN_DUR;
+        this.rot += dt * (ROT_SPEED + HIT_EXTRA_ROT_SPEED * hitFactor);
         if (this.rot > 1) this.rot -= 1;
 
         let rightHeld = controls.held["KeyD"] || controls.held["ArrowRight"];
@@ -247,15 +250,15 @@ export default class Player {
     getHit() {
         if (this.hitCooldown == 0) {
             this.hp--;
-            for (let i = 0; i < 50; i++) {
+            for (let i = 0; i < 100; i++) {
                 const randAngle = 2 * Math.PI * Math.random();
                 let randSpeed = Math.random();
-                randSpeed = randSpeed * randSpeed * 30;
+                randSpeed = randSpeed * 30;
                 const vx = randSpeed * Math.cos(randAngle);
                 const vy = randSpeed * Math.sin(randAngle);
-                const r = 5 + 5 * Math.random();
+                const r = 4 + 3 * Math.random();
                 const dur = 5 + (5 + randSpeed) * Math.random();
-                playField.addParticle(new ShrinkingCircleParticle(this.x, this.y, vx, vy, r, dur, this.getColor()));
+                playField.addParticle(new ShrinkingCircleParticle(this.x, this.y, vx, vy, r, dur, Color.WHITE));
             }
             this.hitCooldown = HIT_COOLDOWN_DUR;
             this.hitSlowCooldown = HIT_SLOW_DUR;
