@@ -102,35 +102,58 @@ export default class Player {
         if (this.hitCooldown <= 0) this.hpMeterDir = 0;
         if (this.hitCooldown > 0) {
             ctx.lineWidth = 5 * this.hitCooldown / HIT_COOLDOWN_DUR;
-            // -- Draw shield ring --
-            // ctx.beginPath();
-            // ctx.arc(this.x, this.y, 40, 0, 2 * Math.PI);
-            // ctx.closePath();
-            // ctx.stroke();
 
             if (this.hpMeterDir == 0) {
                 this.hpMeterDir = this.x <= 0.5 * playField.x ? 1 : -1;
             } else if (this.hpMeterDir * (this.x / playField.x - 0.5) > 0.4) {
                 this.hpMeterDir = -this.hpMeterDir;
             }
-            ctx.lineWidth = 25;
-            for (let i = 0; i < this.hp + 1; i++) {
-                if (i == 0) {
-                    const shownProbability = 0.7 * (1.6 * this.hitCooldown / HIT_COOLDOWN_DUR - 1);
-                    if (Math.random() > shownProbability) continue;
-                }
 
-                const THICK = 0.2;
-                let startAngle = (i - 2) * 0.3 - THICK * 0.5 - 1.3 * (this.y / playField.y - 0.5);
-                let endAngle = startAngle + THICK;
-                if (this.hpMeterDir < 0) {
-                    startAngle = Math.PI - startAngle;
-                    endAngle = Math.PI - endAngle;
+            const HP_BAR_LINE_WIDTH = 1.5;
+            const BAR_ANGULAR_WIDTH = 0.3;
+            const ANGULAR_GAP = 0.1;
+            const BAR_LENGTH = 25;
+            const BAR_INNER_RAD = 40;
+            const VERTICAL_CORRECTION = 1.5;
+            const HP_FLASH_PERIOD = 5;
+            const HP_FLASH_DENSITY = 0.4;
+            const HP_FLASH_PORTION = 0.5;
+
+            ctx.lineWidth = HP_BAR_LINE_WIDTH;
+            ctx.fillStyle = this.getColor().getStr();
+            for (let i = 0; i < MAX_HP; i++) {
+                // if (i == 0) {
+                //     const shownProbability = 0.7 * (1.6 * this.hitCooldown / HIT_COOLDOWN_DUR - 1);
+                //     if (Math.random() > shownProbability) continue;
+                // }
+
+                const isInverted = (this.hpMeterDir < 0);
+
+                const totalAngularWidth = MAX_HP * BAR_ANGULAR_WIDTH + (MAX_HP - 1) * ANGULAR_GAP;
+                let angle1 = -0.5 * totalAngularWidth + i * (BAR_ANGULAR_WIDTH + ANGULAR_GAP) - VERTICAL_CORRECTION * (this.y / playField.y - 0.5);
+                let angle2 = angle1 + BAR_ANGULAR_WIDTH;
+                if (isInverted) {
+                    angle1 = Math.PI - angle1;
+                    angle2 = Math.PI - angle2;
                 }
                 ctx.beginPath();
-                ctx.arc(this.x, this.y, 65, startAngle, endAngle, this.hpMeterDir < 0);
+                ctx.arc(this.x, this.y, BAR_INNER_RAD, angle1, angle2, isInverted);
+                ctx.arc(this.x, this.y, BAR_INNER_RAD + BAR_LENGTH, angle2, angle1, !isInverted);
                 ctx.closePath();
                 ctx.stroke();
+
+                const upsideDownI = MAX_HP - 1 - i;
+                if (upsideDownI < this.hp) {
+                    ctx.fill();
+                } else if (upsideDownI == this.hp) {
+                    const hitFactor = this.hitCooldown / HIT_COOLDOWN_DUR;
+                    if (hitFactor > 1 - HP_FLASH_PORTION) {
+                        const periodValue = (HIT_COOLDOWN_DUR - this.hitCooldown) % HP_FLASH_PERIOD;
+                        if (periodValue < 0.5 * HP_FLASH_PERIOD) {
+                            ctx.fill();
+                        }
+                    }
+                }
             }
         }
 
