@@ -122,11 +122,6 @@ export default class Player {
             ctx.lineWidth = HP_BAR_LINE_WIDTH;
             ctx.fillStyle = this.getColor().getStr();
             for (let i = 0; i < MAX_HP; i++) {
-                // if (i == 0) {
-                //     const shownProbability = 0.7 * (1.6 * this.hitCooldown / HIT_COOLDOWN_DUR - 1);
-                //     if (Math.random() > shownProbability) continue;
-                // }
-
                 const isInverted = (this.hpMeterDir < 0);
 
                 const totalAngularWidth = MAX_HP * BAR_ANGULAR_WIDTH + (MAX_HP - 1) * ANGULAR_GAP;
