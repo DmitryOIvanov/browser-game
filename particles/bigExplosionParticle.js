@@ -1,5 +1,6 @@
 import Color from "../color.js";
 import { ctx } from "../drawing.js";
+import { randomAngle } from "../extraMath.js";
 import playField from "../playField.js";
 
 function randomFloatInRange(range) {
@@ -12,25 +13,36 @@ function randomIntInRange(range) {
 }
 
 const SPLIT_ANGLE_VARIABILITY = 0.3;
+const INITIAL_SIZE = 100;
 const allLevelInfo = [
     {
-        growthRate: [-1, -2],
+        growthRate: [-4, -10],
     },
     {
-        growthRate: [-0.5, -1],
-        numSplits: [2, 4],
-        splitTime: [20, 20],
-        splitSpeed: [2, 4],
+        growthRate: [-1.4, -2.6],
+        numSplits: [3, 4],
+        splitTime: [2, 4],
+        splitSpeed: [4, 6],
         splitAngleFunction: (x) => {
             const a = 2 * x - 1;
-            return 0.25 * a * a * a;
+            return 0.75 * a * a * a;
         },
     },
     {
-        growthRate: [2, 2],
-        numSplits: [7, 9],
-        splitTime: [6, 6],
-        splitSpeed: [5, 9],
+        growthRate: [-1.6, -2.4],
+        numSplits: [3, 4],
+        splitTime: [2, 4],
+        splitSpeed: [4, 6],
+        splitAngleFunction: (x) => {
+            const a = 2 * x - 1;
+            return 0.75 * a * a * a;
+        },
+    },
+    {
+        growthRate: [10, 10],
+        numSplits: [8, 10],
+        splitTime: [3, 3],
+        splitSpeed: [11, 13],
         splitAngleFunction: (x) => (x),
     },
 ];
@@ -70,15 +82,17 @@ class SubExplosion {
         if (this.level > 0) {
             this.splitTime -= dt;
             if (this.splitTime <= 0) {
-                const numSplits = randomIntInRange(levelInfo.splitTime);
-                const currentAngle = Math.atan2(this.vy, this.vx);
+                const numSplits = randomIntInRange(levelInfo.numSplits);
+                let currentAngle = Math.atan2(this.vy, this.vx);
+                if (this.vx == 0 && this.vy == 0) currentAngle = randomAngle();
                 for (let i = 0; i < numSplits; i++) {
-                    const randomValueForAngle = (i + 0.5 * SPLIT_ANGLE_VARIABILITY * (2 * Math.random() - 1)) / numSplits;
+                    const randomValueForAngle = (i + 0.5 + SPLIT_ANGLE_VARIABILITY * (2 * Math.random() - 1)) / numSplits;
                     const splitAngle = 2 * Math.PI * levelInfo.splitAngleFunction(randomValueForAngle);
                     const splitSpeed = randomFloatInRange(levelInfo.splitSpeed);
                     const splitVX = this.vx + splitSpeed * Math.cos(currentAngle + splitAngle);
                     const splitVY = this.vy + splitSpeed * Math.sin(currentAngle + splitAngle);
                     const splitParticle = new SubExplosion(this.x, this.y, splitVX, splitVY, this.radius, this.level - 1, this.color);
+                    splitParticle.timeStep(-this.splitTime);
                     playField.addParticle(splitParticle);
                 }
                 this.retired = true;
@@ -96,6 +110,6 @@ class SubExplosion {
 
 export default class BigExplosionParticle extends SubExplosion {
     constructor(x, y, color) {
-        super(x, y, 0, 0, 100, allLevelInfo.length - 1, color);
+        super(x, y, 0, 0, INITIAL_SIZE, allLevelInfo.length - 1, color);
     }
 }
