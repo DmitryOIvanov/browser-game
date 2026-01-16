@@ -6,16 +6,19 @@ function randomFloatInRange(range) {
     return range[0] + (range[1] - range[0]) * Math.random();
 }
 function randomIntInRange(range) {
-    return range[0] + Math.floor((range[1] - range[0] + 1) * Math.random());
+    const upper = Math.max(range[0], range[1]);
+    const lower = Math.min(range[0], range[1]);
+    return lower + Math.floor((upper - lower + 1) * Math.random());
 }
 
+const SPLIT_ANGLE_VARIABILITY = 0.3;
 const allLevelInfo = [
     {
-        growthRate: [-8, -20],
+        growthRate: [-1, -2],
     },
     {
-        growthRate: [0.5, 0.5],
-        numSplits: [3, 5],
+        growthRate: [-0.5, -1],
+        numSplits: [2, 4],
         splitTime: [20, 20],
         splitSpeed: [2, 4],
         splitAngleFunction: (x) => {
@@ -68,13 +71,13 @@ class SubExplosion {
             this.splitTime -= dt;
             if (this.splitTime <= 0) {
                 const numSplits = randomIntInRange(levelInfo.splitTime);
-                const currentAngle = Math.atan2(this.vx, this.vy);
+                const currentAngle = Math.atan2(this.vy, this.vx);
                 for (let i = 0; i < numSplits; i++) {
-                    const randomValueForAngle = (i + Math.random()) / numSplits;
+                    const randomValueForAngle = (i + 0.5 * SPLIT_ANGLE_VARIABILITY * (2 * Math.random() - 1)) / numSplits;
                     const splitAngle = 2 * Math.PI * levelInfo.splitAngleFunction(randomValueForAngle);
                     const splitSpeed = randomFloatInRange(levelInfo.splitSpeed);
-                    const splitVX = this.vx + splitSpeed * Math.cos(splitAngle);
-                    const splitVY = this.vy + splitSpeed * Math.sin(splitAngle);
+                    const splitVX = this.vx + splitSpeed * Math.cos(currentAngle + splitAngle);
+                    const splitVY = this.vy + splitSpeed * Math.sin(currentAngle + splitAngle);
                     const splitParticle = new SubExplosion(this.x, this.y, splitVX, splitVY, this.radius, this.level - 1, this.color);
                     playField.addParticle(splitParticle);
                 }
