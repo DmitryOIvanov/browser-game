@@ -16,33 +16,33 @@ const SPLIT_ANGLE_VARIABILITY = 0.3;
 const INITIAL_SIZE = 100;
 const allLevelInfo = [
     {
-        growthRate: [-4, -10],
+        growthRate: [-15, -25],
     },
     {
-        growthRate: [-1.4, -2.6],
+        growthRate: [-4, -8],
         numSplits: [3, 4],
         splitTime: [2, 4],
-        splitSpeed: [4, 6],
+        splitSpeed: [10, 10],
         splitAngleFunction: (x) => {
             const a = 2 * x - 1;
             return 0.75 * a * a * a;
         },
     },
     {
-        growthRate: [-1.6, -2.4],
+        growthRate: [-4, -8],
         numSplits: [3, 4],
-        splitTime: [2, 4],
-        splitSpeed: [4, 6],
+        splitTime: [0.5, 1],
+        splitSpeed: [10, 10],
         splitAngleFunction: (x) => {
             const a = 2 * x - 1;
             return 0.75 * a * a * a;
         },
     },
     {
-        growthRate: [10, 10],
+        growthRate: [40, 40],
         numSplits: [8, 10],
-        splitTime: [3, 3],
-        splitSpeed: [11, 13],
+        splitTime: [1, 1],
+        splitSpeed: [24, 24],
         splitAngleFunction: (x) => (x),
     },
 ];
