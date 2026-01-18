@@ -119,7 +119,7 @@ export default class DebugManager {
     constructor() {
         this.concluded = false;
         this.spawnTimer = 0;
-        this.doSpawns = true;
+        this.doSpawns = false;
         this.weaponIndex = 0;
     }
 
