@@ -4,45 +4,48 @@ import { randomAngle } from "../extraMath.js";
 import playField from "../playField.js";
 
 function randomFloatInRange(range) {
+    if (range.length == 1) return range[0];
     return range[0] + (range[1] - range[0]) * Math.random();
 }
 function randomIntInRange(range) {
+    if (range.length == 1) return range[0];
     const upper = Math.max(range[0], range[1]);
     const lower = Math.min(range[0], range[1]);
     return lower + Math.floor((upper - lower + 1) * Math.random());
 }
 
+const SPEED_DECAY_RATE = 0.1;
 const SPLIT_ANGLE_VARIABILITY = 0.3;
 const INITIAL_SIZE = 100;
 const allLevelInfo = [
     {
-        growthRate: [-15, -25],
+        growthRate: [-2],
     },
     {
-        growthRate: [-4, -8],
+        growthRate: [-10],
         numSplits: [3, 4],
         splitTime: [2, 4],
-        splitSpeed: [10, 10],
+        splitSpeed: [10],
         splitAngleFunction: (x) => {
             const a = 2 * x - 1;
             return 0.75 * a * a * a;
         },
     },
     {
-        growthRate: [-4, -8],
+        growthRate: [0],
         numSplits: [3, 4],
-        splitTime: [0.5, 1],
-        splitSpeed: [10, 10],
+        splitTime: [2, 4],
+        splitSpeed: [10],
         splitAngleFunction: (x) => {
             const a = 2 * x - 1;
             return 0.75 * a * a * a;
         },
     },
     {
-        growthRate: [40, 40],
+        growthRate: [40],
         numSplits: [8, 10],
-        splitTime: [1, 1],
-        splitSpeed: [24, 24],
+        splitTime: [1],
+        splitSpeed: [40],
         splitAngleFunction: (x) => (x),
     },
 ];
@@ -71,6 +74,9 @@ class SubExplosion {
         const levelInfo = allLevelInfo[this.level];
         let ownStep = dt;
         if (this.level > 0) ownStep = Math.min(dt, this.splitTime);
+        const speedDecay = Math.exp(-SPEED_DECAY_RATE * ownStep);
+        this.vx *= speedDecay;
+        this.vy *= speedDecay;
         this.x += this.vx * ownStep;
         this.y += this.vy * ownStep;
         this.radius += this.growthRate * ownStep;
