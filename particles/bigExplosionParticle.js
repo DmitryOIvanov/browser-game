@@ -1,6 +1,6 @@
 import Color from "../color.js";
 import { ctx } from "../drawing.js";
-import { randomAngle } from "../extraMath.js";
+import { posMod, randomAngle } from "../extraMath.js";
 import playField from "../playField.js";
 
 function randomFloatInRange(range) {
@@ -14,51 +14,52 @@ function randomIntInRange(range) {
     return lower + Math.floor((upper - lower + 1) * Math.random());
 }
 
-function processParams(params) {
-    let curGrowthRate = 1;
-    for (let i = 0; i < params.splitInfo.length; i++) {
-        const entry = params.splitInfo[i];
-        entry.growthRate = curGrowthRate;
-        curGrowthRate -= entry.splitSpeed;
-    }
-}
+// function processParams(params) {
+//     let curGrowthRate = 1;
+//     for (let i = 0; i < params.splitInfo.length; i++) {
+//         const entry = params.splitInfo[i];
+//         console.log(curGrowthRate);
+//         entry.growthRate = curGrowthRate;
+//         curGrowthRate -= entry.speedConversion;
+//     }
+// }
 
 const DEFAULT_PARAMS = {
-    scaleMultiplier: 100,
+    scaleMultiplier: 50,
     timeMultiplier: 1 / 120,
     initialSize: 1,
-    speedDecay: 0.1,
     splitDirectionVariability: 0.3,
     splitInfo: [
         {
-            growthAcceleration: [0],
+            growthAcceleration: 0,
             speedDecay: 0,
-            splitSpeed: [1],
-            occurenceTime: [0.2],
+            speedConversion: [1],
+            occurenceTime: [1],
             numSplits: [10],
         },
         {
-            growthAcceleration: [-0.5],
-            speedDecay: 0.1,
-            splitSpeed: [1],
-            occurenceTime: [0.3],
-            numSplits: [4],
+            growthAcceleration: 0,
+            speedDecay: 0,
+            speedConversion: [1],
+            occurenceTime: [1],
+            numSplits: [10],
         },
         {
-            growthAcceleration: [-1],
-            speedDecay: 0.2,
+            growthAcceleration: 0.2,
+            speedDecay: 0,
         },
     ],
 };
-processParams(DEFAULT_PARAMS);
+// processParams(DEFAULT_PARAMS);
 
+const densityCubicWeight = 0.5
 function splitAngleDensity(value) {
-    const a = 2 * value - 1;
-    return 0.75 * a * a * a;
+    const a = 2 * posMod(value, 1) - 1;
+    return densityCubicWeight * 0.5 * a * a * a + (1 - densityCubicWeight) * (value - 0.5);
 }
 
 class SubExplosion {
-    constructor(x, y, vx, vy, radius, splitNum, params, color) {
+    constructor(x, y, vx, vy, radius, growthRate, splitNum, params, color) {
         this.autonomous = true;
         this.retired = false;
 
@@ -67,6 +68,7 @@ class SubExplosion {
         this.vx = vx;
         this.vy = vy;
         this.radius = radius;
+        this.growthRate = growthRate;
         this.splitNum = splitNum;
         this.params = params;
         this.color = color;
@@ -94,8 +96,8 @@ class SubExplosion {
         this.x += this.vx * ownStep;
         this.y += this.vy * ownStep;
 
-        let growthRate = splitInfo.growthRate;
-        this.radius += params.scaleMultiplier * growthRate * ownStep;
+        this.growthRate += params.scaleMultiplier * splitInfo.growthAcceleration * ownStep;
+        this.radius += this.growthRate * ownStep;
         if (this.radius <= 0) {
             this.retired = true;
             return;
@@ -107,16 +109,16 @@ class SubExplosion {
                 const numSplits = randomIntInRange(splitInfo.numSplits);
                 for (let i = 0; i < numSplits; i++) {
                     const randomValueForAngle = (i + 0.5 + params.splitDirectionVariability * (2 * Math.random() - 1)) / numSplits;
-                    let splitAngle;
+                    let splitAngle = Math.atan2(this.vy, this.vx);
                     if (this.splitNum == 0) {
-                        splitAngle = 2 * Math.PI * randomValueForAngle;
+                        splitAngle += 2 * Math.PI * randomValueForAngle;
                     } else {
-                        splitAngle = 2 * Math.PI * splitAngleDensity(randomValueForAngle);
+                        splitAngle += 2 * Math.PI * splitAngleDensity(randomValueForAngle);
                     }
-                    const splitSpeed = randomFloatInRange(splitInfo.splitSpeed) * params.scaleMultiplier;
+                    const splitSpeed = randomFloatInRange(splitInfo.speedConversion) * params.scaleMultiplier;
                     const splitVX = this.vx + splitSpeed * Math.cos(splitAngle);
                     const splitVY = this.vy + splitSpeed * Math.sin(splitAngle);
-                    const splitParticle = new SubExplosion(this.x, this.y, splitVX, splitVY, this.radius, this.splitNum + 1, params, this.color);
+                    const splitParticle = new SubExplosion(this.x, this.y, splitVX, splitVY, this.radius, this.growthRate - splitSpeed, this.splitNum + 1, params, this.color);
                     splitParticle.timeStep(-this.timeToNextSplit);
                     playField.addParticle(splitParticle);
                 }
@@ -129,13 +131,16 @@ class SubExplosion {
         ctx.fillStyle = this.color.getStr();
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
-        ctx.fill();
+        // ctx.fill();
+        ctx.strokeStyle = this.color.getStr();
+        ctx.lineWidth = 1;
+        ctx.stroke();
     }
 }
 
 export default class BigExplosionParticle extends SubExplosion {
     constructor(x, y, color) {
         const params = DEFAULT_PARAMS;
-        super(x, y, 0, 0, params.initialSize * params.scaleMultiplier, 0, params, color);
+        super(x, y, 0, 0, params.initialSize * params.scaleMultiplier, params.scaleMultiplier, 0, params, color);
     }
 }
