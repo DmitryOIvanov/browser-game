@@ -14,24 +14,43 @@ function randomIntInRange(range) {
     return lower + Math.floor((upper - lower + 1) * Math.random());
 }
 
+function processParams(params) {
+    let curGrowthRate = 1;
+    for (let i = 0; i < params.splitInfo.length; i++) {
+        const entry = params.splitInfo[i];
+        entry.growthRate = curGrowthRate;
+        curGrowthRate -= entry.splitSpeed;
+    }
+}
+
 const DEFAULT_PARAMS = {
-    initialSize: 100,
-    initialSpeed: 40,
-    duration: 30,
+    scaleMultiplier: 100,
+    timeMultiplier: 1 / 120,
+    initialSize: 1,
     speedDecay: 0.1,
-    sizeDecay: 0.03,
-    splitVariability: 0.3,
+    splitDirectionVariability: 0.3,
     splitInfo: [
         {
-            durationElapsed: [0.1],
+            growthAcceleration: [0],
+            speedDecay: 0,
+            splitSpeed: [1],
+            occurenceTime: [0.2],
             numSplits: [10],
         },
         {
-            durationElapsed: [0.1],
-            numSplits: [3],
+            growthAcceleration: [-0.5],
+            speedDecay: 0.1,
+            splitSpeed: [1],
+            occurenceTime: [0.3],
+            numSplits: [4],
+        },
+        {
+            growthAcceleration: [-1],
+            speedDecay: 0.2,
         },
     ],
 };
+processParams(DEFAULT_PARAMS);
 
 function splitAngleDensity(value) {
     const a = 2 * value - 1;
@@ -39,53 +58,65 @@ function splitAngleDensity(value) {
 }
 
 class SubExplosion {
-    constructor(x, y, speed, angle, abstractSizeValue, splitsLeft, params, color) {
+    constructor(x, y, vx, vy, radius, splitNum, params, color) {
         this.autonomous = true;
         this.retired = false;
 
         this.x = x;
         this.y = y;
-        this.speed = speed;
-        this.angle = angle;
-        this.abstractSizeValue = abstractSizeValue;
-        this.splitsLeft = splitsLeft;
+        this.vx = vx;
+        this.vy = vy;
+        this.radius = radius;
+        this.splitNum = splitNum;
         this.params = params;
         this.color = color;
 
-        if (this.splitsLeft > 0) {
-            const splitInfo = params.splitInfo[this.splitsLeft - 1];
-            this.timeToNextSplit = params.duration * randomFloatInRange(splitInfo.durationElapsed);
+        if (this.splitNum < params.splitInfo.length - 1) {
+            const splitInfo = params.splitInfo[this.splitNum];
+            this.timeToNextSplit = randomFloatInRange(splitInfo.occurenceTime) / params.timeMultiplier;
         }
     }
 
     timeStep(dt) {
+        const params = this.params;
+        let splitInfo = params.splitInfo[this.splitNum];
+        const isLastSplit = (this.splitNum == params.splitInfo.length - 1);
+
         let ownStep = dt;
-        if (this.splitsLeft > 0) {
+        if (!isLastSplit) {
             ownStep = Math.min(dt, this.timeToNextSplit);
         }
-        this.speed *= Math.exp(-this.params.speedDecay * ownStep);
-        this.x += Math.cos(this.angle) * ownStep;
-        this.y += Math.sin(this.angle) * ownStep;
-        this.abstractSizeValue += dt / this.params.duration;
-        if (this.abstractSizeValue >= 1) {
+        ownStep *= params.timeMultiplier;
+
+        let speedReduction = Math.exp(-splitInfo.speedDecay * ownStep);
+        this.vx *= speedReduction;
+        this.vy *= speedReduction;
+        this.x += this.vx * ownStep;
+        this.y += this.vy * ownStep;
+
+        let growthRate = splitInfo.growthRate;
+        this.radius += params.scaleMultiplier * growthRate * ownStep;
+        if (this.radius <= 0) {
             this.retired = true;
             return;
         }
 
-        if (this.splitsLeft > 0) {
-            const splitInfo = this.params.splitInfo[this.splitsLeft - 1];
+        if (!isLastSplit) {
             this.timeToNextSplit -= dt;
             if (this.timeToNextSplit <= 0) {
                 const numSplits = randomIntInRange(splitInfo.numSplits);
                 for (let i = 0; i < numSplits; i++) {
-                    const randomValueForAngle = (i + 0.5 + this.params.splitVariability * (2 * Math.random() - 1)) / numSplits;
+                    const randomValueForAngle = (i + 0.5 + params.splitDirectionVariability * (2 * Math.random() - 1)) / numSplits;
                     let splitAngle;
-                    if (this.splitsLeft < this.params.splitInfo.length) {
-                        splitAngle = 2 * Math.PI * splitAngleDensity(randomValueForAngle);
-                    } else {
+                    if (this.splitNum == 0) {
                         splitAngle = 2 * Math.PI * randomValueForAngle;
+                    } else {
+                        splitAngle = 2 * Math.PI * splitAngleDensity(randomValueForAngle);
                     }
-                    const splitParticle = new SubExplosion(this.x, this.y, this.speed, this.angle + splitAngle, this.abstractSizeValue, this.splitsLeft - 1, this.params, this.color);
+                    const splitSpeed = randomFloatInRange(splitInfo.splitSpeed) * params.scaleMultiplier;
+                    const splitVX = this.vx + splitSpeed * Math.cos(splitAngle);
+                    const splitVY = this.vy + splitSpeed * Math.sin(splitAngle);
+                    const splitParticle = new SubExplosion(this.x, this.y, splitVX, splitVY, this.radius, this.splitNum + 1, params, this.color);
                     splitParticle.timeStep(-this.timeToNextSplit);
                     playField.addParticle(splitParticle);
                 }
@@ -94,21 +125,17 @@ class SubExplosion {
         }
     }
 
-    getRadius() {
-        const params = this.params;
-    }
-
     draw() {
-        const radius = (this.params.initialSize + this.params.initialSpeed * this.abstractSizeValue) * Math.exp(-this.abstractSizeValue * this.params.sizeDecay * this.params.duration);
         ctx.fillStyle = this.color.getStr();
         ctx.beginPath();
-        ctx.arc(this.x, this.y, radius, 0, 2 * Math.PI);
+        ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
         ctx.fill();
     }
 }
 
 export default class BigExplosionParticle extends SubExplosion {
     constructor(x, y, color) {
-        super(x, y, 0, 0, 0, DEFAULT_PARAMS.splitInfo.length, DEFAULT_PARAMS, color);
+        const params = DEFAULT_PARAMS;
+        super(x, y, 0, 0, params.initialSize * params.scaleMultiplier, 0, params, color);
     }
 }
