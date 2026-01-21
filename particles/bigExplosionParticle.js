@@ -25,33 +25,33 @@ function randomIntInRange(range) {
 // }
 
 const DEFAULT_PARAMS = {
-    scaleMultiplier: 30,
-    timeMultiplier: 1 / 30,
-    initialSize: 2,
-    splitDirectionVariability: 0.3,
-    outlineMode: true,
+    scaleMultiplier: 15,
+    timeMultiplier: 1,
+    initialSize: 3,
+    splitDirectionVariability: 0.4,
+    outlineMode: false,
     decayTime: [3, 4],
     splitInfo: [
         {
-            speedConversion: [0.5, 0.7],
-            occurenceTime: [1],
+            speedConversion: [0.4, 0.45],
+            occurenceTime: [1.5],
             numSplits: [12, 13],
             speedDecay: 0,
         },
         {
-            speedConversion: [0.4, 0.6],
-            occurenceTime: [0.9, 1.1],
-            numSplits: [3, 4],
-            speedDecay: 0,
-        },
-        {
-            speedConversion: [0.3, 0.5],
-            occurenceTime: [0.9, 1.1],
+            speedConversion: [0.3, 0.35],
+            occurenceTime: [0.3, 0.5],
             numSplits: [2, 3],
             speedDecay: 0,
         },
         {
-            speedDecay: 0.05,
+            speedConversion: [0.5, 0.65],
+            occurenceTime: [0.2, 0.4],
+            numSplits: [2, 3],
+            speedDecay: 0,
+        },
+        {
+            speedDecay: 0.03,
         },
     ],
 };
