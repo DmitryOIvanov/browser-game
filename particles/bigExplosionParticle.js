@@ -63,12 +63,6 @@ function splitAngleDensity(value) {
     return densityCubicWeight * 0.5 * a * a * a + (1 - densityCubicWeight) * (value - 0.5);
 }
 
-const decayExponentValue = 3;
-function decayFunction(value) {
-    const a = Math.exp(-decayExponentValue);
-    return (Math.exp(-decayExponentValue * value) - a) / (1 - a)
-}
-
 class SubExplosion {
     constructor(x, y, vx, vy, radius, growthRate, splitNum, params, color) {
         this.autonomous = true;
@@ -88,7 +82,6 @@ class SubExplosion {
             const splitInfo = params.splitInfo[this.splitNum];
             this.timeToNextSplit = randomFloatInRange(splitInfo.occurenceTime) / params.timeMultiplier;
         } else {
-            this.decayTime = randomFloatInRange(params.decayTime);
             this.timeElapsed = 0;
             this.initialRadius = radius;
         }
@@ -119,11 +112,12 @@ class SubExplosion {
             }
         } else {
             this.timeElapsed += ownStep;
-            if (this.timeElapsed >= this.decayTime) {
+            if (this.timeElapsed >= -2 * this.initialRadius / this.growthRate) {
                 this.retired = true;
                 return;
             }
-            this.radius = this.initialRadius * decayFunction(this.timeElapsed / this.decayTime);
+            const a = this.growthRate * this.timeElapsed;
+            this.radius = this.initialRadius + a + 0.25 * a * a / this.initialRadius;
         }
 
         if (!isLastSplit) {
