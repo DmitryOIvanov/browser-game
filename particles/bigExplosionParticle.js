@@ -25,28 +25,33 @@ function randomIntInRange(range) {
 // }
 
 const DEFAULT_PARAMS = {
-    scaleMultiplier: 50,
-    timeMultiplier: 1 / 120,
-    initialSize: 1,
+    scaleMultiplier: 30,
+    timeMultiplier: 1 / 30,
+    initialSize: 2,
     splitDirectionVariability: 0.3,
+    outlineMode: true,
+    decayTime: [3, 4],
     splitInfo: [
         {
-            growthAcceleration: 0,
-            speedDecay: 0,
-            speedConversion: [1],
+            speedConversion: [0.5, 0.7],
             occurenceTime: [1],
-            numSplits: [10],
+            numSplits: [12, 13],
+            speedDecay: 0,
         },
         {
-            growthAcceleration: 0,
+            speedConversion: [0.4, 0.6],
+            occurenceTime: [0.9, 1.1],
+            numSplits: [3, 4],
             speedDecay: 0,
-            speedConversion: [1],
-            occurenceTime: [1],
-            numSplits: [10],
         },
         {
-            growthAcceleration: 0.2,
+            speedConversion: [0.3, 0.5],
+            occurenceTime: [0.9, 1.1],
+            numSplits: [2, 3],
             speedDecay: 0,
+        },
+        {
+            speedDecay: 0.05,
         },
     ],
 };
@@ -56,6 +61,12 @@ const densityCubicWeight = 0.5
 function splitAngleDensity(value) {
     const a = 2 * posMod(value, 1) - 1;
     return densityCubicWeight * 0.5 * a * a * a + (1 - densityCubicWeight) * (value - 0.5);
+}
+
+const decayExponentValue = 3;
+function decayFunction(value) {
+    const a = Math.exp(-decayExponentValue);
+    return (Math.exp(-decayExponentValue * value) - a) / (1 - a)
 }
 
 class SubExplosion {
@@ -76,12 +87,16 @@ class SubExplosion {
         if (this.splitNum < params.splitInfo.length - 1) {
             const splitInfo = params.splitInfo[this.splitNum];
             this.timeToNextSplit = randomFloatInRange(splitInfo.occurenceTime) / params.timeMultiplier;
+        } else {
+            this.decayTime = randomFloatInRange(params.decayTime);
+            this.timeElapsed = 0;
+            this.initialRadius = radius;
         }
     }
 
     timeStep(dt) {
         const params = this.params;
-        let splitInfo = params.splitInfo[this.splitNum];
+        const splitInfo = params.splitInfo[this.splitNum];
         const isLastSplit = (this.splitNum == params.splitInfo.length - 1);
 
         let ownStep = dt;
@@ -96,11 +111,19 @@ class SubExplosion {
         this.x += this.vx * ownStep;
         this.y += this.vy * ownStep;
 
-        this.growthRate += params.scaleMultiplier * splitInfo.growthAcceleration * ownStep;
-        this.radius += this.growthRate * ownStep;
-        if (this.radius <= 0) {
-            this.retired = true;
-            return;
+        if (!isLastSplit) {
+            this.radius += this.growthRate * ownStep;
+            if (this.radius <= 0) {
+                this.retired = true;
+                return;
+            }
+        } else {
+            this.timeElapsed += ownStep;
+            if (this.timeElapsed >= this.decayTime) {
+                this.retired = true;
+                return;
+            }
+            this.radius = this.initialRadius * decayFunction(this.timeElapsed / this.decayTime);
         }
 
         if (!isLastSplit) {
@@ -131,10 +154,13 @@ class SubExplosion {
         ctx.fillStyle = this.color.getStr();
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
-        // ctx.fill();
-        ctx.strokeStyle = this.color.getStr();
-        ctx.lineWidth = 1;
-        ctx.stroke();
+        if (this.params.outlineMode) {
+            ctx.strokeStyle = this.color.getStr();
+            ctx.lineWidth = 1;
+            ctx.stroke();
+        } else {
+            ctx.fill();
+        }
     }
 }
 
