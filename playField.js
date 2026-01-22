@@ -205,6 +205,7 @@ const playField = {
         }
         for (let i = 0; i < this.particles.length; i++) {
             const part = this.particles[i];
+            if (part.retired) continue;
             if (part.autonomous) part.timeStep(step);
         }
         deleteRetirables(this.bgParticles);
