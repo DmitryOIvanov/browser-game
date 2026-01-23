@@ -14,39 +14,6 @@ function randomIntInRange(range) {
     return lower + Math.floor((upper - lower + 1) * Math.random());
 }
 
-const DEFAULT_PARAMS = {
-    sizeMultiplier: 1,
-    speedMultiplier: 0.5,
-    timeMultiplier: 50,
-    initialSize: 50,
-    splitDirectionVariability: 0.4,
-    outlineMode: false,
-    sizeEndDecay: [1.02],
-    splitInfo: [
-        {
-            speedConversion: [0.4, 0.45],
-            occurenceTime: [60],
-            numSplits: [12],
-            speedDecay: 0,
-        },
-        {
-            speedConversion: [0.4, 0.45],
-            occurenceTime: [60],
-            numSplits: [2, 3],
-            speedDecay: 0,
-        },
-        {
-            speedConversion: [0.5, 0.65],
-            occurenceTime: [60],
-            numSplits: [2, 3],
-            speedDecay: 0,
-        },
-        {
-            speedDecay: 0.001,
-        },
-    ],
-};
-
 const densityCubicWeight = 0.5
 function splitAngleDensity(value) {
     const a = 2 * posMod(value, 1) - 1;
@@ -138,7 +105,7 @@ class SubExplosion {
         ctx.fillStyle = this.color.getStr();
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
-        if (this.params.outlineMode) {
+        if (this.params.outlineDebugMode) {
             ctx.strokeStyle = this.color.getStr();
             ctx.lineWidth = 1;
             ctx.stroke();
@@ -149,8 +116,42 @@ class SubExplosion {
 }
 
 export default class BigExplosionParticle extends SubExplosion {
-    constructor(x, y, color) {
-        const params = DEFAULT_PARAMS;
+    static PARAMS = {
+        PLAYER_DEATH: {
+            sizeMultiplier: 1,
+            speedMultiplier: 0.5,
+            timeMultiplier: 50,
+            initialSize: 50,
+            splitDirectionVariability: 0.4,
+            outlineDebugMode: false,
+            sizeEndDecay: 1.05,
+            splitInfo: [
+                {
+                    speedConversion: [0.3, 0.35],
+                    occurenceTime: [60],
+                    numSplits: [9],
+                    speedDecay: 0,
+                },
+                {
+                    speedConversion: [0.4, 0.45],
+                    occurenceTime: [40, 50],
+                    numSplits: [1, 3],
+                    speedDecay: 0,
+                },
+                {
+                    speedConversion: [0.5, 0.65],
+                    occurenceTime: [30, 40],
+                    numSplits: [1, 3],
+                    speedDecay: 0.001,
+                },
+                {
+                    speedDecay: 0.002,
+                },
+            ],
+        },
+    }
+
+    constructor(x, y, params, color) {
         super(x, y, 0, 0, params.initialSize * params.sizeMultiplier, params.speedMultiplier * params.sizeMultiplier, 0, params, color);
     }
 }

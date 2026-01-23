@@ -131,7 +131,7 @@ export default class DebugManager {
 
     timeStep(amount) {
         if (controls.pressed["KeyP"]) {
-            playField.addParticle(new BigExplosionParticle(640, 360, Color.WHITE));
+            playField.addParticle(new BigExplosionParticle(640, 360, BigExplosionParticle.PARAMS.PLAYER_DEATH, Color.WHITE));
         }
         if (controls.pressed["KeyO"]) this.doSpawns = !this.doSpawns;
 
