@@ -21,7 +21,7 @@ const DEFAULT_PARAMS = {
     initialSize: 50,
     splitDirectionVariability: 0.4,
     outlineMode: false,
-    sizeEndDecay: [1.01],
+    sizeEndDecay: [1.02],
     splitInfo: [
         {
             speedConversion: [0.4, 0.45],
@@ -42,7 +42,7 @@ const DEFAULT_PARAMS = {
             speedDecay: 0,
         },
         {
-            speedDecay: 0.002,
+            speedDecay: 0.001,
         },
     ],
 };
@@ -102,7 +102,7 @@ class SubExplosion {
             }
         } else {
             this.timeElapsed += ownStep;
-            const exponent = params.sizeEndDecay * this.growthRate * this.timeElapsed / this.initialRadius;
+            const exponent = this.growthRate * this.timeElapsed / (this.initialRadius * params.sizeEndDecay);
             this.radius = this.initialRadius * (1 + params.sizeEndDecay * (Math.exp(exponent) - 1));
             if (this.radius <= 0) {
                 this.retired = true;
