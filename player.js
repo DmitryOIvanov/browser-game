@@ -3,6 +3,7 @@ import Color from "./color.js";
 import controls from "./controls.js";
 import { ctx } from "./drawing.js";
 import { decToZero, normalizeAngle } from "./extraMath.js";
+import BigExplosionParticle from "./particles/bigExplosionParticle.js";
 import ShrinkingCircleParticle from "./particles/shrinkingCircleParticle.js";
 import playField from "./playField.js";
 import ShockAuraEffect from "./shockAuraEffect.js";
@@ -30,13 +31,13 @@ const HIT_EXTRA_ROT_SPEED = 0.04;
 
 const MAX_HP = 5;
 
-const SHOCK_SPAWN_RATE_ON_HIT = 2.5;
-const SHOCK_AURA_PARAMS = {
+const HIT_SHOCK_INITIAL_RATE = 2.5;
+const HIT_SHOCK_PARAMS = {
     color: Color.WHITE,
     radius: 25,
     arcSpawnRate: 0,
     arcSpawnVariance: 2,
-    arcSpawnAutoDecay: SHOCK_SPAWN_RATE_ON_HIT / HIT_COOLDOWN_DUR,
+    arcSpawnAutoDecay: HIT_SHOCK_INITIAL_RATE / HIT_COOLDOWN_DUR,
     arcDuration: 6,
     minMoves: 4,
     extraMoveChance: 0.6,
@@ -47,8 +48,27 @@ const SHOCK_AURA_PARAMS = {
     radDeviation: 0.5,
 };
 
+const DEATH_SHOCK_INITIAL_RATE = 0.5;
+const DEATH_SHOCK_FINAL_RATE = 5;
+const DEATH_SHOCK_TIME = 180;
+const DEATH_SHOCK_PARAMS = {
+    color: Color.WHITE,
+    radius: 60,
+    arcSpawnRate: 0,
+    arcSpawnVariance: 2,
+    arcSpawnAutoDecay: (DEATH_SHOCK_INITIAL_RATE - DEATH_SHOCK_FINAL_RATE) / DEATH_SHOCK_TIME,
+    arcDuration: 6,
+    minMoves: 6,
+    extraMoveChance: 0.7,
+    moveSizeBase: 0.1,
+    moveSizeVar: 0.1,
+    redirectionAmount: 0.5,
+    arcThickness: 7,
+    radDeviation: 0.5,
+};
+const DEATH_AFTER_TIME = 90;
+
 export default class Player {
-    static SLOWMO_SPEED = SLOWMO_SPEED;
     static IN_RAD = IN_RAD;
 
     constructor(x, y) {
@@ -71,13 +91,40 @@ export default class Player {
         this.weapon = null;
         this.exp = 0;
 
-        this.shockAura = new ShockAuraEffect(this.x, this.y, SHOCK_AURA_PARAMS);
+        this.hitShockAura = new ShockAuraEffect(this.x, this.y, HIT_SHOCK_PARAMS);
+        this.deathShockAura = new ShockAuraEffect(this.x, this.y, DEATH_SHOCK_PARAMS);
+        this.deathTimer = 0;
+        this.deathParticleSpawned = false;
     }
 
     getColor() { return this.weapon == null ? Color.WHITE : this.weapon.color; }
 
+    updateAndReturnSlowMoAmount() {
+        if (this.hp <= 0 && this.deathTimer >= DEATH_SHOCK_TIME) {
+            return 1;
+        }
+
+        let slowMoAmount = 1;
+        const slowMoKeyHeld = controls.held["Space"];
+        this.inSlowMo = slowMoKeyHeld && (this.slowMoCharge > 0);
+        if (this.inSlowMo) slowMoAmount *= SLOWMO_SPEED;
+        this.hitSlowCooldown = decToZero(this.hitSlowCooldown, 1);
+        if (this.hitSlowCooldown > 0) {
+            const t = 1 - this.hitSlowCooldown / HIT_SLOW_DUR;
+            slowMoAmount *= HIT_SLOW_MAG + (1 - HIT_SLOW_MAG) * t * t * t;
+        }
+        return slowMoAmount;
+    }
+
     draw() {
-        this.shockAura.drawLower();
+        if (this.hp <= 0 && this.deathTimer >= DEATH_SHOCK_TIME) {
+            return;
+        }
+
+        if (this.hp <= 0 && this.deathTimer < DEATH_SHOCK_TIME) {
+            this.deathShockAura.drawLower();
+        }
+        this.hitShockAura.drawLower();
 
         // --- Player body ---
         ctx.strokeStyle = this.getColor().getStr();
@@ -178,10 +225,17 @@ export default class Player {
             ctx.stroke();
         }
 
-        this.shockAura.drawUpper();
+        this.hitShockAura.drawUpper();
+        if (this.hp <= 0 && this.deathTimer < DEATH_SHOCK_TIME) {
+            this.deathShockAura.drawUpper();
+        }
     }
 
     drawCursor() {
+        if (this.hp <= 0 && this.deathTimer >= DEATH_SHOCK_TIME) {
+            return;
+        }
+
         if (this.weapon && this.weapon.drawCursor) {
             this.weapon.drawCursor();
         } else {
@@ -202,20 +256,22 @@ export default class Player {
         }
     }
 
-    updateSlowmoStatus() {
-        const keyHeld = (controls.held["ShiftLeft"] || controls.held["ShiftRight"] || controls.held["Space"]);
-        this.inSlowMo = keyHeld && (this.slowMoCharge > 0);
-    }
-
     timeStep(dt) {
-        this.hitCooldown = decToZero(this.hitCooldown, dt);
-        this.hitSlowCooldown = decToZero(this.hitSlowCooldown, 1);
-        if (this.hitSlowCooldown == 0) {
-            this.hitSlowFactor = 1;
-        } else {
-            const t = 1 - this.hitSlowCooldown / HIT_SLOW_DUR;
-            this.hitSlowFactor = HIT_SLOW_MAG + (1 - HIT_SLOW_MAG) * t * t * t;
+        if (this.hp <= 0) {
+            this.deathTimer += dt;
+            if (this.deathTimer >= DEATH_SHOCK_TIME) {
+                if (!this.deathParticleSpawned) {
+                    playField.addParticle(new BigExplosionParticle(this.x, this.y, BigExplosionParticle.PARAMS.PLAYER_DEATH, Color.WHITE));
+                    this.deathParticleSpawned = true;
+                }
+                if (this.deathTimer >= DEATH_SHOCK_TIME + DEATH_AFTER_TIME) {
+                    this.deathFinished = true;
+                }
+                return;
+            }
         }
+
+        this.hitCooldown = decToZero(this.hitCooldown, dt);
         if (this.inSlowMo) {
             this.slowMoCharge -= SLOWMO_DRAIN_RATE;
             if (this.slowMoCharge < 0) this.slowMoCharge = 0;
@@ -261,11 +317,18 @@ export default class Player {
             this.cursorRot = normalizeAngle(this.cursorRot + dt * DEFAULT_CURSOR_SPEED);
         }
 
-        this.shockAura.updatePosition(this.x, this.y);
-        this.shockAura.timeStep(dt);
+        this.hitShockAura.updatePosition(this.x, this.y);
+        this.hitShockAura.timeStep(dt);
+        if (this.hp <= 0) {
+            this.deathShockAura.updatePosition(this.x, this.y);
+            this.deathShockAura.timeStep(dt);
+        }
     }
 
     getHit() {
+        if (this.hp <= 0) {
+            return;
+        }
         if (this.hitCooldown == 0) {
             this.hp--;
             for (let i = 0; i < 100; i++) {
@@ -280,8 +343,12 @@ export default class Player {
             }
             this.hitCooldown = HIT_COOLDOWN_DUR;
             this.hitSlowCooldown = HIT_SLOW_DUR;
-            this.shockAura.arcSpawnValue = 0;
-            this.shockAura.arcSpawnRate = SHOCK_SPAWN_RATE_ON_HIT;
+            this.hitShockAura.arcSpawnValue = 0;
+            this.hitShockAura.arcSpawnRate = HIT_SHOCK_INITIAL_RATE;
+            if (this.hp == 0) {
+                this.deathShockAura.arcSpawnValue = 0;
+                this.deathShockAura.arcSpawnRate = DEATH_SHOCK_INITIAL_RATE;
+            }
         }
     }
 }

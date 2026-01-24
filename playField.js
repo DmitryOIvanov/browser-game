@@ -92,9 +92,7 @@ const playField = {
 
     advanceOneFrame() {
         const player = this.player;
-        player.updateSlowmoStatus();
-        const playerStep = player.inSlowMo ? Player.SLOWMO_SPEED : 1;
-        const step = playerStep * player.hitSlowFactor;
+        const step = player.updateAndReturnSlowMoAmount();
 
         Color.incRainbow(step * 0.1);
 

@@ -19,7 +19,7 @@ export const heavyWeaponClasses = [
 ];
 
 export default class ModeBManager {
-    constructor(level){
+    constructor(level) {
         this.level = level;
         this.concluded = false;
         this.performer = new TaskPerformer(modeBLevels[this.level]);
@@ -27,41 +27,45 @@ export default class ModeBManager {
         this.heavyIndex = 0;
     }
 
-    onPlayfieldInit(){
+    onPlayfieldInit() {
         this.updateWeapon();
     }
 
-    onPlayerHit(){
-        if(playField.player.hp <= 0){
-            this.concluded = true;
-            return;
-        }
-    }
+    onPlayerHit() { }
 
-    timeStep(dt){
-        if(this.concluded) return;
-        this.performer.timeStep(dt);
-        if(this.performer.concluded){
-            this.level++;
-            if(this.level == modeBLevels.length){
+    timeStep(dt) {
+        if (this.concluded) return;
+
+        const player = playField.player;
+        if (player.hp > 0) {
+            this.performer.timeStep(dt);
+            if (this.performer.concluded) {
+                this.level++;
+                if (this.level == modeBLevels.length) {
+                    this.concluded = true;
+                    return;
+                } else {
+                    this.performer = new TaskPerformer(modeBLevels[this.level]);
+                }
+            }
+        } else {
+            if (player.deathFinished) {
                 this.concluded = true;
                 return;
-            }else{
-                this.performer = new TaskPerformer(modeBLevels[this.level]);
             }
         }
 
-        if(controls.pressed["KeyE"]){
-            this.lightIndex = (this.lightIndex+1)%lightWeaponClasses.length;
+        if (controls.pressed["KeyE"]) {
+            this.lightIndex = (this.lightIndex + 1) % lightWeaponClasses.length;
             this.updateWeapon();
         }
-        if(controls.pressed["KeyQ"]){
-            this.heavyIndex = (this.heavyIndex+1)%heavyWeaponClasses.length;
+        if (controls.pressed["KeyQ"]) {
+            this.heavyIndex = (this.heavyIndex + 1) % heavyWeaponClasses.length;
             this.updateWeapon();
         }
     }
 
-    updateWeapon(){
+    updateWeapon() {
         playField.player.weapon = new DualWeapon(
             new lightWeaponClasses[this.lightIndex](),
             new heavyWeaponClasses[this.heavyIndex]()
