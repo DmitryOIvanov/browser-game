@@ -119,27 +119,27 @@ export default class BigExplosionParticle extends SubExplosion {
     static PARAMS = {
         PLAYER_DEATH: {
             sizeMultiplier: 1,
-            speedMultiplier: 0.35,
-            timeMultiplier: 100,
+            speedMultiplier: 0.45,
+            timeMultiplier: 65,
             initialSize: 30,
             splitDirectionVariability: 0.4,
             outlineDebugMode: false,
             sizeEndDecay: 1.01,
             splitInfo: [
                 {
-                    speedConversion: [0.3, 0.5],
+                    speedConversion: [0.3, 0.45],
                     occurenceTime: [120],
                     numSplits: [12],
                     speedDecay: 0,
                 },
                 {
-                    speedConversion: [0.4, 0.6],
+                    speedConversion: [0.4, 0.55],
                     occurenceTime: [20, 40],
                     numSplits: [2, 3],
                     speedDecay: 0,
                 },
                 {
-                    speedConversion: [0.5, 0.7],
+                    speedConversion: [0.5, 0.65],
                     occurenceTime: [10, 30],
                     numSplits: [2, 3],
                     speedDecay: 0,

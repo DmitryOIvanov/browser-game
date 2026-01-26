@@ -140,6 +140,10 @@ export default class DebugManager {
             this.weaponIndex = (this.weaponIndex + 1) % weaponGenerators.length;
             playField.player.weapon = weaponGenerators[this.weaponIndex]();
         }
+        if (controls.pressed["Backspace"]) {
+            playField.player.hp = 1;
+            playField.player.getHit();
+        }
 
 
         if (this.doSpawns) {
