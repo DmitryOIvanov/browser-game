@@ -23,18 +23,17 @@ const CROSSHAIR_CENTER_RAD = 5;
 const CROSSHAIR_SPECIAL_LINE_WIDTH = 8;
 const CROSSHAIR_SPECIAL_RADIUS = 16;
 
-function lerp(t) {
+function smoothStep(t) {
     return t * t * (3 - 2 * t);
 }
 
 export class DualWeapon {
-    constructor(lightComponent, heavyComponent) {
-        this.lightComponent = lightComponent;
-        this.heavyComponent = heavyComponent;
+    constructor(primaryComponent, secondaryComponent) {
+        this.primaryComponent = primaryComponent;
+        this.secondaryComponent = secondaryComponent;
 
-        this.fireTimer = 0;
-        this.wasRightClicking = false;
-        this.prevFrameHeavy = false;
+        this.primaryTimer = 0;
+        this.secondaryTimer = 0;
 
         this.color = PRIMARY_COLOR;
 
@@ -55,92 +54,60 @@ export class DualWeapon {
         ctx.lineWidth = CROSSHAIR_LINE_WIDTH;
         ctx.fillStyle = this.color.getStr();
 
-        const inRad = CROSSHAIR_IN_RAD_NORMAL + lerp(this.cursorSwitch) * CROSSHAIR_SPECIAL_EXTRA_RAD;
-        const outRad = inRad + CROSSHAIR_LENGTH;
-
-        for (let i = 0; i < NUM_CROSSHAIRS; i++) {
-            const angle = 2 * Math.PI * i / NUM_CROSSHAIRS;
-            ctx.beginPath();
-            ctx.moveTo(mouse.x + inRad * Math.cos(angle), mouse.y + inRad * Math.sin(angle));
-            ctx.lineTo(mouse.x + outRad * Math.cos(angle), mouse.y + outRad * Math.sin(angle));
-            ctx.stroke();
-        }
-
         ctx.beginPath();
         ctx.arc(mouse.x, mouse.y, CROSSHAIR_CENTER_RAD, 0, 2 * Math.PI);
         ctx.fill();
 
-        ctx.lineWidth = CROSSHAIR_SPECIAL_LINE_WIDTH;
-        const deviation = this.cursorSpecialCharge * Math.PI;
-        ctx.beginPath();
-        ctx.arc(mouse.x, mouse.y, CROSSHAIR_SPECIAL_RADIUS, 0.5 * Math.PI - deviation, 0.5 * Math.PI + deviation);
-        ctx.stroke();
+        // const inRad = CROSSHAIR_IN_RAD_NORMAL + smoothStep(this.cursorSwitch) * CROSSHAIR_SPECIAL_EXTRA_RAD;
+        // const outRad = inRad + CROSSHAIR_LENGTH;
+        //
+        // for (let i = 0; i < NUM_CROSSHAIRS; i++) {
+        //     const angle = 2 * Math.PI * i / NUM_CROSSHAIRS;
+        //     ctx.beginPath();
+        //     ctx.moveTo(mouse.x + inRad * Math.cos(angle), mouse.y + inRad * Math.sin(angle));
+        //     ctx.lineTo(mouse.x + outRad * Math.cos(angle), mouse.y + outRad * Math.sin(angle));
+        //     ctx.stroke();
+        // }
+        //
+        //
+        // ctx.lineWidth = CROSSHAIR_SPECIAL_LINE_WIDTH;
+        // const deviation = this.cursorSpecialCharge * Math.PI;
+        // ctx.beginPath();
+        // ctx.arc(mouse.x, mouse.y, CROSSHAIR_SPECIAL_RADIUS, 0.5 * Math.PI - deviation, 0.5 * Math.PI + deviation);
+        // ctx.stroke();
     }
 
     timeStep(dt) {
-        let dtAdded = false;
-        let forcedHeavyShot = (this.wasRightClicking && !controls.mouse.rightHeld);
-        if (this.heavyComponent.isContinuing() || controls.mouse.rightHeld || forcedHeavyShot) {
-            this.cursorSwitch = Math.min(1, this.cursorSwitch + dt * CROSSHAIR_SWITCH_RATE);
-            if (!this.prevFrameHeavy) {
-                this.fireTimer = 0;
-            }
-            this.prevFrameHeavy = true;
-
-            this.fireTimer += dt;
-            if (this.heavyComponent.isContinuing()) {
-                this.cursorSpecialCharge = 0;
-            } else {
-                this.cursorSpecialCharge = Math.min(1, this.fireTimer / this.heavyComponent.getDelay());
-            }
-
-            dtAdded = true;
+        this.primaryTimer += dt;
+        if (!this.secondaryComponent.isContinuing()) {
             while (true) {
-                if (!this.heavyComponent.isContinuing()) {
-                    if (this.hasStartedAHeavyAttack) {
-                        this.hasFinishedAHeavyAttack = true;
+                if (controls.mouse.leftHeld || this.primaryComponent.isContinuing()) {
+                    const delay = this.primaryComponent.getDelay();
+                    if (this.primaryTimer >= delay) {
+                        this.primaryTimer -= delay;
+                        this.primaryComponent.fire(this.primaryTimer);
+                        continue;
                     }
-                    if (!forcedHeavyShot && !controls.mouse.leftHeld) break;
                 }
-                if (this.fireTimer >= this.heavyComponent.getDelay()) {
-                    this.fireTimer -= this.heavyComponent.getDelay();
-                    this.heavyComponent.fire(this.fireTimer);
-                    this.hasStartedAHeavyAttack = true;
-                } else {
-                    break;
-                }
-                forcedHeavyShot = false;
+                break;
             }
-        } else {
-            this.cursorSwitch = Math.max(0, this.cursorSwitch - dt * CROSSHAIR_SWITCH_RATE);
-            this.cursorSpecialCharge = 0;
-            this.prevFrameHeavy = false;
         }
+        this.primaryTimer = Math.min(this.primaryTimer, this.primaryComponent.getDelay());
 
-        if (!this.heavyComponent.isContinuing() && !controls.mouse.rightHeld) {
-            this.fireTimer = Math.min(this.fireTimer, this.lightComponent.getDelay());
-            if (!dtAdded) this.fireTimer += dt;
-            dtAdded = true;
-            if (controls.mouse.leftHeld) {
-                while (this.fireTimer >= this.lightComponent.getDelay()) {
-                    this.fireTimer -= this.lightComponent.getDelay();
-                    this.lightComponent.fire(this.fireTimer);
+        this.secondaryTimer += dt;
+        while (true) {
+            if (controls.mouse.rightHeld || this.secondaryComponent.isContinuing()) {
+                const delay = this.secondaryComponent.getDelay();
+                if (this.secondaryTimer >= delay) {
+                    this.secondaryTimer -= delay;
+                    this.secondaryComponent.fire(this.secondaryTimer);
+                    continue;
                 }
             }
-        } else if (controls.mouse.rightHeld) {
-            this.fireTimer = Math.min(this.fireTimer, this.heavyComponent.getDelay());
+            break;
         }
-        if (this.heavyComponent.isContinuing() || (controls.mouse.rightHeld && this.fireTimer >= this.heavyComponent.getDelay())) {
-            this.color = SECONDARY_COLOR;
-        } else {
-            this.color = PRIMARY_COLOR;
-        }
-        this.wasRightClicking = controls.mouse.rightHeld;
 
-        if (!dtAdded) {
-            console.log("[!!!] Dual weapon: dt added later than expected");
-            this.fireTimer += dt;
-        }
+        this.secondaryTimer = Math.min(this.secondaryTimer, this.secondaryComponent.getDelay());
     }
 }
 
