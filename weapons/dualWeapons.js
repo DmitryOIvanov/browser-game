@@ -92,8 +92,10 @@ export class DualWeapon {
             if (controls.mouse.rightHeld || this.secondaryComponent.isContinuing()) {
                 const delay = this.secondaryComponent.getDelay();
                 if (this.secondaryTimer >= delay) {
+                    this.hasStartedAHeavyAttack = true;
                     this.secondaryTimer -= delay;
                     this.secondaryComponent.fire(this.secondaryTimer);
+                    if (this.hasStartedAHeavyAttack && !this.secondaryComponent.isContinuing()) this.hasFinishedAHeavyAttack = true;
                     continue;
                 }
             }
