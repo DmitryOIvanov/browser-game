@@ -10,22 +10,15 @@ import ExplodingBallPProj from "../projectiles/player/explodingBallPProj.js";
 import FireworkProj from "../projectiles/player/fireworkProj.js";
 import PointPProj from "../projectiles/player/pointPProj.js";
 
-const PRIMARY_COLOR = new Color(false, '#7FF');
-const SECONDARY_COLOR = new Color(false, '#FFF');
-
-const NUM_CROSSHAIRS = 4;
-const CROSSHAIR_IN_RAD_NORMAL = 10;
-const CROSSHAIR_SPECIAL_EXTRA_RAD = 14;
-const CROSSHAIR_LENGTH = 15;
-const CROSSHAIR_SWITCH_RATE = 0.2;
+const CROSSHAIR_IN_RAD = 10;
+const CROSSHAIR_LENGTH = 20;
 const CROSSHAIR_LINE_WIDTH = 5;
 const CROSSHAIR_CENTER_RAD = 5;
-const CROSSHAIR_SPECIAL_LINE_WIDTH = 8;
-const CROSSHAIR_SPECIAL_RADIUS = 16;
+const CROSSHAIR_SPECIAL_LINE_WIDTH = 7;
+const CROSSHAIR_SPECIAL_RADIUS = 20;
 
-function smoothStep(t) {
-    return t * t * (3 - 2 * t);
-}
+const PRIMARY_COLOR = new Color(false, '#7FF');
+const SECONDARY_COLOR = new Color(false, '#FFF');
 
 export class DualWeapon {
     constructor(primaryComponent, secondaryComponent) {
@@ -40,10 +33,6 @@ export class DualWeapon {
         // For tutorial
         this.hasStartedAHeavyAttack = false;
         this.hasFinishedAHeavyAttack = false;
-
-        // Cursor
-        this.cursorSwitch = 0;
-        this.cursorSpecialCharge = 0;
     }
 
     drawCursor() {
@@ -58,23 +47,27 @@ export class DualWeapon {
         ctx.arc(mouse.x, mouse.y, CROSSHAIR_CENTER_RAD, 0, 2 * Math.PI);
         ctx.fill();
 
-        // const inRad = CROSSHAIR_IN_RAD_NORMAL + smoothStep(this.cursorSwitch) * CROSSHAIR_SPECIAL_EXTRA_RAD;
-        // const outRad = inRad + CROSSHAIR_LENGTH;
-        //
-        // for (let i = 0; i < NUM_CROSSHAIRS; i++) {
-        //     const angle = 2 * Math.PI * i / NUM_CROSSHAIRS;
-        //     ctx.beginPath();
-        //     ctx.moveTo(mouse.x + inRad * Math.cos(angle), mouse.y + inRad * Math.sin(angle));
-        //     ctx.lineTo(mouse.x + outRad * Math.cos(angle), mouse.y + outRad * Math.sin(angle));
-        //     ctx.stroke();
-        // }
-        //
-        //
-        // ctx.lineWidth = CROSSHAIR_SPECIAL_LINE_WIDTH;
-        // const deviation = this.cursorSpecialCharge * Math.PI;
-        // ctx.beginPath();
-        // ctx.arc(mouse.x, mouse.y, CROSSHAIR_SPECIAL_RADIUS, 0.5 * Math.PI - deviation, 0.5 * Math.PI + deviation);
-        // ctx.stroke();
+        const inRad = CROSSHAIR_IN_RAD;
+        const outRad = inRad + CROSSHAIR_LENGTH;
+
+        for (let i = 0; i < 4; i++) {
+            const angle = 2 * Math.PI * (i + 0.5) / 4;
+            ctx.beginPath();
+            ctx.moveTo(mouse.x + inRad * Math.cos(angle), mouse.y + inRad * Math.sin(angle));
+            ctx.lineTo(mouse.x + outRad * Math.cos(angle), mouse.y + outRad * Math.sin(angle));
+            ctx.stroke();
+        }
+
+        if (!this.secondaryComponent.isContinuing()) {
+            ctx.lineWidth = CROSSHAIR_SPECIAL_LINE_WIDTH;
+            const portion = this.secondaryTimer / this.secondaryComponent.getDelay();
+            ctx.beginPath();
+            ctx.arc(mouse.x, mouse.y, CROSSHAIR_SPECIAL_RADIUS, 0.25 * Math.PI, (0.25 - 0.5 * portion) * Math.PI, true);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(mouse.x, mouse.y, CROSSHAIR_SPECIAL_RADIUS, 0.75 * Math.PI, (0.75 + 0.5 * portion) * Math.PI);
+            ctx.stroke();
+        }
     }
 
     timeStep(dt) {
