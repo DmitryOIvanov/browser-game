@@ -25,12 +25,8 @@ export class SpecialTutorialTask extends TutorialTask {
         ctx.strokeStyle = "#FFF";
         ctx.fillStyle = "#FFF";
 
-        drawTutorialMouse(canv.width / 2 - MOUSE_OFFSET_X, canv.height / 2 - 130, false, true);
-        fillTextFromCorner("Hold - Charge Special Attack", 50, canv.width / 2 + 80 - MOUSE_OFFSET_X, canv.height / 2 - 150);
-        fillTextFromCorner("Release - Fire (if Charged)", 50, canv.width / 2 + 80 - MOUSE_OFFSET_X, canv.height / 2 - 80);
-
-        drawTutorialMouse(canv.width / 2 - MOUSE_OFFSET_X, canv.height / 2 + 130, true, true);
-        fillTextFromCorner("Hold - Fire when Ready", 50, canv.width / 2 + 80 - MOUSE_OFFSET_X, canv.height / 2 + 150);
+        drawTutorialMouse(canv.width / 2, canv.height / 2 - 130, false, true);
+        fillTextCenteredXY("Fire Special Attack", 60, canv.width / 2, canv.height / 2 + 100);
     }
 }
 

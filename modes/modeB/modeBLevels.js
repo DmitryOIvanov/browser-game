@@ -61,11 +61,11 @@ const tutorialPart1 = [
 const tutorialPart2 = [
     {
         class: CreateBgParticleAndWaitForRetirementTask,
-        particleClass: TimeSlowTutorialTask
+        particleClass: SpecialTutorialTask
     },
     {
         class: CreateBgParticleAndWaitForRetirementTask,
-        particleClass: SpecialTutorialTask
+        particleClass: TimeSlowTutorialTask
     },
     {
         class: CreateMessageTask,
