@@ -144,6 +144,9 @@ export default class DebugManager {
             playField.player.hp = 1;
             playField.player.getHit();
         }
+        if (controls.pressed["KeyU"]) {
+            playField.player.resetHealthAndFlash();
+        }
 
 
         if (this.doSpawns) {

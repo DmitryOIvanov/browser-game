@@ -1,7 +1,7 @@
 import { CircleArea } from "./areas.js";
 import Color from "./color.js";
 import controls from "./controls.js";
-import { ctx } from "./drawing.js";
+import { addToGlobalAlphaStack, ctx, popFromGlobalStack } from "./drawing.js";
 import { decToZero, normalizeAngle } from "./extraMath.js";
 import BigExplosionParticle from "./particles/bigExplosionParticle.js";
 import ShrinkingCircleParticle from "./particles/shrinkingCircleParticle.js";
@@ -30,6 +30,7 @@ const HIT_COOLDOWN_DUR = 120;
 const HIT_EXTRA_ROT_SPEED = 0.04;
 
 const MAX_HP = 5;
+const HP_FLASH_TIME = 60;
 
 const HIT_SHOCK_INITIAL_RATE = 2.5;
 const HIT_SHOCK_DEATH_DECAY_MULTIPLIER = -2;
@@ -66,6 +67,7 @@ export default class Player {
         this.hitSlowFactor = 1;
         this.hp = MAX_HP;
         this.hpMeterDir = 0;
+        this.hpFlash = 0;
 
         this.inSlowMo = false;
         this.slowMeterDir = 0;
@@ -127,7 +129,11 @@ export default class Player {
 
         // --- HP bars ---
         if (this.hitCooldown <= 0) this.hpMeterDir = 0;
-        if (this.hitCooldown > 0) {
+        if (this.hitCooldown > 0 || this.hpFlash > 0) {
+            let opacity = 1;
+            if (this.hitCooldown <= 0) opacity = this.hpFlash / HP_FLASH_TIME;
+            addToGlobalAlphaStack(opacity);
+
             ctx.lineWidth = 5 * this.hitCooldown / HIT_COOLDOWN_DUR;
 
             if (this.hpMeterDir == 0) {
@@ -177,6 +183,8 @@ export default class Player {
                     }
                 }
             }
+
+            popFromGlobalStack();
         }
 
         // --- Slow mo meter ---
@@ -296,6 +304,8 @@ export default class Player {
 
         this.hitShockAura.updatePosition(this.x, this.y);
         this.hitShockAura.timeStep(dt);
+
+        this.hpFlash = decToZero(this.hpFlash, dt);
     }
 
     getHit() {
@@ -322,5 +332,10 @@ export default class Player {
                 this.hitShockAura.arcSpawnAutoDecay *= HIT_SHOCK_DEATH_DECAY_MULTIPLIER;
             }
         }
+    }
+
+    resetHealthAndFlash() {
+        this.hp = MAX_HP;
+        this.hpFlash = HP_FLASH_TIME;
     }
 }

@@ -1,6 +1,6 @@
 import { canv } from "../drawing.js";
 import playField from "../playField.js";
-import { CreateMessageTask, PerformTasksTask, WaitForConditionTask, WaitTimeTask } from "../tasks.js";
+import { CreateMessageTask, ExecuteFunctionTask, PerformTasksTask, WaitForConditionTask, WaitTimeTask } from "../tasks.js";
 
 const tasks = [
     {
@@ -36,6 +36,12 @@ const tasks = [
         showTime: 90,
         fadeOutTime: 30,
         opacity: 0.4,
+    },
+    {
+        class: ExecuteFunctionTask,
+        function: () => {
+            playField.player.resetHealthAndFlash();
+        }
     },
     {
         class: WaitTimeTask,

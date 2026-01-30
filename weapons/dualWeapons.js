@@ -71,8 +71,8 @@ export class DualWeapon {
     }
 
     timeStep(dt) {
-        this.primaryTimer += dt;
         if (!this.secondaryComponent.isContinuing()) {
+            this.primaryTimer += dt;
             while (true) {
                 if (controls.mouse.leftHeld || this.primaryComponent.isContinuing()) {
                     const delay = this.primaryComponent.getDelay();
@@ -99,8 +99,9 @@ export class DualWeapon {
             }
             break;
         }
-
         this.secondaryTimer = Math.min(this.secondaryTimer, this.secondaryComponent.getDelay());
+
+        this.color = this.secondaryComponent.isContinuing() ? SECONDARY_COLOR : PRIMARY_COLOR;
     }
 }
 

@@ -181,3 +181,10 @@ export class PerformTasksTask {
         if (this.performer.concluded) this.concluded = true;
     }
 }
+
+export class ExecuteFunctionTask {
+    constructor(readonlyParams) {
+        readonlyParams.function();
+        this.concluded = true;
+    }
+}
