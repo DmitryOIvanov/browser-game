@@ -9,12 +9,27 @@ import ModeBController from "./modes/modeB/modeBController.js";
 
 const modeAButton = new CanvasTextButton(canv.width / 2, canv.height / 2, "Untitled Mode A", 60, new Color(false, "#fff"));
 const modeBButton = new CanvasTextButton(canv.width / 2, canv.height / 2 + 80, "Untitled Mode B", 60, new Color(false, "#fff"));
-const debugModeButton = new CanvasTextButton(canv.width / 2, canv.height / 2 + 160, "Debug Mode", 60, new Color(false, "#fff"));
 
 const STATE_TITLE = 0;
 const STATE_MODE_A = 1;
 const STATE_MODE_B = 2;
 const STATE_DEBUG = 3;
+
+const DEBUG_KEYS = ["KeyD", "KeyE", "KeyB", "KeyU", "KeyG"];
+function debugRequested() {
+    for (let i = 0; i < DEBUG_KEYS.length; i++) {
+        if (!controls.held[DEBUG_KEYS[i]]) {
+            return false;
+        }
+    }
+    return true;
+}
+function clearDebugInputs() {
+    for (let i = 0; i < DEBUG_KEYS.length; i++) {
+        controls.pressed[DEBUG_KEYS[i]] = false;
+        controls.held[DEBUG_KEYS[i]] = false;
+    }
+}
 
 const controller = {
     initialize() {
@@ -34,8 +49,6 @@ const controller = {
             modeAButton.draw();
             modeBButton.update();
             modeBButton.draw();
-            debugModeButton.update();
-            debugModeButton.draw();
             if (controls.mouse.inBounds) {
                 drawDot(controls.mouse.x, controls.mouse.y)
             }
@@ -50,7 +63,8 @@ const controller = {
                 controls.mouse.leftHeld = false;
                 this.state = STATE_MODE_B;
                 this.subController = new ModeBController();
-            } else if (debugModeButton.isPressed()) {
+            } else if (debugRequested()) {
+                clearDebugInputs();
                 controls.mouse.lPressed = false;
                 controls.mouse.leftHeld = false;
                 this.state = STATE_DEBUG;

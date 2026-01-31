@@ -10,12 +10,11 @@ export function fillScreen(color) {
 }
 
 export function drawDot(x, y) {
-    ctx.strokeStyle = "white";
-    ctx.lineWidth = 5;
+    ctx.fillStyle = "white";
     ctx.beginPath();
-    ctx.arc(x, y, 3, 0, 2 * Math.PI);
+    ctx.arc(x, y, 5, 0, 2 * Math.PI);
     ctx.closePath();
-    ctx.stroke();
+    ctx.fill();
 }
 
 const MAX_ALPHA_STACK = 16; // arbitrary and high enough
