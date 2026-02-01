@@ -4,7 +4,7 @@ import controls from "../controls.js";
 import { ctx } from "../drawing.js";
 import Player from "../player.js";
 import playField from "../playField.js";
-import { shootSpread, shootSpreadAsPlayer, shootWithAngularOffset } from "../projectileCreation.js";
+import { shoot, shootSpread, shootSpreadAsPlayer, shootWithAngularOffset } from "../projectileCreation.js";
 import BallPProj from "../projectiles/player/ballPProj.js";
 import ExplodingBallPProj from "../projectiles/player/explodingBallPProj.js";
 import FireworkProj from "../projectiles/player/fireworkProj.js";
@@ -181,17 +181,18 @@ export class MultiDualWeaponComponent {
 }
 
 export class VolleyDualWeaponComponent {
-    constructor(numRounds, mainDelay, subDelay, sideProjCount, spread, offsetSpread, speed, projectileGenerator) {
+    constructor(numRounds, mainDelay, subDelay, sideProjCount, forwardOffset, sideOffset, backOffset, angleSpread, speed, projectileGenerator) {
         this.numRounds = numRounds;
         this.mainDelay = mainDelay;
         this.subDelay = subDelay;
         this.sideProjCount = sideProjCount;
-        this.spread = spread;
-        this.offsetSpread = offsetSpread;
+        this.forwardOffset = forwardOffset;
+        this.sideOffset = sideOffset;
+        this.backOffset = backOffset;
+        this.angleSpread = angleSpread;
         this.speed = speed;
         this.projectileGenerator = projectileGenerator;
 
-        this.subRound = 0;
         this.roundIndex = 0;
     }
 
@@ -199,24 +200,25 @@ export class VolleyDualWeaponComponent {
         const dx = controls.mouse.x - playField.player.x;
         const dy = controls.mouse.y - playField.player.y;
         const baseAngle = Math.atan2(dy, dx);
-        if (this.subRound == 0) {
-            shootWithAngularOffset(playField.player.x, playField.player.y, baseAngle, this.speed, 0, partialDt, this.projectileGenerator);
-        } else {
-            const angleChange = this.spread * this.subRound / this.sideProjCount;
-            const offset = this.offsetSpread * this.subRound / this.sideProjCount;
-            shootWithAngularOffset(playField.player.x, playField.player.y, baseAngle + angleChange, this.speed, offset, partialDt, this.projectileGenerator);
-            shootWithAngularOffset(playField.player.x, playField.player.y, baseAngle - angleChange, this.speed, -offset, partialDt, this.projectileGenerator);
+        const cos = Math.cos(baseAngle);
+        const sin = Math.sin(baseAngle);
+
+        const primaryX = playField.player.x + this.forwardOffset * cos;
+        const primaryY = playField.player.y + this.forwardOffset * sin;
+        shoot(primaryX, primaryY, baseAngle, this.speed, partialDt, this.projectileGenerator);
+        for (let bullet = 1; bullet <= this.sideProjCount; bullet++) {
+            for (let bulletDir = -1; bulletDir <= 1; bulletDir += 2) {
+                const x1 = primaryX + bullet * (- this.backOffset * cos - bulletDir * this.sideOffset * sin);
+                const y1 = primaryY + bullet * (- this.backOffset * sin + bulletDir * this.sideOffset * cos);
+                shoot(x1, y1, baseAngle + bulletDir * bullet * this.angleSpread, this.speed, partialDt, this.projectileGenerator);
+            }
         }
 
-        this.subRound++;
-        if (this.subRound >= this.sideProjCount) {
-            this.subRound = 0;
-            this.roundIndex = (this.roundIndex + 1) % this.numRounds;
-        }
+        this.roundIndex = (this.roundIndex + 1) % this.numRounds;
     }
 
     getDelay() {
-        if (this.roundIndex == 0 && this.subRound == 0) {
+        if (this.roundIndex == 0) {
             return this.mainDelay;
         } else {
             return this.subDelay;
@@ -224,7 +226,7 @@ export class VolleyDualWeaponComponent {
     }
 
     isContinuing() {
-        return !(this.roundIndex == 0 && this.subRound == 0);
+        return this.roundIndex != 0;
     }
 }
 
@@ -338,15 +340,18 @@ export const stockLightComponents = {
 };
 
 export const stockHeavyComponents = {
+    // numRounds, mainDelay, subDelay, sideProjCount, forwardOffset, sideOffset, backOffset, angleSpread, speed, projectileGenerator
     Volley: class extends VolleyDualWeaponComponent {
         constructor() {
             super(
                 15, // # Rounds
                 120, // Main delay
-                0.5, // Time between bullets
-                8, // Bullets from center including center
-                0.06, // Total spread
-                Math.PI / 2, // Total offset spread
+                0.5, // Time between shots
+                8, // Bullets from center excluding center
+                10, // Forward offset of wedge
+                2, // Sideways offset of sucessive bullets
+                1, // Backwatds offset of successive bullets
+                0.01, // angle difference of bullets in one wedge
                 25, // Speed
                 (x, y, dx, dy) => (
                     new PointPProj(x, y, dx, dy, SECONDARY_COLOR, () => (createAttackProfile(
