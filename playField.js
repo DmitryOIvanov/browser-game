@@ -103,10 +103,10 @@ const playField = {
         }
 
         // Timestep forward
-        player.timeStep(step);
         for (let i = 0; i < this.playerProj.length; i++) {
             this.playerProj[i].timeStep(step);
         }
+        player.timeStep(step);
         for (let ep = 0; ep < this.enemyProj.length; ep++) {
             const proj = this.enemyProj[ep];
             if (proj.autonomous) proj.timeStep(step);

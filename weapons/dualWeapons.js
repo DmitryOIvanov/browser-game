@@ -181,7 +181,7 @@ export class MultiDualWeaponComponent {
 }
 
 export class VolleyDualWeaponComponent {
-    constructor(numRounds, mainDelay, subDelay, sideProjCount, forwardOffset, sideOffset, backOffset, angleSpread, speed, projectileGenerator) {
+    constructor(numRounds, mainDelay, subDelay, sideProjCount, forwardOffset, sideOffset, backOffset, angleSpread, speed, extraSpeed, projectileGenerator) {
         this.numRounds = numRounds;
         this.mainDelay = mainDelay;
         this.subDelay = subDelay;
@@ -191,6 +191,7 @@ export class VolleyDualWeaponComponent {
         this.backOffset = backOffset;
         this.angleSpread = angleSpread;
         this.speed = speed;
+        this.extraSpeed = extraSpeed;
         this.projectileGenerator = projectileGenerator;
 
         this.roundIndex = 0;
@@ -205,12 +206,13 @@ export class VolleyDualWeaponComponent {
 
         const primaryX = playField.player.x + this.forwardOffset * cos;
         const primaryY = playField.player.y + this.forwardOffset * sin;
-        shoot(primaryX, primaryY, baseAngle, this.speed, partialDt, this.projectileGenerator);
+        shoot(primaryX, primaryY, baseAngle, this.speed + this.extraSpeed, partialDt, this.projectileGenerator);
         for (let bullet = 1; bullet <= this.sideProjCount; bullet++) {
+            const specificSpeed = this.speed + this.extraSpeed * (1 - bullet / this.sideProjCount);
             for (let bulletDir = -1; bulletDir <= 1; bulletDir += 2) {
                 const x1 = primaryX + bullet * (- this.backOffset * cos - bulletDir * this.sideOffset * sin);
                 const y1 = primaryY + bullet * (- this.backOffset * sin + bulletDir * this.sideOffset * cos);
-                shoot(x1, y1, baseAngle + bulletDir * bullet * this.angleSpread, this.speed, partialDt, this.projectileGenerator);
+                shoot(x1, y1, baseAngle + bulletDir * bullet * this.angleSpread, specificSpeed, partialDt, this.projectileGenerator);
             }
         }
 
@@ -344,15 +346,16 @@ export const stockHeavyComponents = {
     Volley: class extends VolleyDualWeaponComponent {
         constructor() {
             super(
-                15, // # Rounds
+                10, // # Rounds
                 120, // Main delay
-                0.5, // Time between shots
+                5, // Time between shots
                 8, // Bullets from center excluding center
-                10, // Forward offset of wedge
+                20, // Forward offset of wedge
                 2, // Sideways offset of sucessive bullets
-                1, // Backwatds offset of successive bullets
+                2, // Backwatds offset of successive bullets
                 0.01, // angle difference of bullets in one wedge
                 25, // Speed
+                3, // Extra speed given to arrow tip
                 (x, y, dx, dy) => (
                     new PointPProj(x, y, dx, dy, SECONDARY_COLOR, () => (createAttackProfile(
                         1, // Damage
