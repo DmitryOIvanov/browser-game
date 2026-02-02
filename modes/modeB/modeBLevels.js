@@ -50,9 +50,9 @@ const tutorialPart1 = [
         class: WeightedSpawnTask,
         delayCoeff: 20,
         enemies: [
-            { name: "SmallSquare", weight: 1, num: 8 },
-            { name: "SmallTriangle", weight: 1, num: 8 },
-            { name: "SmallCircle", weight: 1, num: 5 },
+            { name: "SmallSquare", weight: 1, num: 4 },
+            { name: "SmallTriangle", weight: 1, num: 4 },
+            { name: "SmallCircle", weight: 1, num: 3 },
         ]
     },
     { class: CheckpointTask },
@@ -88,16 +88,16 @@ const tutorialPart2 = [
         enemies: [
             {
                 shuffle: [
-                    { name: "SmallSquare", weight: 1, num: 5 },
-                    { name: "SmallTriangle", weight: 1, num: 5 },
-                    { name: "SmallCircle", weight: 1, num: 5 },
+                    { name: "SmallSquare", weight: 1, num: 3 },
+                    { name: "SmallTriangle", weight: 1, num: 3 },
+                    { name: "SmallCircle", weight: 1, num: 3 },
                 ]
             },
             {
                 shuffle: [
-                    { name: "SmallSquare", weight: 1, num: 5 },
-                    { name: "SmallTriangle", weight: 1, num: 5 },
-                    { name: "SmallCircle", weight: 1, num: 3 },
+                    { name: "SmallSquare", weight: 1, num: 3 },
+                    { name: "SmallTriangle", weight: 1, num: 3 },
+                    { name: "SmallCircle", weight: 1, num: 2 },
                     { name: "MultiSquare", weight: 2, num: 2 },
                     { name: "MultiTriangle", weight: 2, num: 2 },
                     { name: "MultiCircle", weight: 2, num: 1 },
