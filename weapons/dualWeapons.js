@@ -347,15 +347,15 @@ export const stockHeavyComponents = {
         constructor() {
             super(
                 10, // # Rounds
-                120, // Main delay
+                600, // Main delay
                 5, // Time between shots
-                8, // Bullets from center excluding center
+                7, // Bullets from center excluding center
                 20, // Forward offset of wedge
                 2, // Sideways offset of sucessive bullets
                 2, // Backwatds offset of successive bullets
                 0.01, // angle difference of bullets in one wedge
                 25, // Speed
-                3, // Extra speed given to arrow tip
+                2.5, // Extra speed given to arrow tip
                 (x, y, dx, dy) => (
                     new PointPProj(x, y, dx, dy, SECONDARY_COLOR, () => (createAttackProfile(
                         1, // Damage
@@ -369,13 +369,13 @@ export const stockHeavyComponents = {
     Wave: class extends MultiDualWeaponComponent {
         constructor() {
             super(
-                3, // # Rounds
-                120, // Main Delay
+                5, // # Rounds
+                600, // Main Delay
                 0, // Sub delay
-                [31, 30, 29], // # Bullets
+                [31, 30, 31, 30, 31], // # Bullets
                 0.05, // Spread
                 0, // Variance
-                [25, 22.5, 20], // Speed
+                [27, 26, 25, 24, 23], // Speed
                 (x, y, dx, dy) => (
                     new PointPProj(x, y, dx, dy, SECONDARY_COLOR, () => (createAttackProfile(
                         1, // Damage
@@ -412,7 +412,7 @@ export const stockHeavyComponents = {
     Firework: class extends BasicDualWeaponComponent {
         constructor() {
             super(
-                120, // Delay
+                600, // Delay
                 1, // # Bullets
                 0, // Spread
                 0, // Variance
@@ -421,7 +421,7 @@ export const stockHeavyComponents = {
                     new FireworkProj(x, y, dx, dy,
                         12, // Radius
                         40, // Duration
-                        50, // Projectiles in 1 of 2 rings
+                        120, // Projectiles in 1 of 2 rings
                         30, // Speed 1
                         25, // Speed 2
                         SECONDARY_COLOR,
