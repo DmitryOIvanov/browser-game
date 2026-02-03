@@ -17,6 +17,7 @@ const CROSSHAIR_LINE_WIDTH = 5;
 const CROSSHAIR_CENTER_RAD = 5;
 const CROSSHAIR_SPECIAL_LINE_WIDTH = 7;
 const CROSSHAIR_SPECIAL_RADIUS = 20;
+const CHARGE_BAR_ANGLE_CORRECTION = Math.asin(0.5 * CROSSHAIR_LINE_WIDTH / (CROSSHAIR_SPECIAL_RADIUS + CROSSHAIR_SPECIAL_LINE_WIDTH * 0.5));
 
 const PRIMARY_COLOR = new Color(false, '#7FF');
 const SECONDARY_COLOR = new Color(false, '#FFF');
@@ -66,12 +67,12 @@ export class DualWeapon {
 
         if (!this.secondaryComponent.isContinuing()) {
             ctx.lineWidth = CROSSHAIR_SPECIAL_LINE_WIDTH;
-            const portion = this.secondaryTimer / this.secondaryComponent.getDelay();
+            const portion = CHARGE_BAR_ANGLE_CORRECTION + (0.5 * Math.PI - 2 * CHARGE_BAR_ANGLE_CORRECTION) * this.secondaryTimer / this.secondaryComponent.getDelay();
             ctx.beginPath();
-            ctx.arc(mouse.x, mouse.y, CROSSHAIR_SPECIAL_RADIUS, 0.25 * Math.PI, (0.25 - 0.5 * portion) * Math.PI, true);
+            ctx.arc(mouse.x, mouse.y, CROSSHAIR_SPECIAL_RADIUS, 0.25 * Math.PI, 0.25 * Math.PI - portion, true);
             ctx.stroke();
             ctx.beginPath();
-            ctx.arc(mouse.x, mouse.y, CROSSHAIR_SPECIAL_RADIUS, 0.75 * Math.PI, (0.75 + 0.5 * portion) * Math.PI);
+            ctx.arc(mouse.x, mouse.y, CROSSHAIR_SPECIAL_RADIUS, 0.75 * Math.PI, 0.75 * Math.PI + portion);
             ctx.stroke();
         }
     }
