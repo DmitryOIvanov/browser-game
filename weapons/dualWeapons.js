@@ -2,6 +2,7 @@ import { createAttackProfile } from "../attackAndDefense.js";
 import Color from "../color.js";
 import controls from "../controls.js";
 import { ctx } from "../drawing.js";
+import { decToZero, posMod } from "../extraMath.js";
 import Player from "../player.js";
 import playField from "../playField.js";
 import { shoot, shootSpread, shootSpreadAsPlayer, shootWithAngularOffset } from "../projectileCreation.js";
@@ -20,6 +21,9 @@ const CROSSHAIR_SPECIAL_RADIUS = 20;
 const PRIMARY_COLOR = new Color(false, '#7FF');
 const SECONDARY_COLOR = new Color(false, '#FFF');
 
+const CHARGE_FLASH_TOTAL_TIME = 27;
+const CHARGE_FlASH_ALT_TIME = 3;
+
 export class DualWeapon {
     constructor(primaryComponent, secondaryComponent) {
         this.primaryComponent = primaryComponent;
@@ -29,6 +33,8 @@ export class DualWeapon {
         this.secondaryTimer = 0;
 
         this.color = PRIMARY_COLOR;
+        this.chargeFlash = CHARGE_FLASH_TOTAL_TIME;
+        this.flashTriggered = false;
 
         // For tutorial
         this.hasStartedAHeavyAttack = false;
@@ -71,6 +77,8 @@ export class DualWeapon {
     }
 
     timeStep(dt) {
+        this.chargeFlash = Math.min(this.chargeFlash + dt, CHARGE_FLASH_TOTAL_TIME);
+
         if (!this.secondaryComponent.isContinuing()) {
             this.primaryTimer += dt;
             while (true) {
@@ -96,6 +104,8 @@ export class DualWeapon {
                     this.secondaryTimer -= delay;
                     this.secondaryComponent.fire(this.secondaryTimer);
                     if (this.hasStartedAHeavyAttack && !this.secondaryComponent.isContinuing()) this.hasFinishedAHeavyAttack = true;
+                    this.flashTriggered = false;
+                    this.chargeFlash = CHARGE_FLASH_TOTAL_TIME;
                     continue;
                 }
             }
@@ -103,7 +113,18 @@ export class DualWeapon {
         }
         this.secondaryTimer = Math.min(this.secondaryTimer, this.secondaryComponent.getDelay());
 
-        this.color = this.secondaryComponent.isContinuing() ? SECONDARY_COLOR : PRIMARY_COLOR;
+        if (this.secondaryTimer >= this.secondaryComponent.getDelay() && !this.secondaryComponent.isContinuing() && !this.flashTriggered) {
+            this.flashTriggered = true;
+            this.chargeFlash = 0;
+        }
+
+        if (this.secondaryComponent.isContinuing()) {
+            this.color = SECONDARY_COLOR;
+        } else if (this.chargeFlash < CHARGE_FLASH_TOTAL_TIME && posMod(this.chargeFlash / CHARGE_FlASH_ALT_TIME, 2) < 1) {
+            this.color = SECONDARY_COLOR;
+        } else {
+            this.color = PRIMARY_COLOR;
+        }
     }
 }
 
