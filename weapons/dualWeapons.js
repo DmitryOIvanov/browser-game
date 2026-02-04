@@ -31,16 +31,20 @@ export class DualWeapon {
         this.secondaryComponent = secondaryComponent;
 
         this.primaryTimer = 0;
-        this.secondaryTimer = 0;
+        this.secondaryTimer = secondaryComponent.getDelay();
+        this.canFireSecondary = true;
 
         this.color = PRIMARY_COLOR;
         this.chargeFlash = CHARGE_FLASH_TOTAL_TIME;
-        this.flashTriggered = false;
+        this.flashTriggered = true;
 
         // For tutorial
         this.hasStartedAHeavyAttack = false;
         this.hasFinishedAHeavyAttack = false;
     }
+
+    disableSecondary() { this.canFireSecondary = false; }
+    enableSecondary() { this.canFireSecondary = true; }
 
     drawCursor() {
         if (!controls.mouse.inBounds) return;
@@ -66,8 +70,8 @@ export class DualWeapon {
         }
 
         if (!this.secondaryComponent.isContinuing()) {
-            ctx.lineWidth = CROSSHAIR_SPECIAL_LINE_WIDTH;
             const portion = CHARGE_BAR_ANGLE_CORRECTION + (0.5 * Math.PI - 2 * CHARGE_BAR_ANGLE_CORRECTION) * this.secondaryTimer / this.secondaryComponent.getDelay();
+            ctx.lineWidth = CROSSHAIR_SPECIAL_LINE_WIDTH;
             ctx.beginPath();
             ctx.arc(mouse.x, mouse.y, CROSSHAIR_SPECIAL_RADIUS, 0.25 * Math.PI, 0.25 * Math.PI - portion, true);
             ctx.stroke();
@@ -98,7 +102,7 @@ export class DualWeapon {
 
         this.secondaryTimer += dt;
         while (true) {
-            if (controls.mouse.rightHeld || this.secondaryComponent.isContinuing()) {
+            if ((controls.mouse.rightHeld && this.canFireSecondary) || this.secondaryComponent.isContinuing()) {
                 const delay = this.secondaryComponent.getDelay();
                 if (this.secondaryTimer >= delay) {
                     this.hasStartedAHeavyAttack = true;

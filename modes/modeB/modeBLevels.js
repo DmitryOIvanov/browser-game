@@ -1,6 +1,6 @@
 import { canv } from "../../drawing.js";
 import playField from "../../playField.js";
-import { CreateBgParticleAndWaitForRetirementTask, CreateMessageAndWaitTask, CreateMessageTask, CreateTrackedMessageTask, PerformTasksTask, WaitForConditionTask, WaitTimeTask, WeightedSpawnTask } from "../../tasks.js";
+import { CreateBgParticleAndWaitForRetirementTask, CreateMessageAndWaitTask, CreateMessageTask, CreateTrackedMessageTask, ExecuteFunctionTask, PerformTasksTask, WaitForConditionTask, WaitTimeTask, WeightedSpawnTask } from "../../tasks.js";
 import CheckpointTask from "../../tasks/checkpointTask.js";
 import { ShootTutorialTask } from "../../tutorial/shootTutorialTask.js";
 import { SpecialTutorialTask } from "../../tutorial/specialTutorialTask.js";
@@ -8,6 +8,12 @@ import TimeSlowTutorialTask from "../../tutorial/timeSlowTutorialTask.js";
 import { WasdTutorialTask } from "../../tutorial/wasdTutorialTask.js";
 
 const tutorialPart1 = [
+    {
+        class: ExecuteFunctionTask,
+        function: () => {
+            playField.player.weapon.disableSecondary();
+        }
+    },
     {
         class: CreateBgParticleAndWaitForRetirementTask,
         particleClass: WasdTutorialTask
@@ -59,6 +65,12 @@ const tutorialPart1 = [
 ];
 
 const tutorialPart2 = [
+    {
+        class: ExecuteFunctionTask,
+        function: () => {
+            playField.player.weapon.enableSecondary();
+        }
+    },
     {
         class: CreateBgParticleAndWaitForRetirementTask,
         particleClass: SpecialTutorialTask

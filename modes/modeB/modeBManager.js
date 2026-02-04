@@ -7,14 +7,14 @@ import modeBLevels from "./modeBLevels.js";
 export const lightWeaponClasses = [
     stockLightComponents.MachineGun,
     stockLightComponents.Spread,
-    stockLightComponents.Heavy,
+    // stockLightComponents.Heavy,
     stockLightComponents.Splitter,
 ];
 
 export const heavyWeaponClasses = [
     stockHeavyComponents.Volley,
     stockHeavyComponents.Wave,
-    stockHeavyComponents.Buster,
+    // stockHeavyComponents.Buster,
     stockHeavyComponents.Firework,
 ];
 
