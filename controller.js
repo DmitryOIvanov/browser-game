@@ -7,13 +7,11 @@ import DebugManager from "./modes/debug/debugEnemySpawning.js";
 import ModeAController from "./modes/modeA/modeAController.js";
 import ModeBController from "./modes/modeB/modeBController.js";
 
-const modeAButton = new CanvasTextButton(canv.width / 2, canv.height / 2, "Untitled Mode A", 60, new Color(false, "#fff"));
-const modeBButton = new CanvasTextButton(canv.width / 2, canv.height / 2 + 80, "Untitled Mode B", 60, new Color(false, "#fff"));
+const modeBButton = new CanvasTextButton(canv.width / 2, canv.height / 2, "Play", 60, new Color(false, "#fff"));
 
 const STATE_TITLE = 0;
-const STATE_MODE_A = 1;
-const STATE_MODE_B = 2;
-const STATE_DEBUG = 3;
+const STATE_MODE_B = 1;
+const STATE_DEBUG = 2;
 
 const DEBUG_KEYS = ["KeyD", "KeyE", "KeyB", "KeyU", "KeyG"];
 function debugRequested() {
@@ -45,20 +43,13 @@ const controller = {
             ctx.font = "100px arial";
             ctx.fillStyle = '#fff';
             ctx.fillText("video game", canv.width / 2, canv.height / 2 - 200);
-            modeAButton.update();
-            modeAButton.draw();
             modeBButton.update();
             modeBButton.draw();
             if (controls.mouse.inBounds) {
                 drawDot(controls.mouse.x, controls.mouse.y)
             }
 
-            if (modeAButton.isPressed()) {
-                controls.mouse.lPressed = false;
-                controls.mouse.leftHeld = false;
-                this.state = STATE_MODE_A;
-                this.subController = new ModeAController();
-            } else if (modeBButton.isPressed()) {
+            if (modeBButton.isPressed()) {
                 controls.mouse.lPressed = false;
                 controls.mouse.leftHeld = false;
                 this.state = STATE_MODE_B;
@@ -71,7 +62,7 @@ const controller = {
                 playField.initialize();
                 playField.setManager(new DebugManager());
             }
-        } else if (this.state == STATE_MODE_A || this.state == STATE_MODE_B) {
+        } else if (this.state == STATE_MODE_B) {
             if (controls.pressed["Escape"]) {
                 this.state = STATE_TITLE;
                 return;
