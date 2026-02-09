@@ -233,17 +233,87 @@ const level2 = [
                     { name: "MultiTriangle", weight: 2, num: 5 },
                 ]
             },
+            {
+                shuffle: [
+                    { name: "SmallCircle", weight: 1, num: 10 },
+                    { name: "MultiCircle", weight: 2, num: 1 },
+                    { name: "SimpleShooter", weight: 2, num: 5 },
+                ]
+            },
+            { name: "ShieldedCircle", weight: 2, num: 1 },
+            { name: "SmallSquare", weight: 0.5, num: 10 },
+            { name: "ShieldedCircle", weight: 2, num: 1 },
+            { name: "SmallSquare", weight: 0.5, num: 10 },
+            {
+                shuffle: [
+                    { name: "MultiSquare", weight: 1.5, num: 4 },
+                    { name: "MultiTriangle", weight: 1.5, num: 3 },
+                    { name: "SimpleShooter", weight: 1, num: 7 },
+                ]
+            },
         ]
     },
     {
         class: WaitForConditionTask,
-        condition: () => (playField.enemyWeight <= 2)
+        condition: () => (playField.isDangerFree())
+    },
+    { class: CheckpointTask },
+];
+
+const level3 = [
+    {
+        class: CreateMessageTask,
+        centerX: canv.width / 2,
+        centerY: canv.height / 2,
+        text: "Level 3",
+        fontSizePx: 320,
+        fadeInTime: 20,
+        showTime: 60,
+        fadeOutTime: 20,
+        opacity: 0.3,
+    },
+    {
+        class: WaitTimeTask,
+        time: 100
     },
     {
         class: WeightedSpawnTask,
-        delayCoeff: 15,
+        delayCoeff: 12,
         enemies: [
-            { name: "SimpleShooter", weight: 3, num: 3 },
+            {
+                shuffle: [
+                    { name: "SimpleShooter", weight: 1, num: 10 },
+                    { name: "MultiTriangle", weight: 1, num: 5 },
+                    { name: "SmallTriangle", weight: 0.2, num: 30 },
+                ]
+            },
+            { name: "ThreeShooter", weight: 3, num: 1 },
+            {
+                shuffle: [
+                    { name: "SimpleShooter", weight: 1, num: 5 },
+                    { name: "MultiTriangle", weight: 1, num: 3 },
+                    { name: "SmallTriangle", weight: 0.2, num: 20 },
+                    { name: "ThreeShooter", weight: 3, num: 1 },
+                ]
+            },
+            { name: "Snake", weight: 3, num: 1 },
+            {
+                shuffle: [
+                    { name: "MultiSquare", weight: 1, num: 3 },
+                    { name: "MultiTriangle", weight: 1, num: 3 },
+                    { name: "SmallTriangle", weight: 0.2, num: 5 },
+                    { name: "SmallSquare", weight: 0.2, num: 5 },
+                ]
+            },
+            {
+                shuffle: [
+                    { name: "MultiSquare", weight: 1, num: 1 },
+                    { name: "MultiTriangle", weight: 1, num: 1 },
+                    { name: "SmallTriangle", weight: 0.2, num: 5 },
+                    { name: "SmallSquare", weight: 0.2, num: 5 },
+                    { name: "ShieldedCircle", weight: 2, num: 2 },
+                ]
+            },
         ]
     },
     {
@@ -256,8 +326,9 @@ const level2 = [
 const modeBLevels = [
     tutorialPart1,
     tutorialPart2,
-    level1,
-    level2,
+    // level1,
+    // level2,
+    level3,
 ];
 
 const modeBTasks = [
