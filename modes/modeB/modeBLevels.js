@@ -323,12 +323,72 @@ const level3 = [
     { class: CheckpointTask },
 ];
 
+const level4 = [
+    {
+        class: CreateMessageTask,
+        centerX: canv.width / 2,
+        centerY: canv.height / 2,
+        text: "Level 4",
+        fontSizePx: 320,
+        fadeInTime: 20,
+        showTime: 60,
+        fadeOutTime: 20,
+        opacity: 0.3,
+    },
+    {
+        class: WaitTimeTask,
+        time: 100
+    },
+    {
+        class: WeightedSpawnTask,
+        delayCoeff: 15,
+        enemies: [
+            {
+                shuffle: [
+                    { name: "Lurcher", weight: 1, num: 10 },
+                    { name: "MultiSquare", weight: 1, num: 5 },
+                    { name: "SmallSquare", weight: 0.2, num: 10 },
+                    { name: "MultiCircle", weight: 1, num: 3 },
+                    { name: "SmallCircle", weight: 0.2, num: 5 },
+                ]
+            },
+            {
+                shuffle: [
+                    { name: "SimpleShooter", weight: 1, num: 8 },
+                    { name: "ThreeShooter", weight: 1, num: 3 },
+                    { name: "MultiTriangle", weight: 1, num: 5 },
+                    { name: "SmallTriangle", weight: 0.2, num: 10 },
+                    { name: "MultiCircle", weight: 1, num: 5 },
+                    { name: "SmallCircle", weight: 0.2, num: 3 },
+                ]
+            },
+        ]
+    },
+    {
+        class: WaitForConditionTask,
+        condition: () => (playField.enemyWeight <= 2)
+    },
+    {
+        class: WeightedSpawnTask,
+        delayCoeff: 15,
+        enemies: [
+            { name: "RingShooter", weight: 1, num: 1 },
+        ]
+    },
+    {
+        class: WaitForConditionTask,
+        condition: () => (playField.isDangerFree())
+    },
+    { class: CheckpointTask },
+];
+
 const modeBLevels = [
     tutorialPart1,
     tutorialPart2,
     // level1,
     // level2,
-    level3,
+    // level3,
+    level4,
 ];
 
 const modeBTasks = [
