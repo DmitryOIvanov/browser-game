@@ -158,6 +158,7 @@ export default class DebugManager {
                     curProbSum += entry.probWeight;
                     if (randNum < curProbSum) {
                         const generalInfo = enemySpawningInfo[entry.name];
+                        if (!generalInfo) throw new Error(`Could not find enemy '${entry.name}'`);
                         const pos = getRandomPosWithMargins(generalInfo.rad, PLAYER_CLEARANCE);
                         generalInfo.spawn(0, pos.x, pos.y);
                         this.spawnTimer += entry.cooldown;

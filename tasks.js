@@ -22,6 +22,7 @@ export class WeightedSpawnTask {
         let timeToNext = this.getTimeToNext();
         while (this.timePassed >= timeToNext) {
             const enemyInfo = enemySpawningInfo[this.nextSpawn.name];
+            if (!enemyInfo) throw new Error(`Could not find enemy '${this.nextSpawn.name}'`);
             const pos = getRandomPosWithMargins(enemyInfo.rad, PLAYER_CLEARANCE);
             playField.announceEnemyWeight(this.nextSpawn.weight);
             enemyInfo.spawn(this.nextSpawn.weight, pos.x, pos.y);
