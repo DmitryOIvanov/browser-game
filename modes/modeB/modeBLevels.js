@@ -390,9 +390,9 @@ const level4 = [
 const modeBLevels = [
     tutorialPart1,
     tutorialPart2,
-    level1,
-    level2,
-    level3,
+    // level1,
+    // level2,
+    // level3,
     level4,
 ];
 
