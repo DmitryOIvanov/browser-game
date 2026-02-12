@@ -9,7 +9,7 @@ const tasks = [
     },
     {
         class: WaitTimeTask,
-        time: 60
+        time: 20
     },
     {
         class: CreateMessageTask,

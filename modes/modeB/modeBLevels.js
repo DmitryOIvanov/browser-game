@@ -200,10 +200,6 @@ const level1 = [
             { name: "SimpleShooter", weight: 3, num: 3 },
         ]
     },
-    {
-        class: WaitForConditionTask,
-        condition: () => (playField.isDangerFree())
-    },
     { class: CheckpointTask },
 ];
 
@@ -252,10 +248,6 @@ const level2 = [
                 ]
             },
         ]
-    },
-    {
-        class: WaitForConditionTask,
-        condition: () => (playField.isDangerFree())
     },
     { class: CheckpointTask },
 ];
@@ -316,10 +308,6 @@ const level3 = [
             },
         ]
     },
-    {
-        class: WaitForConditionTask,
-        condition: () => (playField.isDangerFree())
-    },
     { class: CheckpointTask },
 ];
 
@@ -352,10 +340,31 @@ const level4 = [
                     { name: "SmallCircle", weight: 0.2, num: 5 },
                 ]
             },
+        ]
+    },
+    {
+        class: WaitForConditionTask,
+        condition: () => (playField.enemyWeight <= 1.5)
+    },
+    {
+        class: WeightedSpawnTask,
+        delayCoeff: 15,
+        enemies: [
+            { name: "RingShooter", weight: 2, num: 1 },
+        ]
+    },
+    {
+        class: WaitForConditionTask,
+        condition: () => (playField.enemyWeight <= 2.5)
+    },
+    {
+        class: WeightedSpawnTask,
+        delayCoeff: 15,
+        enemies: [
             {
                 shuffle: [
-                    { name: "SimpleShooter", weight: 1, num: 8 },
-                    { name: "ThreeShooter", weight: 1, num: 3 },
+                    { name: "SimpleShooter", weight: 1, num: 5 },
+                    { name: "ThreeShooter", weight: 2, num: 2 },
                     { name: "MultiTriangle", weight: 1, num: 5 },
                     { name: "SmallTriangle", weight: 0.2, num: 10 },
                     { name: "MultiCircle", weight: 1, num: 5 },
@@ -366,7 +375,7 @@ const level4 = [
     },
     {
         class: WaitForConditionTask,
-        condition: () => (playField.enemyWeight <= 2)
+        condition: () => (playField.enemyWeight <= 3)
     },
     {
         class: WeightedSpawnTask,
@@ -375,19 +384,15 @@ const level4 = [
             { name: "RingShooter", weight: 1, num: 1 },
         ]
     },
-    {
-        class: WaitForConditionTask,
-        condition: () => (playField.isDangerFree())
-    },
     { class: CheckpointTask },
 ];
 
 const modeBLevels = [
     tutorialPart1,
     tutorialPart2,
-    // level1,
-    // level2,
-    // level3,
+    level1,
+    level2,
+    level3,
     level4,
 ];
 
