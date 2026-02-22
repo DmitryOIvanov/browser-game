@@ -7,6 +7,20 @@ import { SpecialTutorialTask } from "../../tutorial/specialTutorialTask.js";
 import TimeSlowTutorialTask from "../../tutorial/timeSlowTutorialTask.js";
 import { WasdTutorialTask } from "../../tutorial/wasdTutorialTask.js";
 
+function getLevelIntroMessage(number) {
+    return {
+        class: CreateMessageTask,
+        centerX: canv.width / 2,
+        centerY: canv.height / 2,
+        text: `Level ${number}`,
+        fontSizePx: 320,
+        fadeInTime: 20,
+        showTime: 60,
+        fadeOutTime: 20,
+        opacity: 0.3,
+    };
+}
+
 const tutorialPart1 = [
     {
         class: ExecuteFunctionTask,
@@ -151,17 +165,7 @@ const tutorialPart2 = [
 ];
 
 const level1 = [
-    {
-        class: CreateMessageTask,
-        centerX: canv.width / 2,
-        centerY: canv.height / 2,
-        text: "Level 1",
-        fontSizePx: 320,
-        fadeInTime: 20,
-        showTime: 60,
-        fadeOutTime: 20,
-        opacity: 0.3,
-    },
+    getLevelIntroMessage(1),
     {
         class: WaitTimeTask,
         time: 100
@@ -204,17 +208,7 @@ const level1 = [
 ];
 
 const level2 = [
-    {
-        class: CreateMessageTask,
-        centerX: canv.width / 2,
-        centerY: canv.height / 2,
-        text: "Level 2",
-        fontSizePx: 320,
-        fadeInTime: 20,
-        showTime: 60,
-        fadeOutTime: 20,
-        opacity: 0.3,
-    },
+    getLevelIntroMessage(2),
     {
         class: WaitTimeTask,
         time: 100
@@ -225,26 +219,32 @@ const level2 = [
         enemies: [
             {
                 shuffle: [
-                    { name: "MultiSquare", weight: 2, num: 5 },
-                    { name: "MultiTriangle", weight: 2, num: 5 },
+                    { name: "MultiSquare", weight: 2, num: 3 },
+                    { name: "SmallSquare", weight: 0.5, num: 10 },
+                    { name: "MultiTriangle", weight: 2, num: 3 },
+                    { name: "SmallTriangle", weight: 0.5, num: 10 },
+                    { name: "ShieldedCircle", weight: 2.5, num: 2 },
                 ]
             },
+        ]
+    },
+    {
+        class: WeightedSpawnTask,
+        delayCoeff: 15,
+        enemies: [
             {
                 shuffle: [
                     { name: "SmallCircle", weight: 1, num: 10 },
-                    { name: "MultiCircle", weight: 2, num: 1 },
+                    { name: "MultiCircle", weight: 2, num: 2 },
                     { name: "SimpleShooter", weight: 2, num: 5 },
                 ]
             },
-            { name: "ShieldedCircle", weight: 2, num: 1 },
-            { name: "SmallSquare", weight: 0.5, num: 10 },
-            { name: "ShieldedCircle", weight: 2, num: 1 },
-            { name: "SmallSquare", weight: 0.5, num: 10 },
+            { name: "ThreeShooter", weight: 2, num: 1 },
             {
                 shuffle: [
-                    { name: "MultiSquare", weight: 1.5, num: 4 },
-                    { name: "MultiTriangle", weight: 1.5, num: 3 },
-                    { name: "SimpleShooter", weight: 1, num: 7 },
+                    { name: "SmallCircle", weight: 1, num: 3 },
+                    { name: "MultiCircle", weight: 2, num: 1 },
+                    { name: "SimpleShooter", weight: 2, num: 2 },
                 ]
             },
         ]
@@ -253,17 +253,7 @@ const level2 = [
 ];
 
 const level3 = [
-    {
-        class: CreateMessageTask,
-        centerX: canv.width / 2,
-        centerY: canv.height / 2,
-        text: "Level 3",
-        fontSizePx: 320,
-        fadeInTime: 20,
-        showTime: 60,
-        fadeOutTime: 20,
-        opacity: 0.3,
-    },
+    getLevelIntroMessage(3),
     {
         class: WaitTimeTask,
         time: 100
@@ -274,36 +264,36 @@ const level3 = [
         enemies: [
             {
                 shuffle: [
-                    { name: "SimpleShooter", weight: 1, num: 10 },
-                    { name: "MultiTriangle", weight: 1, num: 5 },
-                    { name: "SmallTriangle", weight: 0.2, num: 30 },
-                ]
-            },
-            { name: "ThreeShooter", weight: 3, num: 1 },
-            {
-                shuffle: [
-                    { name: "SimpleShooter", weight: 1, num: 5 },
-                    { name: "MultiTriangle", weight: 1, num: 3 },
-                    { name: "SmallTriangle", weight: 0.2, num: 20 },
-                    { name: "ThreeShooter", weight: 3, num: 1 },
+                    { name: "SmallTriangle", weight: 0.2, num: 5 },
+                    { name: "MultiTriangle", weight: 1, num: 1 },
+                    { name: "SmallSquare", weight: 0.2, num: 5 },
+                    { name: "MultiSquare", weight: 1, num: 1 },
                 ]
             },
             { name: "Snake", weight: 3, num: 1 },
             {
                 shuffle: [
-                    { name: "MultiSquare", weight: 1, num: 3 },
-                    { name: "MultiTriangle", weight: 1, num: 3 },
-                    { name: "SmallTriangle", weight: 0.2, num: 5 },
-                    { name: "SmallSquare", weight: 0.2, num: 5 },
+                    { name: "SimpleShooter", weight: 1, num: 5 },
+                    { name: "MultiTriangle", weight: 1, num: 5 },
+                    { name: "SmallTriangle", weight: 0.2, num: 20 },
                 ]
             },
             {
                 shuffle: [
-                    { name: "MultiSquare", weight: 1, num: 1 },
-                    { name: "MultiTriangle", weight: 1, num: 1 },
+                    { name: "SimpleShooter", weight: 1, num: 5 },
+                    { name: "MultiTriangle", weight: 1, num: 3 },
+                    { name: "SmallTriangle", weight: 0.2, num: 20 },
+                    { name: "ThreeShooter", weight: 3, num: 2 },
+                ]
+            },
+            {
+                shuffle: [
+                    { name: "MultiSquare", weight: 1, num: 2 },
+                    { name: "MultiTriangle", weight: 1, num: 2 },
                     { name: "SmallTriangle", weight: 0.2, num: 5 },
                     { name: "SmallSquare", weight: 0.2, num: 5 },
                     { name: "ShieldedCircle", weight: 2, num: 2 },
+                    { name: "LaserShooter", weight: 2, num: 3 },
                 ]
             },
         ]
@@ -312,76 +302,84 @@ const level3 = [
 ];
 
 const level4 = [
-    {
-        class: CreateMessageTask,
-        centerX: canv.width / 2,
-        centerY: canv.height / 2,
-        text: "Level 4",
-        fontSizePx: 320,
-        fadeInTime: 20,
-        showTime: 60,
-        fadeOutTime: 20,
-        opacity: 0.3,
-    },
+    getLevelIntroMessage(4),
     {
         class: WaitTimeTask,
         time: 100
     },
     {
         class: WeightedSpawnTask,
-        delayCoeff: 15,
+        delayCoeff: 13,
         enemies: [
             {
                 shuffle: [
                     { name: "Lurcher", weight: 1, num: 10 },
-                    { name: "MultiSquare", weight: 1, num: 5 },
-                    { name: "SmallSquare", weight: 0.2, num: 10 },
-                    { name: "MultiCircle", weight: 1, num: 3 },
+                    { name: "MultiSquare", weight: 1, num: 2 },
+                    { name: "SmallSquare", weight: 0.2, num: 5 },
+                    { name: "MultiCircle", weight: 1, num: 2 },
                     { name: "SmallCircle", weight: 0.2, num: 5 },
                 ]
             },
-        ]
-    },
-    {
-        class: WaitForConditionTask,
-        condition: () => (playField.enemyWeight <= 1.5)
-    },
-    {
-        class: WeightedSpawnTask,
-        delayCoeff: 15,
-        enemies: [
-            { name: "RingShooter", weight: 2, num: 1 },
-        ]
-    },
-    {
-        class: WaitForConditionTask,
-        condition: () => (playField.enemyWeight <= 2.5)
-    },
-    {
-        class: WeightedSpawnTask,
-        delayCoeff: 15,
-        enemies: [
             {
                 shuffle: [
-                    { name: "SimpleShooter", weight: 1, num: 5 },
-                    { name: "ThreeShooter", weight: 2, num: 2 },
-                    { name: "MultiTriangle", weight: 1, num: 5 },
-                    { name: "SmallTriangle", weight: 0.2, num: 10 },
-                    { name: "MultiCircle", weight: 1, num: 5 },
-                    { name: "SmallCircle", weight: 0.2, num: 3 },
+                    { name: "BombEnemy", weight: 2, num: 10 },
+                    { name: "SimpleShooter", weight: 1.5, num: 5 },
+                    { name: "MultiTriangle", weight: 1, num: 2 },
+                    { name: "SmallTriangle", weight: 0.2, num: 5 },
+                    { name: "MultiCircle", weight: 1, num: 2 },
+                    { name: "SmallCircle", weight: 0.2, num: 5 },
+                    { name: "ShieldedCircle", weight: 2, num: 3 },
+                ]
+            },
+            { name: "Snake", weight: 2, num: 1 },
+            {
+                shuffle: [
+                    { name: "SimpleShooter", weight: 1, num: 8 },
+                    { name: "LaserShooter", weight: 2, num: 5 },
+                    { name: "ThreeShooter", weight: 2.5, num: 1 },
+                    { name: "MultiSquare", weight: 1, num: 4 },
+                    { name: "SmallSquare", weight: 0.2, num: 16 },
                 ]
             },
         ]
     },
+    { class: CheckpointTask },
+];
+
+const level5 = [
+    getLevelIntroMessage(5),
     {
-        class: WaitForConditionTask,
-        condition: () => (playField.enemyWeight <= 3)
+        class: WaitTimeTask,
+        time: 100
     },
     {
         class: WeightedSpawnTask,
-        delayCoeff: 15,
+        delayCoeff: 17,
         enemies: [
-            { name: "RingShooter", weight: 1, num: 1 },
+            {
+                shuffle: [
+                    { name: "SimpleShooter", weight: 1, num: 15 },
+                    { name: "ThreeShooter", weight: 2, num: 5 },
+                    { name: "SmallCircle", weight: 0.5, num: 15 },
+                ]
+            },
+            { name: "SmallCircle", weight: 0.5, num: 5 },
+            {
+                shuffle: [
+                    { name: "RingShooter", weight: 2.5, num: 2 },
+                    { name: "SimpleShooter", weight: 1, num: 5 },
+                    { name: "ShieldedCircle", weight: 1, num: 2 },
+                    { name: "MultiSquare", weight: 1, num: 5 },
+                ]
+            },
+            {
+                shuffle: [
+                    { name: "WallBurstShooter", weight: 2.5, num: 2 },
+                    { name: "SimpleShooter", weight: 1, num: 5 },
+                    { name: "ShieldedCircle", weight: 1, num: 2 },
+                    { name: "MultiSquare", weight: 1, num: 5 },
+                ]
+            },
         ]
     },
     { class: CheckpointTask },
@@ -393,7 +391,8 @@ const modeBLevels = [
     // level1,
     // level2,
     // level3,
-    level4,
+    // level4,
+    level5,
 ];
 
 const modeBTasks = [
