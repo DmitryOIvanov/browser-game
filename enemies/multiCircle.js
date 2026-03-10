@@ -1,5 +1,5 @@
 import { createDefenseProfile } from "../attackAndDefense.js";
-import Color from "../color.js";
+import { FlatColor, RainbowColor } from "../color.js";
 import { ctx } from "../drawing.js";
 import { normalizedAtan2 } from "../extraMath.js";
 import ExplodingRingParticle from "../particles/explodingRingParticle.js";
@@ -7,7 +7,7 @@ import playField from "../playField.js";
 import AbstractBasicCircle from "./abstractBasicCircle.js";
 import SmallCircle from "./smallCircle.js";
 
-const RAD = 2*SmallCircle.RAD;
+const RAD = 2 * SmallCircle.RAD;
 const LINE_THICK = 6;
 const MAX_HP = 10;
 const HIT_RAD = RAD;
@@ -21,52 +21,52 @@ const BASIC_PARAMS = {
     regularSpeed: 4
 };
 
-export default class MultiCircle extends AbstractBasicCircle{
+export default class MultiCircle extends AbstractBasicCircle {
     static RAD = RAD;
 
-    constructor(x,y,evx,evy,initAngle){
-        super(x,y,evx,evy,initAngle,BASIC_PARAMS);
+    constructor(x, y, evx, evy, initAngle) {
+        super(x, y, evx, evy, initAngle, BASIC_PARAMS);
         this.defenseProfile = createDefenseProfile(MAX_HP);
-        this.rot = 2*Math.PI*Math.random();
+        this.rot = 2 * Math.PI * Math.random();
     }
 
-    timeStep(amount){
+    timeStep(amount) {
         super.timeStep(amount);
-        this.rot += amount*ROT_SPEED;
+        this.rot += amount * ROT_SPEED;
     }
 
-    draw(){
-        ctx.strokeStyle = (this.hitFlash>0)?'#fff':this.baseColor.getStr();
+    draw() {
+        ctx.strokeStyle = (this.hitFlash > 0) ? '#fff' : this.baseColor.getStr();
         ctx.lineWidth = LINE_THICK;
         ctx.beginPath();
-        ctx.arc(this.x,this.y,RAD,0,2*Math.PI);
+        ctx.arc(this.x, this.y, RAD, 0, 2 * Math.PI);
         ctx.closePath();
         ctx.stroke();
         ctx.beginPath();
         ctx.arc(
-            this.x-SmallCircle.RAD*Math.cos(this.rot),
-            this.y-SmallCircle.RAD*Math.sin(this.rot),
-            SmallCircle.RAD,this.rot+Math.PI,this.rot
+            this.x - SmallCircle.RAD * Math.cos(this.rot),
+            this.y - SmallCircle.RAD * Math.sin(this.rot),
+            SmallCircle.RAD, this.rot + Math.PI, this.rot
         );
         ctx.arc(
-            this.x+SmallCircle.RAD*Math.cos(this.rot),
-            this.y+SmallCircle.RAD*Math.sin(this.rot),
-            SmallCircle.RAD,this.rot+Math.PI,this.rot, true
+            this.x + SmallCircle.RAD * Math.cos(this.rot),
+            this.y + SmallCircle.RAD * Math.sin(this.rot),
+            SmallCircle.RAD, this.rot + Math.PI, this.rot, true
         );
         ctx.stroke();
     }
 
-    getHit(){
-        if(this.defenseProfile.expired){
+    getHit() {
+        if (this.defenseProfile.expired) {
             this.retired = true;
-            playField.addParticle(new ExplodingRingParticle(this.x, this.y, RAD, 2*RAD, 6, Color.WHITE));
-            for(let i=-3; i<=3; i+=2){
-                let newAngle = normalizedAtan2(this.vy, this.vx)+i*0.2+(Math.random()-0.5)*0.1;
+            playField.addParticle(new ExplodingRingParticle(this.x, this.y, RAD, 2 * RAD, 6, FlatColor.WHITE));
+            for (let i = -3; i <= 3; i += 2) {
+                let newAngle = normalizedAtan2(this.vy, this.vx) + i * 0.2 + (Math.random() - 0.5) * 0.1;
                 playField.addEnemy(new SmallCircle(
-                    this.x+SmallCircle.RAD*Math.cos(newAngle),
-                    this.y+SmallCircle.RAD*Math.sin(newAngle),
-                    0,0,newAngle
-                ).setWeight(this.weight*0.25), true);
+                    this.x + SmallCircle.RAD * Math.cos(newAngle),
+                    this.y + SmallCircle.RAD * Math.sin(newAngle),
+                    0, 0, newAngle
+                ).setWeight(this.weight * 0.25), true);
             }
             return;
         }

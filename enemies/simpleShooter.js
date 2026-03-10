@@ -1,5 +1,5 @@
 import { createDefenseProfile } from "../attackAndDefense.js";
-import Color from "../color.js";
+import { FlatColor, RainbowColor } from "../color.js";
 import { ctx } from "../drawing.js";
 import ExplodingRingParticle from "../particles/explodingRingParticle.js";
 import playField from "../playField.js";
@@ -24,48 +24,48 @@ const SUPERCLASS_PARAMS = {
     fireTimeVar: 40
 };
 
-export default class SimpleShooter extends AbstractBasicShooter{
+export default class SimpleShooter extends AbstractBasicShooter {
     static RAD = RAD;
 
-    constructor(x,y){
-        super(x,y,SUPERCLASS_PARAMS);
+    constructor(x, y) {
+        super(x, y, SUPERCLASS_PARAMS);
         this.hitFlash = 0;
         this.defenseProfile = createDefenseProfile(MAX_HP);
     }
 
-    shoot(){
+    shoot() {
         playField.addEnemyProjectile(new BallEProj(
-            this.x+0.5*RAD*Math.cos(this.facingAngle),
-            this.y+0.5*RAD*Math.sin(this.facingAngle),
-            PROJ_SPEED*Math.cos(this.facingAngle),
-            PROJ_SPEED*Math.sin(this.facingAngle),
-            6,6,this.dangerColor));
+            this.x + 0.5 * RAD * Math.cos(this.facingAngle),
+            this.y + 0.5 * RAD * Math.sin(this.facingAngle),
+            PROJ_SPEED * Math.cos(this.facingAngle),
+            PROJ_SPEED * Math.sin(this.facingAngle),
+            6, 6, this.dangerColor));
     }
 
-    draw(){
-        ctx.strokeStyle = (this.hitFlash>0)?'#fff':this.baseColor.getStr();
+    draw() {
+        ctx.strokeStyle = (this.hitFlash > 0) ? '#fff' : this.baseColor.getStr();
         // if(this.mood == MOOD_CHASE) ctx.strokeStyle = '#f88';
         // if(this.mood == MOOD_ORBIT) ctx.strokeStyle = '#8f8';
         // if(this.mood == MOOD_FLEE) ctx.strokeStyle = '#88f';
         ctx.lineWidth = LINE_THICK;
         ctx.beginPath();
-        ctx.arc(this.x,this.y,RAD,0,2*Math.PI);
+        ctx.arc(this.x, this.y, RAD, 0, 2 * Math.PI);
         ctx.closePath();
         ctx.stroke();
-        ctx.strokeStyle = (this.hitFlash>0)?'#fff':this.dangerColor.getStr();
+        ctx.strokeStyle = (this.hitFlash > 0) ? '#fff' : this.dangerColor.getStr();
         ctx.beginPath();
         ctx.arc(
-            this.x+0.5*RAD*Math.cos(this.facingAngle),
-            this.y+0.5*RAD*Math.sin(this.facingAngle),
-            0.5*RAD,0,2*Math.PI);
+            this.x + 0.5 * RAD * Math.cos(this.facingAngle),
+            this.y + 0.5 * RAD * Math.sin(this.facingAngle),
+            0.5 * RAD, 0, 2 * Math.PI);
         ctx.closePath();
         ctx.stroke();
     }
 
-    getHit(){
-        if(this.defenseProfile.expired){
+    getHit() {
+        if (this.defenseProfile.expired) {
             this.retired = true;
-            playField.addParticle(new ExplodingRingParticle(this.x, this.y, 1.5*RAD, 2*RAD, 6, Color.WHITE));
+            playField.addParticle(new ExplodingRingParticle(this.x, this.y, 1.5 * RAD, 2 * RAD, 6, FlatColor.WHITE));
             return;
         }
         this.hitFlash = HIT_FLASH_TIME;

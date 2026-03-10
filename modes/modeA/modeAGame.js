@@ -1,5 +1,5 @@
 import { createAttackProfile } from "../../attackAndDefense.js";
-import Color from "../../color.js";
+import { FlatColor } from "../../color.js";
 import { canv } from "../../drawing.js";
 import playField from "../../playField.js";
 import { CreateBgParticleAndWaitForRetirementTask, CreateMessageAndWaitTask, WaitForConditionTask, WaitTimeTask, WeightedSpawnTask } from "../../tasks.js";
@@ -27,7 +27,7 @@ const level1 = {
                 0, // Fixed spread between bullets
                 0.02, // Random variance in each bullet's angle
                 20, // Bullet speed
-                new Color(false, '#0ff'), // Color
+                new FlatColor('#0ff'), // Color
                 () => (createAttackProfile(
                     1, // Damage
                     3, // Overkill factor
@@ -42,7 +42,7 @@ const level1 = {
                 0.18, // Fixed spread between bullets
                 0, // Random variance in each bullet's angle
                 20, // Bullet speed
-                new Color(false, '#ff0'), // Color
+                new FlatColor('#ff0'), // Color
                 () => (createAttackProfile(
                     1, // Damage
                     3, // Overkill factor
@@ -60,7 +60,7 @@ const level1 = {
                 12, // radius
                 -1, // duration (Negative: infinite)
                 0, // bounces (Negative: infinite)
-                new Color(false, '#f0f'), // color
+                new FlatColor('#f0f'), // color
                 () => (createAttackProfile(
                     5, // Damage
                     3, // Overkill factor
@@ -162,7 +162,7 @@ const level2 = {
                 0, // Fixed spread between bullets
                 0.02, // Random variance in each bullet's angle
                 20, // Bullet speed
-                new Color(false, '#0ff'), // Color
+                new FlatColor('#0ff'), // Color
                 () => (createAttackProfile(
                     1, // Damage
                     3, // Overkill factor
@@ -177,7 +177,7 @@ const level2 = {
                 0.15, // Fixed spread between bullets
                 0, // Random variance in each bullet's angle
                 20, // Bullet speed
-                new Color(false, '#ff0'), // Color
+                new FlatColor('#ff0'), // Color
                 () => (createAttackProfile(
                     1, // Damage
                     3, // Overkill factor
@@ -195,7 +195,7 @@ const level2 = {
                 16, // radius
                 -1, // duration (Negative: infinite)
                 0, // bounces (Negative: infinite)
-                new Color(false, '#f0f'), // color
+                new FlatColor('#f0f'), // color
                 () => (createAttackProfile(
                     15, // Damage
                     1, // Overkill factor

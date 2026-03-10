@@ -1,11 +1,11 @@
 import { createAttackProfile } from "../attackAndDefense.js";
-import Color from "../color.js";
+import { FlatColor, RainbowColor } from "../color.js";
 import controls from "../controls.js";
 import playField from "../playField.js";
 import FireworkProj from "../projectiles/player/fireworkProj.js";
 
 class GeneralFireworkWeapon {
-    constructor(fireRate, numShots, spread, variance, speed1, frags, speed2, speed3, radius, duration, color, primaryAttackProfileGenerator, secondaryAttackProfileGenerator){
+    constructor(fireRate, numShots, spread, variance, speed1, frags, speed2, speed3, radius, duration, color, primaryAttackProfileGenerator, secondaryAttackProfileGenerator) {
         this.fireRate = fireRate;
         this.numShots = numShots;
         this.spread = spread;
@@ -23,22 +23,22 @@ class GeneralFireworkWeapon {
         this.fireTimer = 0;
     }
 
-    timeStep(amount){
+    timeStep(amount) {
         this.fireTimer -= amount;
-        if(this.fireTimer <= 0){
-            if(!controls.mouse.leftHeld){
+        if (this.fireTimer <= 0) {
+            if (!controls.mouse.leftHeld) {
                 this.fireTimer = 0;
                 return;
             }
-            while(this.fireTimer <= 0){
-                let dx = controls.mouse.x-playField.player.x;
-                let dy = controls.mouse.y-playField.player.y;
-                if(dx==0 && dy==0) dx = 1;
-                let coeff = this.speed1/Math.sqrt(dx*dx + dy*dy);
-                for(let i=0; i<this.numShots; i++){
-                    let theta = this.spread*(i+0.5*(1-this.numShots)) + this.variance*2*(Math.random()-0.5);
-                    let dx2 = coeff*(dx*Math.cos(theta) + dy*Math.sin(theta));
-                    let dy2 = coeff*(dy*Math.cos(theta) - dx*Math.sin(theta));
+            while (this.fireTimer <= 0) {
+                let dx = controls.mouse.x - playField.player.x;
+                let dy = controls.mouse.y - playField.player.y;
+                if (dx == 0 && dy == 0) dx = 1;
+                let coeff = this.speed1 / Math.sqrt(dx * dx + dy * dy);
+                for (let i = 0; i < this.numShots; i++) {
+                    let theta = this.spread * (i + 0.5 * (1 - this.numShots)) + this.variance * 2 * (Math.random() - 0.5);
+                    let dx2 = coeff * (dx * Math.cos(theta) + dy * Math.sin(theta));
+                    let dy2 = coeff * (dy * Math.cos(theta) - dx * Math.sin(theta));
                     let newBullet = new FireworkProj(
                         playField.player.x, playField.player.y, dx2, dy2,
                         this.radius, this.duration, this.frags, this.speed2, this.speed3, this.color, this.primaryAttackProfileGenerator, this.secondaryAttackProfileGenerator);
@@ -52,7 +52,7 @@ class GeneralFireworkWeapon {
 }
 
 export class FireworkWeapon extends GeneralFireworkWeapon {
-    constructor(){
+    constructor() {
         super(
             50, // fireRate
             1, // numShots
@@ -64,7 +64,7 @@ export class FireworkWeapon extends GeneralFireworkWeapon {
             20, // speed of ring 2
             10, // radius
             50, // duration
-            new Color(false,'#f5f'), // color
+            new FlatColor('#f5f'), // color
             () => (createAttackProfile( // Main body
                 5, // Damage
                 0, // Dummy Value
@@ -80,7 +80,7 @@ export class FireworkWeapon extends GeneralFireworkWeapon {
 }
 
 export class MemeWeapon2 extends GeneralFireworkWeapon {
-    constructor(){
+    constructor() {
         super(
             500, // fireRate
             1, // numShots
@@ -92,7 +92,7 @@ export class MemeWeapon2 extends GeneralFireworkWeapon {
             20, // speed of ring 2
             10, // radius
             50, // duration
-            new Color(true, 0), // color
+            new RainbowColor(0), // color
             () => (createAttackProfile( // Main body
                 5, // Damage
                 0, // Dummy Value

@@ -1,4 +1,4 @@
-import Color from "./color.js";
+import { FlatColor } from "./color.js";
 import { addToGlobalAlphaStack, ctx, popFromGlobalStack } from "./drawing.js";
 
 const STATE_FADE_IN = 0;
@@ -9,7 +9,7 @@ export default class BgMessage {
     constructor(params) {
         this.text = params.text;
         this.fontSizePx = params.fontSizePx;
-        this.color = params.color || Color.WHITE;
+        this.color = params.color || FlatColor.WHITE;
         this.opacity = params.opacity || 1;
         this.centerX = params.centerX;
         this.centerY = params.centerY;

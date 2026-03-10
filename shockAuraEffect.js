@@ -1,4 +1,4 @@
-import Color from "./color.js";
+import { FlatColor, RainbowColor } from "./color.js";
 import { ctx } from "./drawing.js";
 import { QT_I, qtInv, qtMult, qtRandomUnit } from "./quaternions.js";
 
@@ -10,7 +10,7 @@ export default class ShockAuraEffect {
         this.x = x;
         this.y = y;
 
-        this.color = params.color != undefined ? params.color : Color.WHITE;
+        this.color = params.color != undefined ? params.color : FlatColor.WHITE;
         this.radius = params.radius != undefined ? params.radius : 100;
         this.arcSpawnRate = params.arcSpawnRate != undefined ? params.arcSpawnRate : 1 / 60;
         this.arcSpawnVariance = params.arcSpawnVariance != undefined ? params.arcSpawnVariance : 0;

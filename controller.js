@@ -1,13 +1,12 @@
-import Color from "./color.js";
+import { FlatColor } from "./color.js";
 import controls from "./controls.js";
 import { canv, ctx, drawDot, fillScreen } from "./drawing.js";
 import { CanvasTextButton } from "./gui.js";
-import playField from "./playField.js";
 import DebugManager from "./modes/debug/debugEnemySpawning.js";
-import ModeAController from "./modes/modeA/modeAController.js";
 import ModeBController from "./modes/modeB/modeBController.js";
+import playField from "./playField.js";
 
-const modeBButton = new CanvasTextButton(canv.width / 2, canv.height / 2, "Play", 60, new Color(false, "#fff"));
+const modeBButton = new CanvasTextButton(canv.width / 2, canv.height / 2, "Play", 60, new FlatColor("#fff"));
 
 const STATE_TITLE = 0;
 const STATE_MODE_B = 1;

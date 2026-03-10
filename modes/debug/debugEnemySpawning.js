@@ -1,5 +1,5 @@
 import { createAttackProfile } from "../../attackAndDefense.js";
-import Color from "../../color.js";
+import { FlatColor, RainbowColor } from "../../color.js";
 import controls from "../../controls.js";
 import { enemySpawningInfo, getRandomPosWithMargins } from "../../enemySpawning.js";
 import BigExplosionParticle from "../../particles/bigExplosionParticle.js";
@@ -131,7 +131,7 @@ export default class DebugManager {
 
     timeStep(amount) {
         if (controls.pressed["KeyP"]) {
-            playField.addParticle(new BigExplosionParticle(640, 360, BigExplosionParticle.PARAMS.PLAYER_DEATH, Color.WHITE));
+            playField.addParticle(new BigExplosionParticle(640, 360, BigExplosionParticle.PARAMS.PLAYER_DEATH, FlatColor.WHITE));
         }
         if (controls.pressed["KeyO"]) this.doSpawns = !this.doSpawns;
 

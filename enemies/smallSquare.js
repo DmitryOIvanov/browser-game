@@ -1,5 +1,5 @@
 import { createDefenseProfile } from "../attackAndDefense.js";
-import Color from "../color.js";
+import { FlatColor, RainbowColor } from "../color.js";
 import { ctx } from "../drawing.js";
 import ExplodingRingParticle from "../particles/explodingRingParticle.js";
 import playField from "../playField.js";
@@ -8,7 +8,7 @@ import AbstractBasicSquare from "./abstractBasicSquare.js";
 const RAD = 12;
 const LINE_THICK = 6;
 
-const HIT_RAD = RAD + LINE_THICK/2;
+const HIT_RAD = RAD + LINE_THICK / 2;
 const BASE_REST_TIME = 25;
 const REST_TIME_VARIANCE = 20;
 const BASE_MOVE_LEN = 200;
@@ -30,16 +30,16 @@ const BASIC_PARAMS = {
     evFriction: EV_FRICTION
 };
 
-export default class SmallSquare extends AbstractBasicSquare{
+export default class SmallSquare extends AbstractBasicSquare {
     static RAD = RAD;
 
-    constructor(x,y,evx,evy,initDelay){
-        super(x,y,evx,evy,initDelay,BASIC_PARAMS);
+    constructor(x, y, evx, evy, initDelay) {
+        super(x, y, evx, evy, initDelay, BASIC_PARAMS);
         this.defenseProfile = createDefenseProfile(MAX_HP);
     }
 
-    draw(){
-        ctx.strokeStyle = (this.hitFlash>0)?'#fff':this.baseColor.getStr();
+    draw() {
+        ctx.strokeStyle = (this.hitFlash > 0) ? '#fff' : this.baseColor.getStr();
         ctx.lineWidth = LINE_THICK;
         ctx.beginPath();
         ctx.moveTo(this.x - RAD, this.y - RAD);
@@ -50,10 +50,10 @@ export default class SmallSquare extends AbstractBasicSquare{
         ctx.stroke();
     }
 
-    getHit(){
-        if(this.defenseProfile.expired){
+    getHit() {
+        if (this.defenseProfile.expired) {
             this.retired = true;
-            playField.addParticle(new ExplodingRingParticle(this.x, this.y, 2*RAD, 3*RAD, 6, Color.WHITE));
+            playField.addParticle(new ExplodingRingParticle(this.x, this.y, 2 * RAD, 3 * RAD, 6, FlatColor.WHITE));
             return;
         }
         this.hitFlash = HIT_FLASH_TIME;

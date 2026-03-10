@@ -1,6 +1,6 @@
 import { CircleArea } from "../areas.js";
 import { createDefenseProfile } from "../attackAndDefense.js";
-import Color from "../color.js";
+import { FlatColor, RainbowColor } from "../color.js";
 import { ctx } from "../drawing.js";
 import { bounceBoundify, convergeToAngle, decToZero, getAngleToPlayer, isInBounds, normalizeAngle, normalizedAtan2 } from "../extraMath.js";
 import ExplodingRingParticle from "../particles/explodingRingParticle.js";
@@ -84,7 +84,7 @@ export default class BombEnemy extends AbstractEnemy {
     getHit() {
         if (this.defenseProfile.expired) {
             this.retired = true;
-            playField.addParticle(new ExplodingRingParticle(this.x, this.y, 2 * RAD, 4 * RAD, 6, Color.WHITE));
+            playField.addParticle(new ExplodingRingParticle(this.x, this.y, 2 * RAD, 4 * RAD, 6, FlatColor.WHITE));
             const angleToPlayer = getAngleToPlayer(this.x, this.y);
             for (let i = 0; i < NUM_BULLETS; i++) {
                 const angle = angleToPlayer + 2 * Math.PI * i / NUM_BULLETS;

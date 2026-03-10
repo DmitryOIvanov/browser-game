@@ -1,6 +1,6 @@
 import { CircleArea } from "../areas.js";
 import { createDefenseProfile } from "../attackAndDefense.js";
-import Color from "../color.js";
+import { FlatColor, RainbowColor } from "../color.js";
 import { ctx } from "../drawing.js";
 import { bounceBoundify, randomAngle } from "../extraMath.js";
 import ExplodingRingParticle from "../particles/explodingRingParticle.js";
@@ -27,10 +27,10 @@ const STATE_REST = 0;
 const STATE_CHARGE = 1;
 const STATE_LURCH = 2;
 
-export default class Lurcher extends AbstractEnemy{
+export default class Lurcher extends AbstractEnemy {
     static RAD = MAX_RAD;
 
-    constructor(x,y){
+    constructor(x, y) {
         super();
         this.x = x;
         this.y = y;
@@ -42,42 +42,42 @@ export default class Lurcher extends AbstractEnemy{
         this.prevX = this.x; this.prevY = this.y; this.targetX = this.x; this.targetY = this.y;
     }
 
-    findTarget(){
-        const playerDist = Math.sqrt((playField.player.x-this.x)*(playField.player.x-this.x) + (playField.player.y-this.y)*(playField.player.y-this.y));
-        const randR = AIM_COEFF*playerDist*Math.random();
+    findTarget() {
+        const playerDist = Math.sqrt((playField.player.x - this.x) * (playField.player.x - this.x) + (playField.player.y - this.y) * (playField.player.y - this.y));
+        const randR = AIM_COEFF * playerDist * Math.random();
         const randAngle = randomAngle();
-        const aimPointX = playField.player.x-this.x + randR*Math.cos(randAngle);
-        const aimPointY = playField.player.y-this.y + randR*Math.sin(randAngle);
-        const aimPointDist = Math.sqrt(aimPointX*aimPointX + aimPointY*aimPointY);
+        const aimPointX = playField.player.x - this.x + randR * Math.cos(randAngle);
+        const aimPointY = playField.player.y - this.y + randR * Math.sin(randAngle);
+        const aimPointDist = Math.sqrt(aimPointX * aimPointX + aimPointY * aimPointY);
         const lurchDist = BASE_LURCH_DIST + LURCH_DIST_VAR * Math.random();
-        this.targetX = this.x + lurchDist * aimPointX/aimPointDist;
-        this.targetY = this.y + lurchDist * aimPointY/aimPointDist;
+        this.targetX = this.x + lurchDist * aimPointX / aimPointDist;
+        this.targetY = this.y + lurchDist * aimPointY / aimPointDist;
     }
 
-    advanceTowardsTarget(portion){
-        this.x = this.prevX + portion*(this.targetX-this.prevX);
+    advanceTowardsTarget(portion) {
+        this.x = this.prevX + portion * (this.targetX - this.prevX);
         this.x = bounceBoundify(this.x, playField.x, MIN_RAD);
-        this.y = this.prevY + portion*(this.targetY-this.prevY);
+        this.y = this.prevY + portion * (this.targetY - this.prevY);
         this.y = bounceBoundify(this.y, playField.y, MIN_RAD);
     }
 
-    timeStep(dt){
+    timeStep(dt) {
         super.timeStep(dt);
         this.hitFlash -= dt;
-        if(this.hitFlash < 0) this.hitFlash = 0;
+        if (this.hitFlash < 0) this.hitFlash = 0;
 
         this.stateCountdown -= dt;
-        if(this.stateCountdown < 0){
-            if(this.state == STATE_REST){
+        if (this.stateCountdown < 0) {
+            if (this.state == STATE_REST) {
                 this.state = STATE_CHARGE;
                 this.stateCountdown += CHARGE_TIME;
-            }else if(this.state == STATE_CHARGE){
+            } else if (this.state == STATE_CHARGE) {
                 this.state = STATE_LURCH;
                 this.stateCountdown += LURCH_TIME;
                 this.prevX = this.x;
                 this.prevY = this.y;
                 this.findTarget();
-            }else if(this.state == STATE_LURCH){
+            } else if (this.state == STATE_LURCH) {
                 this.state = STATE_REST;
                 this.stateCountdown += BASE_REST_TIME + REST_TIME_VAR * Math.random();
                 this.curRad = MIN_RAD;
@@ -85,38 +85,38 @@ export default class Lurcher extends AbstractEnemy{
             }
         }
 
-        if(this.state == STATE_REST){
+        if (this.state == STATE_REST) {
             this.curRad = MIN_RAD;
-        }else if(this.state == STATE_CHARGE){
-            const t = this.stateCountdown/CHARGE_TIME;
-            this.curRad = MIN_RAD + (MAX_RAD-MIN_RAD)*(1-t)*(1-t);
-        }else if(this.state == STATE_LURCH){
-            const t = this.stateCountdown/LURCH_TIME;
-            this.curRad = MIN_RAD + (MAX_RAD-MIN_RAD)*t*t;
-            this.advanceTowardsTarget(1-t*t);
+        } else if (this.state == STATE_CHARGE) {
+            const t = this.stateCountdown / CHARGE_TIME;
+            this.curRad = MIN_RAD + (MAX_RAD - MIN_RAD) * (1 - t) * (1 - t);
+        } else if (this.state == STATE_LURCH) {
+            const t = this.stateCountdown / LURCH_TIME;
+            this.curRad = MIN_RAD + (MAX_RAD - MIN_RAD) * t * t;
+            this.advanceTowardsTarget(1 - t * t);
         }
 
         this.area.update(this.x, this.y, this.curRad);
     }
 
-    draw(){
-        ctx.strokeStyle = (this.hitFlash>0)?'#fff':this.baseColor.getStr();
+    draw() {
+        ctx.strokeStyle = (this.hitFlash > 0) ? '#fff' : this.baseColor.getStr();
         ctx.lineWidth = LINE_THICK;
         ctx.beginPath();
-        ctx.arc(this.x,this.y,this.curRad,0,2*Math.PI);
+        ctx.arc(this.x, this.y, this.curRad, 0, 2 * Math.PI);
         ctx.closePath();
         ctx.stroke();
-        
+
         ctx.beginPath();
-        ctx.arc(this.x,this.y,INNER_RAD,0,2*Math.PI);
+        ctx.arc(this.x, this.y, INNER_RAD, 0, 2 * Math.PI);
         ctx.closePath();
         ctx.stroke();
     }
 
-    getHit(){
-        if(this.defenseProfile.expired){
+    getHit() {
+        if (this.defenseProfile.expired) {
             this.retired = true;
-            playField.addParticle(new ExplodingRingParticle(this.x, this.y, 1.5*Lurcher.RAD, 2*Lurcher.RAD, 6, Color.WHITE));
+            playField.addParticle(new ExplodingRingParticle(this.x, this.y, 1.5 * Lurcher.RAD, 2 * Lurcher.RAD, 6, FlatColor.WHITE));
             return;
         }
         this.hitFlash = HIT_FLASH_TIME;

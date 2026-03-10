@@ -1,5 +1,5 @@
 import { CircleArea } from "./areas.js";
-import Color from "./color.js";
+import { FlatColor, RainbowColor } from "./color.js";
 import controls from "./controls.js";
 import { addToGlobalAlphaStack, ctx, popFromGlobalStack } from "./drawing.js";
 import { decToZero, normalizeAngle } from "./extraMath.js";
@@ -35,7 +35,7 @@ const HP_FLASH_TIME = 60;
 const HIT_SHOCK_INITIAL_RATE = 2.5;
 const HIT_SHOCK_DEATH_DECAY_MULTIPLIER = -2;
 const HIT_SHOCK_PARAMS = {
-    color: Color.WHITE,
+    color: FlatColor.WHITE,
     radius: 25,
     arcSpawnRate: 0,
     arcSpawnVariance: 2,
@@ -82,7 +82,7 @@ export default class Player {
         this.deathParticleSpawned = false;
     }
 
-    getColor() { return this.weapon == null ? Color.WHITE : this.weapon.color; }
+    getColor() { return this.weapon == null ? FlatColor.WHITE : this.weapon.color; }
 
     updateAndReturnSlowMoAmount() {
         if (this.hp <= 0 && this.deathTimer >= DEATH_SHOCK_TIME) {
@@ -246,7 +246,7 @@ export default class Player {
             this.deathTimer += dt;
             if (this.deathTimer >= DEATH_SHOCK_TIME) {
                 if (!this.deathParticleSpawned) {
-                    playField.addParticle(new BigExplosionParticle(this.x, this.y, BigExplosionParticle.PARAMS.PLAYER_DEATH, Color.WHITE));
+                    playField.addParticle(new BigExplosionParticle(this.x, this.y, BigExplosionParticle.PARAMS.PLAYER_DEATH, FlatColor.WHITE));
                     this.deathParticleSpawned = true;
                 }
                 if (this.deathTimer >= DEATH_SHOCK_TIME + DEATH_AFTER_TIME) {
@@ -322,7 +322,7 @@ export default class Player {
                 const vy = randSpeed * Math.sin(randAngle);
                 const r = 4 + 3 * Math.random();
                 const dur = 5 + (5 + randSpeed) * Math.random();
-                playField.addParticle(new ShrinkingCircleParticle(this.x, this.y, vx, vy, r, dur, Color.WHITE));
+                playField.addParticle(new ShrinkingCircleParticle(this.x, this.y, vx, vy, r, dur, FlatColor.WHITE));
             }
             this.hitCooldown = HIT_COOLDOWN_DUR;
             this.hitSlowCooldown = HIT_SLOW_DUR;

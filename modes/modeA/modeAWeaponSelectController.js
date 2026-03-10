@@ -1,35 +1,35 @@
-import Color from "../../color.js";
+import { FlatColor, RainbowColor } from "../../color.js";
 import controls from "../../controls.js";
 import { canv, ctx, drawDot } from "../../drawing.js";
 import { CanvasTextButton } from "../../gui.js";
 import { modeALevelList } from "./modeAGame.js";
 
 export default class ModeAWeaponSelectController {
-    constructor(game){
+    constructor(game) {
         this.game = game;
         this.concluded = false;
 
         const level = game.level;
-        this.buttons = modeALevelList[game.level].weapons.map((entry,index)=>(
-            new CanvasTextButton(canv.width/2,200+80*index,entry.name,60,Color.WHITE)
+        this.buttons = modeALevelList[game.level].weapons.map((entry, index) => (
+            new CanvasTextButton(canv.width / 2, 200 + 80 * index, entry.name, 60, FlatColor.WHITE)
         ));
     }
 
-    nextFrame(){
-        if(controls.pressed["KeyM"]){
+    nextFrame() {
+        if (controls.pressed["KeyM"]) {
             this.concluded = true;
         }
-        if(this.concluded) return;
+        if (this.concluded) return;
 
-        if(controls.mouse.inBounds){
-            drawDot(controls.mouse.x,controls.mouse.y)
+        if (controls.mouse.inBounds) {
+            drawDot(controls.mouse.x, controls.mouse.y)
         }
-        for(const button of this.buttons){
+        for (const button of this.buttons) {
             button.update();
             button.draw();
         }
-        for(let i=0; i<this.buttons.length;i++){
-            if(this.buttons[i].isPressed()){
+        for (let i = 0; i < this.buttons.length; i++) {
+            if (this.buttons[i].isPressed()) {
                 this.game.weaponGenerator = modeALevelList[this.game.level].weapons[i].generator;
                 this.concluded = true;
                 return;
@@ -39,6 +39,6 @@ export default class ModeAWeaponSelectController {
         ctx.textAlign = "center";
         ctx.font = "80px arial";
         ctx.fillStyle = '#fff';
-        ctx.fillText("Choose Your Weapon", canv.width/2,120);
+        ctx.fillText("Choose Your Weapon", canv.width / 2, 120);
     }
 }

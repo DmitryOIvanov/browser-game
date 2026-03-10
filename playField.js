@@ -1,6 +1,6 @@
 import { Area } from "./areas.js";
 import { attackAndDefend } from "./attackAndDefense.js";
-import Color from "./color.js";
+import { FlatColor, RainbowColor } from "./color.js";
 import controls from "./controls.js";
 import { canv, ctx } from "./drawing.js";
 import { findMultiIntersections, intersects } from "./intersection.js";
@@ -94,7 +94,7 @@ const playField = {
         const player = this.player;
         const step = player.updateAndReturnSlowMoAmount();
 
-        Color.incRainbow(step * 0.1);
+        RainbowColor.incRainbow(step * 0.1);
 
         // Timestep manager
         if (this.manager) {

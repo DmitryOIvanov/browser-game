@@ -1,5 +1,5 @@
 import { createAttackProfile } from "../attackAndDefense.js";
-import Color from "../color.js";
+import { FlatColor, RainbowColor } from "../color.js";
 import controls from "../controls.js";
 import { ctx } from "../drawing.js";
 import { decToZero, posMod } from "../extraMath.js";
@@ -19,8 +19,8 @@ const CROSSHAIR_SPECIAL_LINE_WIDTH = 7;
 const CROSSHAIR_SPECIAL_RADIUS = 20;
 const CHARGE_BAR_ANGLE_CORRECTION = Math.asin(0.5 * CROSSHAIR_LINE_WIDTH / (CROSSHAIR_SPECIAL_RADIUS + CROSSHAIR_SPECIAL_LINE_WIDTH * 0.5));
 
-const PRIMARY_COLOR = new Color(false, '#7FF');
-const SECONDARY_COLOR = new Color(false, '#FFF');
+const PRIMARY_COLOR = new FlatColor('#7FF');
+const SECONDARY_COLOR = new FlatColor('#FFF');
 
 const CHARGE_FLASH_TOTAL_TIME = 27;
 const CHARGE_FlASH_ALT_TIME = 3;

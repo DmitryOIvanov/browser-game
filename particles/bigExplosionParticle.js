@@ -1,4 +1,4 @@
-import Color from "../color.js";
+import { FlatColor, RainbowColor } from "../color.js";
 import { ctx } from "../drawing.js";
 import { posMod, randomAngle } from "../extraMath.js";
 import playField from "../playField.js";

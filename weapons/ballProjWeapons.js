@@ -1,11 +1,11 @@
 import { createAttackProfile } from "../attackAndDefense.js";
-import Color from "../color.js";
+import { FlatColor, RainbowColor } from "../color.js";
 import controls from "../controls.js";
 import playField from "../playField.js";
 import BallPProj from "../projectiles/player/ballPProj.js";
 
 export class BallPProjWeapon {
-    constructor(fireRate, numShots, spread, variance, speed, radius, duration, numBounces, color, attackProfileGenerator){
+    constructor(fireRate, numShots, spread, variance, speed, radius, duration, numBounces, color, attackProfileGenerator) {
         this.fireRate = fireRate;
         this.numShots = numShots;
         this.spread = spread;
@@ -20,22 +20,22 @@ export class BallPProjWeapon {
         this.fireTimer = 0;
     }
 
-    timeStep(amount){
+    timeStep(amount) {
         this.fireTimer -= amount;
-        if(this.fireTimer <= 0){
-            if(!controls.mouse.leftHeld){
+        if (this.fireTimer <= 0) {
+            if (!controls.mouse.leftHeld) {
                 this.fireTimer = 0;
                 return;
             }
-            while(this.fireTimer <= 0){
-                let dx = controls.mouse.x-playField.player.x;
-                let dy = controls.mouse.y-playField.player.y;
-                if(dx==0 && dy==0) dx = 1;
-                let coeff = this.speed/Math.sqrt(dx*dx + dy*dy);
-                for(let i=0; i<this.numShots; i++){
-                    let theta = this.spread*(i+0.5*(1-this.numShots)) + this.variance*2*(Math.random()-0.5);
-                    let dx2 = coeff*(dx*Math.cos(theta) + dy*Math.sin(theta));
-                    let dy2 = coeff*(dy*Math.cos(theta) - dx*Math.sin(theta));
+            while (this.fireTimer <= 0) {
+                let dx = controls.mouse.x - playField.player.x;
+                let dy = controls.mouse.y - playField.player.y;
+                if (dx == 0 && dy == 0) dx = 1;
+                let coeff = this.speed / Math.sqrt(dx * dx + dy * dy);
+                for (let i = 0; i < this.numShots; i++) {
+                    let theta = this.spread * (i + 0.5 * (1 - this.numShots)) + this.variance * 2 * (Math.random() - 0.5);
+                    let dx2 = coeff * (dx * Math.cos(theta) + dy * Math.sin(theta));
+                    let dy2 = coeff * (dy * Math.cos(theta) - dx * Math.sin(theta));
                     let newBullet = new BallPProj(
                         playField.player.x, playField.player.y, dx2, dy2,
                         this.radius, this.duration, this.numBounces, this.color, this.attackProfileGenerator);
@@ -49,7 +49,7 @@ export class BallPProjWeapon {
 }
 
 export class BouncyWeapon extends BallPProjWeapon {
-    constructor(){
+    constructor() {
         super(
             12, // fireRate
             1, // numShots
@@ -59,7 +59,7 @@ export class BouncyWeapon extends BallPProjWeapon {
             10, // radius
             150, // duration (Negative: infinite)
             -1, // bounces (Negative: infinite)
-            new Color(false,'#0f0'), // color
+            new FlatColor('#0f0'), // color
             () => (createAttackProfile(
                 1, // Damage
                 3, // Overkill factor
@@ -70,7 +70,7 @@ export class BouncyWeapon extends BallPProjWeapon {
 }
 
 export class MemeWeapon3 extends BallPProjWeapon {
-    constructor(){
+    constructor() {
         super(
             5, // fireRate
             5, // numShots
@@ -80,7 +80,7 @@ export class MemeWeapon3 extends BallPProjWeapon {
             15, // radius
             500, // duration (Negative: infinite)
             -1, // bounces (Negative: infinite)
-            new Color(true,0), // color
+            new RainbowColor(0), // color
             () => (createAttackProfile(
                 1, // Damage
                 3, // Overkill factor
