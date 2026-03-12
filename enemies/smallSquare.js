@@ -1,5 +1,5 @@
 import { createDefenseProfile } from "../attackAndDefense.js";
-import { FlatColor, RainbowColor } from "../color.js";
+import { FlatColor } from "../color.js";
 import { ctx } from "../drawing.js";
 import ExplodingRingParticle from "../particles/explodingRingParticle.js";
 import playField from "../playField.js";
@@ -39,7 +39,7 @@ export default class SmallSquare extends AbstractBasicSquare {
     }
 
     draw() {
-        ctx.strokeStyle = (this.hitFlash > 0) ? '#fff' : this.baseColor.getStr();
+        ctx.strokeStyle = (this.hitFlash > 0) ? '#fff' : this.getBaseColorStr(this.defenseProfile);
         ctx.lineWidth = LINE_THICK;
         ctx.beginPath();
         ctx.moveTo(this.x - RAD, this.y - RAD);

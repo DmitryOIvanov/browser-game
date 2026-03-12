@@ -196,7 +196,7 @@ export default class RingShooter extends AbstractEnemy {
 
     draw() {
         ctx.lineWidth = LINE_THICK;
-        ctx.strokeStyle = (this.hitFlash > 0) ? '#fff' : this.baseColor.getStr();
+        ctx.strokeStyle = (this.hitFlash > 0) ? '#fff' : this.getBaseColorStr(this.defenseProfile);
         ctx.beginPath();
         for (let i = 0; i < NUM_SIDES; i++) {
             const x = this.x + BODY_RAD * Math.cos(this.bodyRot + 2 * Math.PI * i / NUM_SIDES);

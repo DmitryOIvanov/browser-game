@@ -43,7 +43,7 @@ export default class SimpleShooter extends AbstractBasicShooter {
     }
 
     draw() {
-        ctx.strokeStyle = (this.hitFlash > 0) ? '#fff' : this.baseColor.getStr();
+        ctx.strokeStyle = (this.hitFlash > 0) ? '#fff' : this.getBaseColorStr(this.defenseProfile);
         // if(this.mood == MOOD_CHASE) ctx.strokeStyle = '#f88';
         // if(this.mood == MOOD_ORBIT) ctx.strokeStyle = '#8f8';
         // if(this.mood == MOOD_FLEE) ctx.strokeStyle = '#88f';

@@ -203,7 +203,8 @@ export default class Snake extends AbstractEnemy {
             if (exists) {
                 const x = this.area.arr[i].x;
                 const y = this.area.arr[i].y;
-                ctx.strokeStyle = (this.segArr[i].hitFlash > 0) ? '#fff' : this.baseColor.getStr();
+                const baseColorStr = this.getBaseColorStr(this.segArr[i].defenseProfile);
+                ctx.strokeStyle = (this.segArr[i].hitFlash > 0) ? '#fff' : baseColorStr;
                 ctx.beginPath();
                 ctx.arc(x, y, SEG_RAD, 0, 2 * Math.PI);
                 ctx.closePath();
@@ -211,7 +212,7 @@ export default class Snake extends AbstractEnemy {
 
                 if (!prevExists && exists) {
                     const tangentAngle = this.segArr[i].tangentAngle;
-                    ctx.fillStyle = (this.segArr[i].hitFlash > 0) ? '#fff' : this.baseColor.getStr();
+                    ctx.fillStyle = (this.segArr[i].hitFlash > 0) ? '#fff' : baseColorStr;
                     ctx.beginPath();
                     ctx.arc(x + EYE_OFFSET * Math.cos(tangentAngle), y + EYE_OFFSET * Math.sin(tangentAngle), EYE_RAD, 0, 2 * Math.PI);
                     ctx.closePath();

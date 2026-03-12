@@ -1,3 +1,4 @@
+import { createDefenseProfile } from "../attackAndDefense.js";
 import { FlatColor, RainbowColor } from "../color.js";
 import { ctx } from "../drawing.js";
 import Snake from "../enemies/snake.js";
@@ -18,6 +19,8 @@ const STATE_DURATIONS = [30, 10, -1, 30];
 const EYE_APPEAR_SPEED = 5;
 
 const VISIBLE_TIME = (HOLE_RAD + Snake.SEG_RAD) / Snake.LINEAR_SPEED;
+
+const FULL_HP_DEFENSE_PROFILE = createDefenseProfile(1);
 
 export default class SnakeSpawnerParticle {
     constructor(x, y, initAngle, numSegs, weight) {
@@ -93,7 +96,8 @@ export default class SnakeSpawnerParticle {
         scale = 1 - (1 - scale) * (1 - scale);
 
         if (this.state == STATE_SPAWNING) {
-            ctx.strokeStyle = this.storedSnake.baseColor.getStr();
+            const colorStr = this.storedSnake.getBaseColorStr(FULL_HP_DEFENSE_PROFILE);
+            ctx.strokeStyle = colorStr;
             ctx.lineWidth = Snake.LINE_THICK;
             let seg = this.minSeg;
             let time = this.stateProgress;
@@ -114,7 +118,7 @@ export default class SnakeSpawnerParticle {
                     ctx.stroke();
                 }
                 if (seg == this.minSeg && (seg == 0 || !this.storedSnake.area.arr[seg - 1].exists)) {
-                    ctx.fillStyle = this.storedSnake.baseColor.getStr();
+                    ctx.fillStyle = colorStr;
                     let eyeScale = EYE_APPEAR_SPEED * time / VISIBLE_TIME - 1;
                     if (eyeScale >= 0) {
                         if (eyeScale > 1) eyeScale = 1;

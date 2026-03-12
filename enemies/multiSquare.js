@@ -40,7 +40,7 @@ export default class MultiSquare extends AbstractBasicSquare {
     }
 
     draw() {
-        ctx.strokeStyle = (this.hitFlash > 0) ? '#fff' : this.baseColor.getStr();
+        ctx.strokeStyle = (this.hitFlash > 0) ? '#fff' : this.getBaseColorStr(this.defenseProfile);
         ctx.lineWidth = LINE_THICK;
         ctx.beginPath();
         ctx.moveTo(this.x - RAD, this.y - RAD);

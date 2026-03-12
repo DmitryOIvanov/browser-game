@@ -12,7 +12,7 @@ export class FlatColor {
     }
 }
 
-function rainbowFunction(value) {
+export function rainbowFunction(value) {
     value = posMod(value, 6);
     let r = 0, g = 0, b = 0;
     if (value < 1) {
@@ -48,4 +48,23 @@ export class RainbowColor {
     getStr() {
         return rainbowFunction(this.offset + RainbowColor.rainbowTimer);
     }
+}
+
+const NUM_DAMAGE_COLOR_GRADATIONS = 20;
+const LOW_DAMAGE_COLOR = [255, 200, 0];
+const HIGH_DAMAGE_COLOR = [255, 100, 0];
+let DAMAGE_COLORS = new Array(NUM_DAMAGE_COLOR_GRADATIONS);
+for (let i = 0; i < NUM_DAMAGE_COLOR_GRADATIONS; i++) {
+    const t = i / (NUM_DAMAGE_COLOR_GRADATIONS - 1);
+    const r = Math.floor(t * LOW_DAMAGE_COLOR[0] + (1 - t) * HIGH_DAMAGE_COLOR[0] + 0.5);
+    const g = Math.floor(t * LOW_DAMAGE_COLOR[1] + (1 - t) * HIGH_DAMAGE_COLOR[1] + 0.5);
+    const b = Math.floor(t * LOW_DAMAGE_COLOR[2] + (1 - t) * HIGH_DAMAGE_COLOR[2] + 0.5);
+    DAMAGE_COLORS[i] = `rgb(${r} ${g} ${b})`;
+}
+
+export function getEnemyDamageColorStr(portion) {
+    let index = Math.floor(portion * NUM_DAMAGE_COLOR_GRADATIONS);
+    if (index < 0) index = 0;
+    if (index >= NUM_DAMAGE_COLOR_GRADATIONS) index = NUM_DAMAGE_COLOR_GRADATIONS - 1;
+    return DAMAGE_COLORS[index];
 }

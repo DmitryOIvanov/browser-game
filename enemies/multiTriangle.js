@@ -1,4 +1,4 @@
-import { createDefenseProfile } from "../attackAndDefense.js";
+import { createDefenseProfile } from "../attackAndDefense.js"
 import { FlatColor, RainbowColor } from "../color.js";
 import { ctx } from "../drawing.js";
 import ExplodingRingParticle from "../particles/explodingRingParticle.js";
@@ -35,7 +35,7 @@ export default class MultiTriangle extends AbstractBasicTriangle {
     }
 
     draw() {
-        ctx.strokeStyle = (this.hitFlash > 0) ? '#fff' : this.baseColor.getStr();
+        ctx.strokeStyle = (this.hitFlash > 0) ? '#fff' : this.getBaseColorStr(this.defenseProfile)
         ctx.lineWidth = LINE_THICK;
         ctx.beginPath();
         ctx.moveTo(this.area.p1x, this.area.p1y);

@@ -34,7 +34,7 @@ export default class SmallTriangle extends AbstractBasicTriangle {
     }
 
     draw() {
-        ctx.strokeStyle = (this.hitFlash > 0) ? '#fff' : this.baseColor.getStr();
+        ctx.strokeStyle = (this.hitFlash > 0) ? '#fff' : this.getBaseColorStr(this.defenseProfile);
         ctx.lineWidth = LINE_THICK;
         ctx.beginPath();
         ctx.moveTo(this.area.p1x, this.area.p1y);

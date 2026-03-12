@@ -179,7 +179,7 @@ export default class ShockwaveShooter extends AbstractEnemy {
         );
         ctx.stroke();
 
-        ctx.strokeStyle = (this.hitFlash > 0) ? '#fff' : this.baseColor.getStr();
+        ctx.strokeStyle = (this.hitFlash > 0) ? '#fff' : this.getBaseColorStr(this.defenseProfile);
         ctx.beginPath();
         for (let i = 0; i < BASE_VERTS.length; i++) {
             const x = this.x + this.area.cos * BASE_VERTS[i].x - this.area.sin * BASE_VERTS[i].y;

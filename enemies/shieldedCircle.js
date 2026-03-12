@@ -1,6 +1,6 @@
 import { CircleArea, ShieldedCircleArea } from "../areas.js";
 import { createDefenseProfile } from "../attackAndDefense.js";
-import { FlatColor, RainbowColor } from "../color.js";
+import { FlatColor, getEnemyDamageColorStr, RainbowColor } from "../color.js";
 import { ctx } from "../drawing.js";
 import { bounceBoundify, decToZero, normalizeAngle, normalizeAnglePMPI, posMod } from "../extraMath.js";
 import ExplodingRingParticle from "../particles/explodingRingParticle.js";
@@ -149,7 +149,7 @@ export default class ShieldedCircle extends AbstractEnemy {
     draw() {
         if (this.retired) return;
         ctx.lineWidth = LINE_THICK;
-        ctx.strokeStyle = this.hitFlash[NUM_SEGMENTS] > 0 ? '#fff' : this.baseColor.getStr();
+        ctx.strokeStyle = this.hitFlash[NUM_SEGMENTS] > 0 ? '#fff' : this.getBaseColorStr(this.defenseProfiles[NUM_SEGMENTS]);
         if (this.segExistence[NUM_SEGMENTS]) {
             ctx.beginPath();
             ctx.arc(this.x, this.y, IN_RAD, 0, 2 * Math.PI);
@@ -157,7 +157,7 @@ export default class ShieldedCircle extends AbstractEnemy {
             ctx.stroke();
         }
         for (let i = 0; i < NUM_SEGMENTS; i++) {
-            ctx.strokeStyle = this.hitFlash[i] > 0 ? '#fff' : this.baseColor.getStr();
+            ctx.strokeStyle = this.hitFlash[i] > 0 ? '#fff' : this.getBaseColorStr(this.defenseProfiles[i]);
             let angle1 = this.rot + 2 * Math.PI * i / NUM_SEGMENTS;
             let angle2 = this.rot + 2 * Math.PI * (i + 1) / NUM_SEGMENTS;
             if (this.segExistence[i]) {
@@ -170,17 +170,27 @@ export default class ShieldedCircle extends AbstractEnemy {
             }
         }
         for (let i = 0; i < NUM_SEGMENTS; i++) {
-            let angle2 = this.rot + 2 * Math.PI * (i + 1) / NUM_SEGMENTS;
             let nextI = (i + 1) % NUM_SEGMENTS;
-            ctx.strokeStyle = (this.hitFlash[i] > 0 || this.hitFlash[nextI] > 0) ? '#fff' : this.baseColor.getStr();
+            const exists = this.segExistence[i];
+            const nextExists = this.segExistence[nextI];
+            if (!exists && !nextExists) continue;
+
+            let angle2 = this.rot + 2 * Math.PI * (i + 1) / NUM_SEGMENTS;
+            let colorStr = null;
+            if (this.hitFlash[i] > 0 || this.hitFlash[nextI] > 0) {
+                colorStr = '#fff';
+            } else if (exists && (!nextExists || this.defenseProfiles[i].hp <= this.defenseProfiles[nextI].hp)) {
+                colorStr = this.getBaseColorStr(this.defenseProfiles[i]);
+            } else {
+                colorStr = this.getBaseColorStr(this.defenseProfiles[nextI]);
+            }
+            ctx.strokeStyle = colorStr;
             let rad1 = MID_RAD - LINE_THICK * 0.5;
             let rad2 = OUT_RAD + LINE_THICK * 0.5;
-            if (this.segExistence[i] || this.segExistence[nextI]) {
-                ctx.beginPath();
-                ctx.moveTo(this.x + rad1 * Math.cos(angle2), this.y + rad1 * Math.sin(angle2));
-                ctx.lineTo(this.x + rad2 * Math.cos(angle2), this.y + rad2 * Math.sin(angle2));
-                ctx.stroke();
-            }
+            ctx.beginPath();
+            ctx.moveTo(this.x + rad1 * Math.cos(angle2), this.y + rad1 * Math.sin(angle2));
+            ctx.lineTo(this.x + rad2 * Math.cos(angle2), this.y + rad2 * Math.sin(angle2));
+            ctx.stroke();
         }
 
         // --- Bounding box test ---

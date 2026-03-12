@@ -26,7 +26,7 @@ export default class SmallCircle extends AbstractBasicCircle {
     }
 
     draw() {
-        ctx.strokeStyle = (this.hitFlash > 0) ? '#fff' : this.baseColor.getStr();
+        ctx.strokeStyle = (this.hitFlash > 0) ? '#fff' : this.getBaseColorStr(this.defenseProfile);
         ctx.lineWidth = LINE_THICK;
         ctx.beginPath();
         ctx.arc(this.x, this.y, RAD, 0, 2 * Math.PI);

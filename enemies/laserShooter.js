@@ -134,7 +134,7 @@ export default class LaserShooter extends AbstractEnemy {
     }
 
     draw() {
-        ctx.strokeStyle = (this.hitFlash > 0) ? '#fff' : this.baseColor.getStr();
+        ctx.strokeStyle = (this.hitFlash > 0) ? '#fff' : this.getBaseColorStr(this.defenseProfile);
         ctx.lineWidth = LINE_THICK;
         ctx.beginPath();
         for (let i = 0; i < VERTS; i++) {
