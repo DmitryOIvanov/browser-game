@@ -1,5 +1,5 @@
 export const canv = document.getElementById("main_canvas");
-export const ctx = canv.getContext("2d");
+export const ctx = canv.getContext("2d", { alpha: false });
 canv.width = canv.offsetWidth;
 canv.height = canv.offsetHeight;
 canv.oncontextmenu = () => false;

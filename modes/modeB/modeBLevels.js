@@ -313,32 +313,32 @@ const level4 = [
         enemies: [
             {
                 shuffle: [
-                    { name: "Lurcher", weight: 1, num: 10 },
+                    { name: "Lurcher", weight: 1, num: 8 },
                     { name: "MultiSquare", weight: 1, num: 2 },
-                    { name: "SmallSquare", weight: 0.2, num: 5 },
+                    { name: "SmallSquare", weight: 0.2, num: 3 },
                     { name: "MultiCircle", weight: 1, num: 2 },
-                    { name: "SmallCircle", weight: 0.2, num: 5 },
+                    { name: "SmallCircle", weight: 0.2, num: 3 },
                 ]
             },
             {
                 shuffle: [
-                    { name: "BombEnemy", weight: 2, num: 10 },
-                    { name: "SimpleShooter", weight: 1.5, num: 5 },
+                    { name: "BombEnemy", weight: 2, num: 8 },
+                    { name: "SimpleShooter", weight: 1.5, num: 4 },
                     { name: "MultiTriangle", weight: 1, num: 2 },
-                    { name: "SmallTriangle", weight: 0.2, num: 5 },
+                    { name: "SmallTriangle", weight: 0.2, num: 3 },
                     { name: "MultiCircle", weight: 1, num: 2 },
-                    { name: "SmallCircle", weight: 0.2, num: 5 },
-                    { name: "ShieldedCircle", weight: 2, num: 3 },
+                    { name: "SmallCircle", weight: 0.2, num: 3 },
+                    { name: "ShieldedCircle", weight: 2, num: 2 },
                 ]
             },
             { name: "Snake", weight: 2, num: 1 },
             {
                 shuffle: [
-                    { name: "SimpleShooter", weight: 1, num: 8 },
-                    { name: "LaserShooter", weight: 2, num: 5 },
+                    { name: "SimpleShooter", weight: 1, num: 6 },
+                    { name: "LaserShooter", weight: 2, num: 3 },
                     { name: "ThreeShooter", weight: 2.5, num: 1 },
-                    { name: "MultiSquare", weight: 1, num: 4 },
-                    { name: "SmallSquare", weight: 0.2, num: 16 },
+                    { name: "MultiSquare", weight: 1, num: 3 },
+                    { name: "SmallSquare", weight: 0.2, num: 12 },
                 ]
             },
         ]
@@ -388,10 +388,10 @@ const level5 = [
 const modeBLevels = [
     tutorialPart1,
     tutorialPart2,
-    // level1,
-    // level2,
-    // level3,
-    // level4,
+    level1,
+    level2,
+    level3,
+    level4,
     level5,
 ];
 
