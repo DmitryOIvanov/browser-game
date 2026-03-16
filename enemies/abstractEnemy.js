@@ -24,7 +24,7 @@ export default class AbstractEnemy {
 
     getBaseColorStr(defenseProfile) {
         if (this.isRare) {
-            return rainbowFunction(this.rainbowOffset);
+            return rainbowFunction(this.rainbowOffset + RainbowColor.rainbowTimer);
         } else {
             return getEnemyDamageColorStr(defenseProfile.hp / defenseProfile.maxHP);
         }
