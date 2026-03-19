@@ -385,14 +385,55 @@ const level5 = [
     { class: CheckpointTask },
 ];
 
+const level6 = [
+    getLevelIntroMessage(6),
+    {
+        class: WaitTimeTask,
+        time: 100
+    },
+    {
+        class: WeightedSpawnTask,
+        delayCoeff: 10,
+        enemies: [
+            { name: "Snake", weight: 1, num: 1 },
+            {
+                shuffle: [
+                    { name: "SimpleShooter", weight: 1, num: 10 },
+                    { name: "LaserShooter", weight: 2, num: 5 },
+                ]
+            },
+        ]
+    },
+    {
+        class: WaitForConditionTask,
+        condition: () => (playField.enemyWeight <= 3)
+    },
+    {
+        class: WeightedSpawnTask,
+        delayCoeff: 10,
+        enemies: [
+            {
+                shuffle: [
+                    { name: "RingShooter", weight: 2, num: 2 },
+                    { name: "WallBurstShooter", weight: 2, num: 3 },
+                    { name: "MultiSquare", weight: 1, num: 10 },
+                    { name: "SmallSquare", weight: 0.2, num: 30 },
+                ]
+            },
+        ]
+    },
+    { class: CheckpointTask },
+];
+
 const modeBLevels = [
     tutorialPart1,
     tutorialPart2,
-    level1,
-    level2,
-    level3,
-    level4,
-    level5,
+    // level1,
+    // level2,
+    // level3,
+    // level4,
+    // level5,
+    level6,
 ];
 
 const modeBTasks = [
