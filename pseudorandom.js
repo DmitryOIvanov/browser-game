@@ -54,3 +54,14 @@ export class PseudorandomGenerator {
         return result * INV_2_32;
     }
 }
+
+export function generateGameSeed() {
+    let result = "";
+    for (let i = 0; i < 8; i++) {
+        let randNum = 1 + Math.floor(Math.random() * 34);
+        if (randNum == 24) randNum = 35;
+        const charCode = randNum < 10 ? randNum + 48 : randNum - 10 + 65;
+        result = result + String.fromCharCode(charCode);
+    }
+    return result;
+}
