@@ -28,13 +28,17 @@ function cyrb128(str) {
 // Implementation of xoshiro128++, output mapped to [0,1) like Math.random()
 export class PseudorandomGenerator {
     static fromString(str) {
-        return new PseudorandomGenerator(cyrb128(str));
+        const result = new PseudorandomGenerator(cyrb128(str));
+        for (let i = 0; i < 20; i++) {
+            result.next();
+        }
+        return result
     }
 
     constructor(initState) {
-        this.state = new Array(4).fill(0).map((_, i) => (initState[i] | 0));
-        for (let i = 0; i < 10; i++) {
-            this.next();
+        this.state = new Array(4);
+        for (let i = 0; i < 4; i++) {
+            this.state[i] = initState[i] | 0;
         }
     }
 

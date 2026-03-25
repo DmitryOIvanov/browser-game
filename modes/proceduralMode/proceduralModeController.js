@@ -48,7 +48,7 @@ export default class ProceduralModeController {
         this.state = STATE_PLAYING;
         this.subController = null;
         playField.initialize();
-        playField.setManager(new ProceduralModeManager(this.levelReached, this.milestoneRng));
+        playField.setManager(new ProceduralModeManager(this.levelReached, this.milestoneRng.clone()));
     }
 
     startLoseScreen() {

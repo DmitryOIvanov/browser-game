@@ -73,6 +73,7 @@ export default class ProceduralModeManager {
             if (this.performer.concluded) {
                 this.level++;
                 this.lastMilestoneRng = this.rng.clone();
+
                 this.performer = new TaskPerformer(getLevelTaskList(this.level, this.rng));
             }
         } else {
