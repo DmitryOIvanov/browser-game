@@ -31,8 +31,8 @@ export class PseudorandomGenerator {
         return new PseudorandomGenerator(cyrb128(str));
     }
 
-    constructor(rawSeed) {
-        this.state = new Array(4).fill(0).map((_, i) => (rawSeed[i] | 0));
+    constructor(initState) {
+        this.state = new Array(4).fill(0).map((_, i) => (initState[i] | 0));
         for (let i = 0; i < 10; i++) {
             this.next();
         }
@@ -52,6 +52,10 @@ export class PseudorandomGenerator {
         s[3] = rotate32(s[3], 11);
 
         return result * INV_2_32;
+    }
+
+    clone() {
+        return new PseudorandomGenerator(this.state);
     }
 }
 

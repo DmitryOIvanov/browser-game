@@ -3,15 +3,10 @@ import { enemySpawningInfo, getRandomPosWithMargins } from "./enemySpawning.js";
 import playField from "./playField.js";
 import { TaskPerformer } from "./taskBasedManager.js";
 
-const PLAYER_CLEARANCE = 300;
-export class WeightedSpawnTask {
-    constructor(readonlyParams) {
-        this.delayCoeff = readonlyParams.delayCoeff;
+export class AbstractWeightedSpawnTask {
+    static PLAYER_CLEARANCE = 300;
 
-        this.spawnList = structuredClone(readonlyParams.enemies);
-        this.groupIndex = 0;
-        this.nextSpawn = this.popNextSpawn();
-
+    constructor() {
         this.timePassed = 0;
         this.concluded = false;
     }
@@ -21,20 +16,31 @@ export class WeightedSpawnTask {
         this.timePassed += amount;
         let timeToNext = this.getTimeToNext();
         while (this.timePassed >= timeToNext) {
-            const enemyInfo = enemySpawningInfo[this.nextSpawn.name];
-            if (!enemyInfo) throw new Error(`Could not find enemy '${this.nextSpawn.name}'`);
-            const pos = getRandomPosWithMargins(enemyInfo.rad, PLAYER_CLEARANCE);
-            playField.announceEnemyWeight(this.nextSpawn.weight);
-            enemyInfo.spawn(this.nextSpawn.weight, pos.x, pos.y);
-
-            this.nextSpawn = this.popNextSpawn();
-            if (!this.nextSpawn) {
-                this.concluded = true;
-                return;
-            }
+            this.spawnNext();
+            if (this.concluded) return;
             this.timePassed -= timeToNext;
             timeToNext = this.getTimeToNext();
         }
+    }
+
+    spawnNext() {
+        throw new Error("spawnNext method of AbstractWeightedSpawnTask not implemented");
+    }
+
+    getTimeToNext() {
+        throw new Error("getTimeToNext method of AbstractWeightedSpawnTask not implemented");
+        return 0;
+    }
+}
+
+export class WeightedSpawnTask extends AbstractWeightedSpawnTask {
+    constructor(readonlyParams) {
+        super();
+        this.groupIndex = 0;
+        this.spawnList = structuredClone(readonlyParams.enemies);
+        this.delayCoeff = readonlyParams.delayCoeff;
+        this.nextSpawn = this.popNextSpawn();
+        if (!this.nextSpawn) this.concluded = true;
     }
 
     popNextSpawn() {
@@ -59,6 +65,17 @@ export class WeightedSpawnTask {
             if (this.spawnList[this.groupIndex].num <= 0) this.groupIndex++;
         }
         return returnVal;
+    }
+
+    spawnNext() {
+        const enemyInfo = enemySpawningInfo[this.nextSpawn.name];
+        if (!enemyInfo) throw new Error(`Could not find enemy '${this.nextSpawn.name}'`);
+        const pos = getRandomPosWithMargins(enemyInfo.rad, AbstractWeightedSpawnTask.PLAYER_CLEARANCE);
+        playField.announceEnemyWeight(this.nextSpawn.weight);
+        enemyInfo.spawn(this.nextSpawn.weight, pos.x, pos.y);
+
+        this.nextSpawn = this.popNextSpawn();
+        if (!this.nextSpawn) this.concluded = true;
     }
 
     getTimeToNext() {
