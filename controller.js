@@ -4,6 +4,7 @@ import { canv, ctx, drawDot, fillScreen } from "./drawing.js";
 import { CanvasTextButton } from "./gui.js";
 import DebugManager from "./modes/debug/debugEnemySpawning.js";
 import ModeBController from "./modes/modeB/modeBController.js";
+import ProceduralModeController from "./modes/proceduralMode/proceduralModeController.js";
 import playField from "./playField.js";
 
 const modeBButton = new CanvasTextButton(canv.width / 2, canv.height / 2, "Play", 60, new FlatColor("#fff"));
@@ -52,7 +53,7 @@ const controller = {
                 controls.mouse.lPressed = false;
                 controls.mouse.leftHeld = false;
                 this.state = STATE_MODE_B;
-                this.subController = new ModeBController();
+                this.subController = new ProceduralModeController();
             } else if (debugRequested()) {
                 clearDebugInputs();
                 controls.mouse.lPressed = false;

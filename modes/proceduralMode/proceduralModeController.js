@@ -3,12 +3,11 @@ import SimpleMessageScreen from "../../simpleMessageScreen.js";
 import playField from "../../playField.js";
 import SimpleOptionScreen from "../../simpleOptionScreen.js";
 import { TutorialTask } from "../../tutorial/tutorialTask.js";
+import { PseudorandomGenerator } from "../../pseudorandom.js";
+import ProceduralModeManager from "./proceduralModeManager.js";
 
-const STATE_WEAPON_SELECT = 0;
 const STATE_PLAYING = 1;
 const STATE_LOSE = 2;
-const STATE_END = 3;
-const STATE_TUTORIAL_DECISION = 4;
 
 export default class ProceduralModeController {
     constructor() {
@@ -16,7 +15,8 @@ export default class ProceduralModeController {
         this.subController = null;
 
         this.levelReached = 0;
-        this.startTutorialDecision();
+        this.milestoneRng = PseudorandomGenerator.fromString("seed123");
+        this.startPlay();
     }
 
     nextFrame() {
@@ -24,12 +24,9 @@ export default class ProceduralModeController {
         if (this.state == STATE_PLAYING) {
             playField.advanceOneFrame();
             if (playField.manager.concluded) {
-                this.levelReached = playField.manager.level
-                if (this.levelReached == modeBLevels.length) {
-                    this.startEndScreen();
-                } else {
-                    this.startLoseScreen();
-                }
+                this.levelReached = playField.manager.level;
+                this.milestoneRng = playField.manager.lastMilestoneRng;
+                this.startLoseScreen();
             } else {
                 playField.redraw();
             }
@@ -42,19 +39,6 @@ export default class ProceduralModeController {
                     this.concluded = true;
                 }
             }
-        } else if (this.state == STATE_END) {
-            this.subController.nextFrame();
-            if (this.subController.concluded) {
-                this.concluded = true;
-            }
-        } else if (this.state == STATE_TUTORIAL_DECISION) {
-            this.subController.nextFrame();
-            if (this.subController.concluded) {
-                if (this.subController.result != 0) {
-                    this.levelReached = 2;
-                }
-                this.startPlay();
-            }
         }
     }
 
@@ -64,7 +48,7 @@ export default class ProceduralModeController {
         this.state = STATE_PLAYING;
         this.subController = null;
         playField.initialize();
-        playField.setManager(new ModeBManager(this.levelReached));
+        playField.setManager(new ProceduralModeManager(this.levelReached, this.milestoneRng));
     }
 
     startLoseScreen() {
@@ -72,19 +56,5 @@ export default class ProceduralModeController {
         controls.mouse.leftHeld = false;
         this.state = STATE_LOSE;
         this.subController = new SimpleOptionScreen("Game Over", ["Retry", "Quit"]);
-    }
-
-    startEndScreen() {
-        controls.mouse.lPressed = false;
-        controls.mouse.leftHeld = false;
-        this.state = STATE_END;
-        this.subController = new SimpleMessageScreen("You Win");
-    }
-
-    startTutorialDecision() {
-        controls.mouse.lPressed = false;
-        controls.mouse.leftHeld = false;
-        this.state = STATE_TUTORIAL_DECISION;
-        this.subController = new SimpleOptionScreen("Play Tutorial?", ["Yes", "No"]);
     }
 }

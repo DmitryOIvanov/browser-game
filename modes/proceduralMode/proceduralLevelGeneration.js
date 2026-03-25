@@ -1,16 +1,13 @@
 import { enemySpawningInfo, getRandomPosWithMargins } from "../../enemySpawning.js";
 import playField from "../../playField.js";
-
-const { AbstractWeightedSpawnTask } = require("../../tasks.js");
-
-const targetImpacts = [10];
+import { AbstractWeightedSpawnTask } from "../../tasks.js";
 
 function getTargetImpact(level) {
-    return 10 * Math.pow(2, level);
+    return 20 * Math.pow(2, level);
 }
 
 function getDelayCoefficient(level) {
-    return 15 * Math.pow(0.5, level / 4);
+    return 10 * Math.pow(0.5, level);
 }
 
 const generalEnemyInfo = [
@@ -38,10 +35,10 @@ function getRandomEnemy(rng) {
 }
 
 export class ProceduralWeightedSpawnTask extends AbstractWeightedSpawnTask {
-    constructor(level, rng) {
+    constructor(readonlyParams) {
         super();
-        this.rng = rng;
-        this.level = level;
+        this.rng = readonlyParams.rng;
+        this.level = readonlyParams.level;
         this.accumulatedImpact = 0;
     }
 
@@ -50,8 +47,8 @@ export class ProceduralWeightedSpawnTask extends AbstractWeightedSpawnTask {
         const spawningInfo = enemySpawningInfo[enemy.name];
         if (!spawningInfo) throw new Error(`Could not find enemy '${enemy.name}'`);
         const pos = getRandomPosWithMargins(spawningInfo.rad, AbstractWeightedSpawnTask.PLAYER_CLEARANCE);
-        playField.announceEnemyWeight(enemy.weight);
-        spawningInfo.spawn(enemy.weight, pos.x, pos.y);
+        playField.announceEnemyWeight(enemy.impact);
+        spawningInfo.spawn(enemy.impact, pos.x, pos.y);
 
         this.accumulatedImpact += enemy.impact;
         if (this.accumulatedImpact >= getTargetImpact(this.level) - 0.5 * avgImpact) {

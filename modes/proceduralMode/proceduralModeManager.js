@@ -1,7 +1,11 @@
 import controls from "../../controls.js";
+import { canv } from "../../drawing.js";
 import playField from "../../playField.js";
 import { TaskPerformer } from "../../taskBasedManager.js";
+import { CreateMessageTask, WaitTimeTask, WeightedSpawnTask, WaitForConditionTask } from "../../tasks.js";
+import CheckpointTask from "../../tasks/checkpointTask.js";
 import { DualWeapon, stockHeavyComponents, stockLightComponents } from "../../weapons/dualWeapons.js";
+import { ProceduralWeightedSpawnTask } from "./proceduralLevelGeneration.js";
 
 export const lightWeaponClasses = [
     stockLightComponents.MachineGun,
@@ -17,11 +21,39 @@ export const heavyWeaponClasses = [
     stockHeavyComponents.Firework,
 ];
 
+function getLevelTaskList(level, rng) {
+    return [
+        {
+            class: CreateMessageTask,
+            centerX: canv.width / 2,
+            centerY: canv.height / 2,
+            text: `Level ${level + 1}`,
+            fontSizePx: 320,
+            fadeInTime: 20,
+            showTime: 60,
+            fadeOutTime: 20,
+            opacity: 0.3,
+        },
+        {
+            class: WaitTimeTask,
+            time: 100
+        },
+        {
+            class: ProceduralWeightedSpawnTask,
+            rng: rng,
+            level: level,
+        },
+        { class: CheckpointTask },
+    ];
+}
+
 export default class ProceduralModeManager {
-    constructor(level) {
+    constructor(level, rng) {
         this.level = level;
+        this.rng = rng;
+        this.lastMilestoneRng = rng.clone();
         this.concluded = false;
-        this.performer = new TaskPerformer(modeBLevels[this.level]);
+        this.performer = new TaskPerformer(getLevelTaskList(level, rng));
         this.lightIndex = 0;
         this.heavyIndex = 0;
     }
@@ -40,12 +72,8 @@ export default class ProceduralModeManager {
             this.performer.timeStep(dt);
             if (this.performer.concluded) {
                 this.level++;
-                if (this.level == modeBLevels.length) {
-                    this.concluded = true;
-                    return;
-                } else {
-                    this.performer = new TaskPerformer(modeBLevels[this.level]);
-                }
+                this.lastMilestoneRng = this.rng.clone();
+                this.performer = new TaskPerformer(getLevelTaskList(this.level, this.rng));
             }
         } else {
             if (player.deathFinished) {
