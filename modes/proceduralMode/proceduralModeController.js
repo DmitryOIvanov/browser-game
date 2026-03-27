@@ -15,7 +15,7 @@ export default class ProceduralModeController {
         this.subController = null;
 
         this.levelReached = 0;
-        this.milestoneRng = PseudorandomGenerator.fromString("seed123");
+        this.milestoneRng = PseudorandomGenerator.fromString("seed124");
         this.startPlay();
     }
 
