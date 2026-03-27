@@ -30,6 +30,7 @@ function renderLoop() {
         ctx.fillText("Enemies", 30, 144); ctx.fillText(`${playField.enemies.length}`, 160, 144);
         ctx.fillText("Enemy Proj.", 30, 168); ctx.fillText(`${playField.enemyProj.length}`, 160, 168);
         ctx.fillText("Player Proj.", 30, 192); ctx.fillText(`${playField.playerProj.length}`, 160, 192);
+        ctx.fillText("Enemy Weight", 30, 216); ctx.fillText(`${playField.enemyWeight}`, 185, 216);
     }
 
     controls.clearPresses();

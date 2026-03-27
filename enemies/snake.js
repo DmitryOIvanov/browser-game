@@ -233,6 +233,10 @@ export default class Snake extends AbstractEnemy {
         if (this.segArr[segID].defenseProfile.expired) {
             playField.addParticle(new ExplodingRingParticle(this.area.arr[segID].x, this.area.arr[segID].y, 24, 36, 6, FlatColor.WHITE));
             this.numSegsAlive--;
+            playField.enemyWeight -= this.weight;
+            this.weight *= this.numSegsAlive / (this.numSegsAlive + 1);
+            playField.enemyWeight += this.weight;
+
             if (this.numSegsAlive <= 0) {
                 this.retired = true;
                 return;
