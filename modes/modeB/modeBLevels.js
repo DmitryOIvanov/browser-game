@@ -21,6 +21,18 @@ function getLevelIntroMessage(number) {
     };
 }
 
+const TEMP_END_MESSAGE = {
+    class: CreateMessageTask,
+    centerX: canv.width / 2,
+    centerY: canv.height / 2,
+    text: "End of levels I designed for now",
+    fontSizePx: 60,
+    fadeInTime: 30,
+    showTime: 240,
+    fadeOutTime: 30,
+    opacity: 0.6,
+}
+
 const tutorialPart1 = [
     {
         class: ExecuteFunctionTask,
@@ -423,6 +435,11 @@ const level6 = [
         ]
     },
     { class: CheckpointTask },
+    TEMP_END_MESSAGE,
+    {
+        class: WaitTimeTask,
+        time: 300
+    },
 ];
 
 const modeBLevels = [

@@ -231,7 +231,7 @@ const playField = {
     },
 
     isDangerFree() { // Loopholes possible e.g. a particle that spawns danger
-        return this.enemies.length == 0 && this.enemyProj.length == 0;
+        return this.enemies.length == 0 && this.enemyProj.length == 0 && this.enemyWeight < 0.001;
     },
 
     hasNoEnemies() {

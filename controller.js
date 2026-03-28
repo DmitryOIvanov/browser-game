@@ -12,11 +12,10 @@ const playButton = new CanvasTextButton(canv.width / 2, canv.height / 2 + 120, "
 
 const STATE_TITLE = 0;
 const STATE_MODE_PLAY = 1;
-const STATE_MODE_SCRIPTED = 2;
 const STATE_DEBUG = 3;
 
 const DEBUG_KEYS = ["KeyD", "KeyE", "KeyB", "KeyU", "KeyG"];
-const SCRIPT_KEYS = ["KeyS", "KeyC", "KeyR", "KeyI", "KeyP", "KeyT"];
+const SCRIPT_KEYS = ["KeyS", "KeyC", "KeyR"];
 
 function allKeysHeld(keys) {
     for (let i = 0; i < keys.length; i++) {
@@ -69,6 +68,12 @@ const controller = {
                 this.state = STATE_DEBUG;
                 playField.initialize();
                 playField.setManager(new DebugManager());
+            } else if (allKeysHeld(SCRIPT_KEYS)) {
+                clearKeys(SCRIPT_KEYS);
+                controls.mouse.lPressed = false;
+                controls.mouse.leftHeld = false;
+                this.state = STATE_MODE_PLAY;
+                this.subController = new ModeBController();
             }
         } else if (this.state == STATE_MODE_PLAY) {
             if (controls.pressed["Escape"]) {
