@@ -10,11 +10,11 @@ const STATE_PLAYING = 1;
 const STATE_LOSE = 2;
 
 export default class ProceduralModeController {
-    constructor() {
+    constructor(tutorialRequested) {
         this.concluded = false;
         this.subController = null;
 
-        this.levelReached = 0;
+        this.levelReached = tutorialRequested ? -2 : 0;
         this.milestoneRng = PseudorandomGenerator.fromString("seed124");
         this.startPlay();
     }
