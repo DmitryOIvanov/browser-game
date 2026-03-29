@@ -6,9 +6,10 @@ import DebugManager from "./modes/debug/debugEnemySpawning.js";
 import ModeBController from "./modes/modeB/modeBController.js";
 import ProceduralModeController from "./modes/proceduralMode/proceduralModeController.js";
 import playField from "./playField.js";
+import { SVG } from "./svg.js";
 
-const tutorialButton = new CanvasTextButton(canv.width / 2, canv.height / 2, "Tutorial", 60, new FlatColor("#fff"));
-const playButton = new CanvasTextButton(canv.width / 2, canv.height / 2 + 120, "Play", 60, new FlatColor("#fff"));
+const tutorialButton = new CanvasTextButton(canv.width / 2, canv.height / 2 + 160, "Tutorial", 60, new FlatColor("#fff"));
+const playButton = new CanvasTextButton(canv.width / 2, canv.height / 2 + 60, "Play", 60, new FlatColor("#fff"));
 
 const STATE_TITLE = 0;
 const STATE_MODE_PLAY = 1;
@@ -46,7 +47,8 @@ const controller = {
             ctx.textAlign = "center";
             ctx.font = "100px arial";
             ctx.fillStyle = '#fff';
-            ctx.fillText("video game", canv.width / 2, canv.height / 2 - 200);
+            // ctx.fillText("video game", canv.width / 2, canv.height / 2 - 200);
+            ctx.drawImage(SVG.title, canv.width / 2 - 0.5 * SVG.title.width, canv.height / 2 - 0.5 * SVG.title.height - 200);
             tutorialButton.update();
             tutorialButton.draw();
             playButton.update();

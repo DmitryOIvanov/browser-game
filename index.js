@@ -4,6 +4,7 @@ import FpsTracker from "./fpsTracker.js";
 import playField from "./playField.js";
 import controller from "./controller.js";
 import { doMiscTests } from "./miscTests.js";
+import { SVG } from "./svg.js";
 
 doMiscTests();
 
@@ -39,4 +40,4 @@ function renderLoop() {
     fpsTracker.endFrame();
 }
 
-renderLoop();
+SVG.onLoad = renderLoop;
