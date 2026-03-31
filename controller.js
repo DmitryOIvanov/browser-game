@@ -8,8 +8,8 @@ import ProceduralModeController from "./modes/proceduralMode/proceduralModeContr
 import playField from "./playField.js";
 import { SVG } from "./svg.js";
 
-const tutorialButton = new CanvasTextButton(canv.width / 2, canv.height / 2 + 160, "Tutorial", 60, new FlatColor("#fff"));
-const playButton = new CanvasTextButton(canv.width / 2, canv.height / 2 + 60, "Play", 60, new FlatColor("#fff"));
+const tutorialButton = new CanvasTextButton(canv.width / 2, canv.height / 2 + 160, "TUTORIAL", 50, new FlatColor("#fff"));
+const playButton = new CanvasTextButton(canv.width / 2, canv.height / 2 + 60, "PLAY", 50, new FlatColor("#fff"));
 
 const STATE_TITLE = 0;
 const STATE_MODE_PLAY = 1;
