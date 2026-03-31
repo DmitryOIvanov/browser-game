@@ -25,3 +25,10 @@ function registerSvg(name, path) {
 
 registerSvg("title", "./resources/svg/title.svg");
 
+export function setSvgLoadedCallback(func) {
+    if (SVG.loaded) {
+        func();
+    } else {
+        SVG.onLoad = func;
+    }
+}
