@@ -19,15 +19,15 @@ export default class ModeAController {
         this.startWeaponSelect();
     }
 
-    nextFrame() {
+    nextFrame(dt) {
         if (this.concluded) return;
         if (this.state == STATE_WEAPON_SELECT) {
-            this.subController.nextFrame();
+            this.subController.nextFrame(dt);
             if (this.subController.concluded) {
                 this.startPlay();
             }
         } else if (this.state == STATE_PLAYING) {
-            playField.advanceOneFrame();
+            playField.advanceOneFrame(dt);
             if (playField.manager.concluded) {
                 if (playField.manager.playerLost) {
                     this.startEndScreen("Game Over");
@@ -43,7 +43,7 @@ export default class ModeAController {
                 playField.redraw();
             }
         } else if (this.state == STATE_END) {
-            this.subController.nextFrame();
+            this.subController.nextFrame(dt);
             if (this.subController.concluded) {
                 this.concluded = true;
                 return;

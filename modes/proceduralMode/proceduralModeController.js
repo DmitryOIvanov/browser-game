@@ -19,10 +19,10 @@ export default class ProceduralModeController {
         this.startPlay();
     }
 
-    nextFrame() {
+    nextFrame(dt) {
         if (this.concluded) return;
         if (this.state == STATE_PLAYING) {
-            playField.advanceOneFrame();
+            playField.advanceOneFrame(dt);
             if (playField.manager.concluded) {
                 this.levelReached = playField.manager.level;
                 this.milestoneRng = playField.manager.lastMilestoneRng;
@@ -31,7 +31,7 @@ export default class ProceduralModeController {
                 playField.redraw();
             }
         } else if (this.state == STATE_LOSE) {
-            this.subController.nextFrame();
+            this.subController.nextFrame(dt);
             if (this.subController.concluded) {
                 if (this.subController.result == 0) {
                     this.startPlay();

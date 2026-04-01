@@ -90,9 +90,9 @@ const playField = {
         return this.trackedBgParticles[id];
     },
 
-    advanceOneFrame() {
+    advanceOneFrame(dt) {
         const player = this.player;
-        const step = player.updateAndReturnSlowMoAmount();
+        const step = dt * player.updateAndReturnSlowMoAmount();
 
         RainbowColor.incRainbow(step * 0.1);
 

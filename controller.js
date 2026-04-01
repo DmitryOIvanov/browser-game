@@ -41,7 +41,7 @@ const controller = {
         playField.initialize();
     },
 
-    nextFrame() {
+    nextFrame(dt) {
         fillScreen("black");
         if (this.state == STATE_TITLE) {
             ctx.textAlign = "center";
@@ -82,14 +82,14 @@ const controller = {
                 this.state = STATE_TITLE;
                 return;
             }
-            this.subController.nextFrame();
+            this.subController.nextFrame(dt);
             if (this.subController.concluded) this.state = STATE_TITLE;
         } else if (this.state == STATE_DEBUG) {
             if (controls.pressed["Escape"]) {
                 this.state = STATE_TITLE;
                 return;
             }
-            playField.advanceOneFrame();
+            playField.advanceOneFrame(dt);
             playField.redraw();
             if (playField.manager.concluded) this.state = STATE_TITLE;
         }

@@ -13,10 +13,20 @@ let showDebugInfo = false;
 controller.initialize();
 
 const fpsTracker = new FpsTracker();
-function renderLoop() {
+
+const MAX_TIMESTEP = 60 / 20;
+let lastTimestamp = 0;
+function renderLoop(msTimestamp) {
     fpsTracker.startProductiveFrame();
 
-    controller.nextFrame();
+    if (lastTimestamp == 0) {
+        lastTimestamp = msTimestamp;
+    }
+    let dt = (msTimestamp - lastTimestamp) * 60 / 1000;
+    if (dt > MAX_TIMESTEP) dt = MAX_TIMESTEP;
+    lastTimestamp = msTimestamp;
+
+    controller.nextFrame(dt);
 
     if (controls.pressed["KeyI"]) showDebugInfo = !showDebugInfo;
     if (showDebugInfo) {
@@ -40,4 +50,6 @@ function renderLoop() {
     fpsTracker.endFrame();
 }
 
-setSvgLoadedCallback(renderLoop);
+setSvgLoadedCallback(function () {
+    requestAnimationFrame(renderLoop);
+});

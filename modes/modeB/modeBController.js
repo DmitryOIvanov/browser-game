@@ -21,10 +21,10 @@ export default class ModeBController {
         this.startTutorialDecision();
     }
 
-    nextFrame() {
+    nextFrame(dt) {
         if (this.concluded) return;
         if (this.state == STATE_PLAYING) {
-            playField.advanceOneFrame();
+            playField.advanceOneFrame(dt);
             if (playField.manager.concluded) {
                 this.levelReached = playField.manager.level
                 if (this.levelReached == modeBLevels.length) {
@@ -36,7 +36,7 @@ export default class ModeBController {
                 playField.redraw();
             }
         } else if (this.state == STATE_LOSE) {
-            this.subController.nextFrame();
+            this.subController.nextFrame(dt);
             if (this.subController.concluded) {
                 if (this.subController.result == 0) {
                     this.startPlay();
@@ -45,12 +45,12 @@ export default class ModeBController {
                 }
             }
         } else if (this.state == STATE_END) {
-            this.subController.nextFrame();
+            this.subController.nextFrame(dt);
             if (this.subController.concluded) {
                 this.concluded = true;
             }
         } else if (this.state == STATE_TUTORIAL_DECISION) {
-            this.subController.nextFrame();
+            this.subController.nextFrame(dt);
             if (this.subController.concluded) {
                 if (this.subController.result != 0) {
                     this.levelReached = 2;
