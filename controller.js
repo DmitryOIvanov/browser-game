@@ -1,3 +1,4 @@
+import { HorizontalGridBackground } from "./backgrounds/horizontalGridBackground.js";
 import { FlatColor } from "./color.js";
 import controls from "./controls.js";
 import { canv, ctx, drawDot, fillScreen } from "./drawing.js";
@@ -34,6 +35,8 @@ function clearKeys(keys) {
     }
 }
 
+const bgGrid = new HorizontalGridBackground(canv.height * 0.5, 100, 10, 10, 0.01, 100, 350);
+
 const controller = {
     initialize() {
         this.state = STATE_TITLE;
@@ -56,6 +59,9 @@ const controller = {
             if (controls.mouse.inBounds) {
                 drawDot(controls.mouse.x, controls.mouse.y)
             }
+
+            bgGrid.timeStep(dt);
+            bgGrid.draw();
 
             if (tutorialButton.isPressed() || playButton.isPressed()) {
                 controls.mouse.lPressed = false;
