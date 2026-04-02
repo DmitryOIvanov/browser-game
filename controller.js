@@ -35,7 +35,7 @@ function clearKeys(keys) {
     }
 }
 
-const bgGrid = new HorizontalGridBackground(canv.height * 0.5, 100, 10, 10, 0.01, 100, 350);
+const bgGrid = new HorizontalGridBackground(480, 300, 5, 0.01, 200, 400);
 
 const controller = {
     initialize() {
@@ -47,10 +47,12 @@ const controller = {
     nextFrame(dt) {
         fillScreen("black");
         if (this.state == STATE_TITLE) {
+            bgGrid.timeStep(dt);
+            bgGrid.draw();
+
             ctx.textAlign = "center";
             ctx.font = "100px arial";
             ctx.fillStyle = '#fff';
-            // ctx.fillText("video game", canv.width / 2, canv.height / 2 - 200);
             ctx.drawImage(SVG.title, canv.width / 2 - 0.5 * SVG.title.width, canv.height / 2 - 0.5 * SVG.title.height - 200);
             tutorialButton.update();
             tutorialButton.draw();
@@ -59,9 +61,6 @@ const controller = {
             if (controls.mouse.inBounds) {
                 drawDot(controls.mouse.x, controls.mouse.y)
             }
-
-            bgGrid.timeStep(dt);
-            bgGrid.draw();
 
             if (tutorialButton.isPressed() || playButton.isPressed()) {
                 controls.mouse.lPressed = false;
