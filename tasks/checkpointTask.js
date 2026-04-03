@@ -41,6 +41,7 @@ const tasks = [
         class: ExecuteFunctionTask,
         function: () => {
             playField.player.resetHealthAndFlash();
+            playField.player.weapon.resetSecondaryCooldown();
         }
     },
     {

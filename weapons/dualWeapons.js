@@ -45,6 +45,11 @@ export class DualWeapon {
 
     disableSecondary() { this.canFireSecondary = false; }
     enableSecondary() { this.canFireSecondary = true; }
+    resetSecondaryCooldown() {
+        if (!this.secondaryComponent.isContinuing()) {
+            this.secondaryTimer = this.secondaryComponent.getDelay();
+        }
+    }
 
     drawCursor() {
         if (!controls.mouse.inBounds) return;
