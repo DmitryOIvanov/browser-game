@@ -1,13 +1,13 @@
 import { FlatColor, RainbowColor } from "./color.js";
 import controls from "./controls.js";
 import { canv, ctx, drawDot } from "./drawing.js";
-import { CanvasTextButton } from "./gui.js";
+import { MinimalTextButton } from "./gui/minimalTextButton.js";
 
 export default class SimpleMessageScreen {
     constructor(message) {
         this.concluded = false;
         this.message = message;
-        this.continueButton = new CanvasTextButton(canv.width / 2, 420, "Continue", 60, FlatColor.WHITE);
+        this.continueButton = new MinimalTextButton(canv.width / 2, 420, "Continue", 60, FlatColor.WHITE);
     }
 
     nextFrame() {

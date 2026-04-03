@@ -1,7 +1,7 @@
 import { FlatColor, RainbowColor } from "../../color.js";
 import controls from "../../controls.js";
 import { canv, ctx, drawDot } from "../../drawing.js";
-import { CanvasTextButton } from "../../gui.js";
+import { MinimalTextButton } from "../../gui/minimalTextButton.js";
 import { modeALevelList } from "./modeAGame.js";
 
 export default class ModeAWeaponSelectController {
@@ -11,7 +11,7 @@ export default class ModeAWeaponSelectController {
 
         const level = game.level;
         this.buttons = modeALevelList[game.level].weapons.map((entry, index) => (
-            new CanvasTextButton(canv.width / 2, 200 + 80 * index, entry.name, 60, FlatColor.WHITE)
+            new MinimalTextButton(canv.width / 2, 200 + 80 * index, entry.name, 60, FlatColor.WHITE)
         ));
     }
 

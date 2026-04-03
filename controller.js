@@ -2,15 +2,15 @@ import { HorizontalGridBackground } from "./backgrounds/horizontalGridBackground
 import { FlatColor } from "./color.js";
 import controls from "./controls.js";
 import { canv, ctx, drawDot, fillScreen } from "./drawing.js";
-import { CanvasTextButton } from "./gui.js";
+import { MinimalTextButton } from "./gui/minimalTextButton.js";
 import DebugManager from "./modes/debug/debugEnemySpawning.js";
 import ModeBController from "./modes/modeB/modeBController.js";
 import ProceduralModeController from "./modes/proceduralMode/proceduralModeController.js";
 import playField from "./playField.js";
 import { SVG } from "./svg.js";
 
-const tutorialButton = new CanvasTextButton(canv.width / 2, canv.height / 2 + 160, "TUTORIAL", 50, new FlatColor("#fff"));
-const playButton = new CanvasTextButton(canv.width / 2, canv.height / 2 + 60, "PLAY", 50, new FlatColor("#fff"));
+const tutorialButton = new MinimalTextButton(canv.width / 2, canv.height / 2 + 160, "TUTORIAL", 50, new FlatColor("#fff"));
+const playButton = new MinimalTextButton(canv.width / 2, canv.height / 2 + 60, "PLAY", 50, new FlatColor("#fff"));
 
 const STATE_TITLE = 0;
 const STATE_MODE_PLAY = 1;
