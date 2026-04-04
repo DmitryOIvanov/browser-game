@@ -2,6 +2,7 @@ import { HorizontalGridBackground } from "./backgrounds/horizontalGridBackground
 import { FlatColor } from "./color.js";
 import controls from "./controls.js";
 import { canv, ctx, drawDot, fillScreen } from "./drawing.js";
+import { MenuTextButton } from "./gui/menuTextButton.js";
 import { MinimalTextButton } from "./gui/minimalTextButton.js";
 import DebugManager from "./modes/debug/debugEnemySpawning.js";
 import ModeBController from "./modes/modeB/modeBController.js";
@@ -9,8 +10,8 @@ import ProceduralModeController from "./modes/proceduralMode/proceduralModeContr
 import playField from "./playField.js";
 import { SVG } from "./svg.js";
 
-const tutorialButton = new MinimalTextButton(canv.width / 2, canv.height / 2 + 160, "TUTORIAL", 50, new FlatColor("#fff"));
-const playButton = new MinimalTextButton(canv.width / 2, canv.height / 2 + 60, "PLAY", 50, new FlatColor("#fff"));
+const playButton = new MenuTextButton(canv.width / 2, canv.height / 2 + 60, 240, "PLAY");
+const tutorialButton = new MenuTextButton(canv.width / 2, canv.height / 2 + 160, 240, "TUTORIAL");
 
 const STATE_TITLE = 0;
 const STATE_MODE_PLAY = 1;
@@ -54,10 +55,10 @@ const controller = {
             ctx.font = "100px arial";
             ctx.fillStyle = '#fff';
             ctx.drawImage(SVG.title, canv.width / 2 - 0.5 * SVG.title.width, canv.height / 2 - 0.5 * SVG.title.height - 200);
-            tutorialButton.update();
-            tutorialButton.draw();
-            playButton.update();
+            playButton.timestep(dt);
             playButton.draw();
+            tutorialButton.timestep(dt);
+            tutorialButton.draw();
             if (controls.mouse.inBounds) {
                 drawDot(controls.mouse.x, controls.mouse.y)
             }
@@ -85,6 +86,8 @@ const controller = {
         } else if (this.state == STATE_MODE_PLAY) {
             if (controls.pressed["Escape"]) {
                 this.state = STATE_TITLE;
+                playButton.reset();
+                tutorialButton.reset();
                 return;
             }
             this.subController.nextFrame(dt);
