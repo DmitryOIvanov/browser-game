@@ -6,8 +6,6 @@ import controller from "./controller.js";
 import { doMiscTests } from "./miscTests.js";
 import { setSvgLoadedCallback, SVG } from "./svg.js";
 
-doMiscTests();
-
 let showDebugInfo = false;
 
 controller.initialize();
@@ -52,4 +50,5 @@ function renderLoop(msTimestamp) {
 
 setSvgLoadedCallback(function () {
     requestAnimationFrame(renderLoop);
+    doMiscTests();
 });
