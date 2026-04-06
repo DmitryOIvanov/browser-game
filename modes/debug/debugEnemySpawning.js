@@ -129,7 +129,7 @@ export default class DebugManager {
 
     onPlayerHit() { }
 
-    timeStep(amount) {
+    timestep(amount) {
         if (controls.pressed["KeyP"]) {
             playField.addParticle(new BigExplosionParticle(640, 360, BigExplosionParticle.PARAMS.PLAYER_DEATH, FlatColor.WHITE));
         }

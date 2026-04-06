@@ -20,7 +20,7 @@ export class BallPProjWeapon {
         this.fireTimer = 0;
     }
 
-    timeStep(amount) {
+    timestep(amount) {
         this.fireTimer -= amount;
         if (this.fireTimer <= 0) {
             if (!controls.mouse.leftHeld) {
@@ -39,7 +39,7 @@ export class BallPProjWeapon {
                     let newBullet = new BallPProj(
                         playField.player.x, playField.player.y, dx2, dy2,
                         this.radius, this.duration, this.numBounces, this.color, this.attackProfileGenerator);
-                    newBullet.timeStep(-this.fireTimer);
+                    newBullet.timestep(-this.fireTimer);
                     playField.addPlayerProjectile(newBullet);
                 }
                 this.fireTimer += this.fireRate;

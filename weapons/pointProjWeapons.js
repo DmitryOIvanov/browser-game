@@ -17,7 +17,7 @@ export class PointPProjWeapon {
         this.fireTimer = 0;
     }
 
-    timeStep(amount) {
+    timestep(amount) {
         this.fireTimer -= amount;
         if (this.fireTimer <= 0) {
             if (!controls.mouse.leftHeld) {
@@ -34,7 +34,7 @@ export class PointPProjWeapon {
                     let dx2 = coeff * (dx * Math.cos(theta) + dy * Math.sin(theta));
                     let dy2 = coeff * (dy * Math.cos(theta) - dx * Math.sin(theta));
                     const newBullet = new PointPProj(playField.player.x, playField.player.y, dx2, dy2, this.color, this.attackProfileGenerator);
-                    newBullet.timeStep(-this.fireTimer);
+                    newBullet.timestep(-this.fireTimer);
                     playField.addPlayerProjectile(newBullet);
                 }
                 this.fireTimer += this.fireRate;

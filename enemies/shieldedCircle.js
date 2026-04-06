@@ -90,9 +90,9 @@ export default class ShieldedCircle extends AbstractEnemy {
         this.retired = !this.segExistence.reduce((cur, exists) => (cur || exists), false);
     }
 
-    timeStep(amount) {
+    timestep(amount) {
         if (this.retired) return;
-        super.timeStep(amount);
+        super.timestep(amount);
         this.hitFlash = this.hitFlash.map((val) => (decToZero(val, amount)));
 
         this.rot = normalizeAngle(this.rot + ROT_SPEED * amount * this.rotDir);

@@ -23,7 +23,7 @@ class GeneralFireworkWeapon {
         this.fireTimer = 0;
     }
 
-    timeStep(amount) {
+    timestep(amount) {
         this.fireTimer -= amount;
         if (this.fireTimer <= 0) {
             if (!controls.mouse.leftHeld) {
@@ -42,7 +42,7 @@ class GeneralFireworkWeapon {
                     let newBullet = new FireworkProj(
                         playField.player.x, playField.player.y, dx2, dy2,
                         this.radius, this.duration, this.frags, this.speed2, this.speed3, this.color, this.primaryAttackProfileGenerator, this.secondaryAttackProfileGenerator);
-                    newBullet.timeStep(-this.fireTimer);
+                    newBullet.timestep(-this.fireTimer);
                     playField.addPlayerProjectile(newBullet);
                 }
                 this.fireTimer += this.fireRate;

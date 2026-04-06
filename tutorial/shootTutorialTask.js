@@ -9,14 +9,14 @@ export class ShootTutorialTask extends TutorialTask {
         this.mouseHeldTime = 0;
     }
 
-    timeStep(dt) {
+    timestep(dt) {
         if (controls.mouse.leftHeld) {
             this.mouseHeldTime += dt;
             if (this.mouseHeldTime >= 30) {
                 this.satisfy();
             }
         }
-        super.timeStep(dt);
+        super.timestep(dt);
     }
 
     drawRaw() {

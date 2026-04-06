@@ -241,7 +241,7 @@ export default class Player {
         }
     }
 
-    timeStep(dt) {
+    timestep(dt) {
         if (this.hp <= 0) {
             this.deathTimer += dt;
             if (this.deathTimer >= DEATH_SHOCK_TIME) {
@@ -295,7 +295,7 @@ export default class Player {
         this.area.y = this.y;
 
         if (this.weapon != null) {
-            this.weapon.timeStep(dt);
+            this.weapon.timestep(dt);
         }
 
         if (!(this.weapon && this.weapon.drawCursor)) {
@@ -303,7 +303,7 @@ export default class Player {
         }
 
         this.hitShockAura.updatePosition(this.x, this.y);
-        this.hitShockAura.timeStep(dt);
+        this.hitShockAura.timestep(dt);
 
         this.hpFlash = decToZero(this.hpFlash, dt);
     }

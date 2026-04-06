@@ -62,7 +62,7 @@ export default class ShockAuraEffect {
         this.arcs.push(newArc);
     }
 
-    timeStep(dt) {
+    timestep(dt) {
         for (let i = 0; i < this.arcs.length; i++) {
             this.arcs[i].timeLeft -= dt;
         }

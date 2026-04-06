@@ -10,14 +10,14 @@ export class TaskPerformer {
         this.playerLost = false;
     }
 
-    timeStep(amount) {
+    timestep(amount) {
         if (this.concluded) return;
         if (!this.curTask) this.startNextTask();
-        if (this.curTask.timeStep) this.curTask.timeStep(amount);
+        if (this.curTask.timestep) this.curTask.timestep(amount);
         while (this.curTask.concluded) {
             if (this.nextTaskIndex < this.tasks.length) {
                 this.startNextTask();
-                if (this.curTask.timeStep) this.curTask.timeStep(0);
+                if (this.curTask.timestep) this.curTask.timestep(0);
             } else {
                 this.concluded = true;
                 return;
@@ -47,9 +47,9 @@ export default class TaskBasedManager {
         }
     }
 
-    timeStep(dt) {
+    timestep(dt) {
         if (this.concluded) return;
-        this.performer.timeStep(dt);
+        this.performer.timestep(dt);
         if (this.performer.concluded) this.concluded = true;
     }
 }

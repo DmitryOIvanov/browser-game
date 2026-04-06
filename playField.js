@@ -98,21 +98,21 @@ const playField = {
 
         // Timestep manager
         if (this.manager) {
-            this.manager.timeStep(step);
+            this.manager.timestep(step);
             if (this.manager.concluded) return;
         }
 
         // Timestep forward
         for (let i = 0; i < this.playerProj.length; i++) {
-            this.playerProj[i].timeStep(step);
+            this.playerProj[i].timestep(step);
         }
-        player.timeStep(step);
+        player.timestep(step);
         for (let ep = 0; ep < this.enemyProj.length; ep++) {
             const proj = this.enemyProj[ep];
-            if (proj.autonomous) proj.timeStep(step);
+            if (proj.autonomous) proj.timestep(step);
         }
         for (let i = 0; i < this.enemies.length; i++) {
-            this.enemies[i].timeStep(step);
+            this.enemies[i].timestep(step);
         }
 
         // Check for enemy-playerprojectile collisions & delete player projectiles
@@ -199,12 +199,12 @@ const playField = {
         }
 
         for (let i = 0; i < this.bgParticles.length; i++) {
-            this.bgParticles[i].timeStep(step);
+            this.bgParticles[i].timestep(step);
         }
         for (let i = 0; i < this.particles.length; i++) {
             const part = this.particles[i];
             if (part.retired) continue;
-            if (part.autonomous) part.timeStep(step);
+            if (part.autonomous) part.timestep(step);
         }
         deleteRetirables(this.bgParticles);
         deleteRetirables(this.particles);

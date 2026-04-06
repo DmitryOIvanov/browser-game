@@ -30,8 +30,8 @@ export default class MultiCircle extends AbstractBasicCircle {
         this.rot = 2 * Math.PI * Math.random();
     }
 
-    timeStep(amount) {
-        super.timeStep(amount);
+    timestep(amount) {
+        super.timestep(amount);
         this.rot += amount * ROT_SPEED;
     }
 

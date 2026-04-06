@@ -34,7 +34,7 @@ export class HorizontalGridBackground {
         this.moveOffset = 0;
     }
 
-    timeStep(dt) {
+    timestep(dt) {
         this.moveOffset = posMod(this.moveOffset + dt * this.speedFactor, 1);
     }
 

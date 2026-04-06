@@ -5,11 +5,11 @@ import playField from "../../playField.js";
 
 const NUM_COL_SAMPLES = 5;
 
-export default class BallPProj{
-    constructor(x,y,vx,vy,rad,dur,numBounces,color,attackProfileGenerator){
-        this.x=x; this.y=y; this.vx=vx; this.vy=vy;
+export default class BallPProj {
+    constructor(x, y, vx, vy, rad, dur, numBounces, color, attackProfileGenerator) {
+        this.x = x; this.y = y; this.vx = vx; this.vy = vy;
         this.radius = rad;
-        this.boundingRad = 0.5*Math.sqrt(this.vx*this.vx + this.vy*this.vy) + this.radius;
+        this.boundingRad = 0.5 * Math.sqrt(this.vx * this.vx + this.vy * this.vy) + this.radius;
         this.color = color;
         this.attackProfile = attackProfileGenerator();
         this.doTimeLimit = dur >= 0;
@@ -18,58 +18,58 @@ export default class BallPProj{
         this.bouncesLeft = numBounces;
         this.numColSamples = NUM_COL_SAMPLES;
 
-        this.colSamples = Array(NUM_COL_SAMPLES).fill(null).map(()=>(new CircleArea(x,y,rad)));
-        this.boundingCircle = new CircleArea(x,y,this.boundingRad);
+        this.colSamples = Array(NUM_COL_SAMPLES).fill(null).map(() => (new CircleArea(x, y, rad)));
+        this.boundingCircle = new CircleArea(x, y, this.boundingRad);
         this.excludes = {};
     }
 
-    timeStep(amount){
-        if(this.retired) return;
-        if(this.doTimeLimit){
+    timestep(amount) {
+        if (this.retired) return;
+        if (this.doTimeLimit) {
             this.remainingTime -= amount;
-            if(this.remainingTime <= 0){
+            if (this.remainingTime <= 0) {
                 this.retired = true;
                 return;
             }
         }
 
-        for(let i=0; i<NUM_COL_SAMPLES; i++){
-            this.x += this.vx*amount/NUM_COL_SAMPLES;
-            this.y += this.vy*amount/NUM_COL_SAMPLES;
-            if(!isInBounds(this.x, playField.x, this.radius) && (!this.doBounceLimit || this.bouncesLeft>0)){
+        for (let i = 0; i < NUM_COL_SAMPLES; i++) {
+            this.x += this.vx * amount / NUM_COL_SAMPLES;
+            this.y += this.vy * amount / NUM_COL_SAMPLES;
+            if (!isInBounds(this.x, playField.x, this.radius) && (!this.doBounceLimit || this.bouncesLeft > 0)) {
                 this.bouncesLeft--;
                 this.x = bounceBoundify(this.x, playField.x, this.radius);
                 this.vx *= -1;
                 this.excludes = {};
             }
-            if(!isInBounds(this.y, playField.y, this.radius) && (!this.doBounceLimit || this.bouncesLeft>0)){
+            if (!isInBounds(this.y, playField.y, this.radius) && (!this.doBounceLimit || this.bouncesLeft > 0)) {
                 this.bouncesLeft--;
                 this.y = bounceBoundify(this.y, playField.y, this.radius);
                 this.vy *= -1;
                 this.excludes = {};
             }
-            this.colSamples[i].update(this.x,this.y,this.radius);
+            this.colSamples[i].update(this.x, this.y, this.radius);
         }
-        const middleCol = (NUM_COL_SAMPLES-1)/2;
-        this.boundingCircle.update(this.colSamples[middleCol].x,this.colSamples[middleCol].y,this.boundingRad);
-        if(
+        const middleCol = (NUM_COL_SAMPLES - 1) / 2;
+        this.boundingCircle.update(this.colSamples[middleCol].x, this.colSamples[middleCol].y, this.boundingRad);
+        if (
             !isInBounds(this.x, playField.x, -this.boundingRad) ||
             !isInBounds(this.y, playField.y, -this.boundingRad)
-        ){
+        ) {
             this.retired = true;
         }
     }
 
-    draw(){
-        if(this.retired) return;
+    draw() {
+        if (this.retired) return;
         ctx.strokeStyle = this.color.getStr();
         ctx.lineWidth = 6;
         ctx.beginPath();
-        ctx.arc(this.x,this.y,this.radius,0,2*Math.PI);
+        ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
         ctx.stroke();
     }
 
-    getHit(){
-        if(this.attackProfile.expired) this.retired = true;
+    getHit() {
+        if (this.attackProfile.expired) this.retired = true;
     }
 }

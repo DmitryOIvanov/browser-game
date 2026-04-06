@@ -86,7 +86,7 @@ export class DualWeapon {
         }
     }
 
-    timeStep(dt) {
+    timestep(dt) {
         this.chargeFlash = Math.min(this.chargeFlash + dt, CHARGE_FLASH_TOTAL_TIME);
 
         if (!this.secondaryComponent.isContinuing()) {

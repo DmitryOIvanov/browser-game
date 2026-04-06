@@ -39,8 +39,8 @@ export default class ThreeShooter extends AbstractBasicShooter {
         this.defenseProfile = createDefenseProfile(MAX_HP);
     }
 
-    timeStep(amount) {
-        super.timeStep(amount);
+    timestep(amount) {
+        super.timestep(amount);
         this.irisRot += this.irisRotAmount * amount;
     }
 

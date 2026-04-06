@@ -18,7 +18,7 @@ export default class RingOfBallsEProj {
         this.cullDelay = cullDelay;
     }
 
-    timeStep(dt) {
+    timestep(dt) {
         this.area.x += this.vx * dt;
         this.area.y += this.vy * dt;
         this.area.angle += this.rotSpeed * dt;

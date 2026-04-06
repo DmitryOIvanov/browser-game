@@ -1,4 +1,4 @@
-import { backgrounds, timeStepBackgrounds } from "./backgrounds/backgrounds.js";
+import { backgrounds, timestepBackgrounds } from "./backgrounds/backgrounds.js";
 import { HorizontalGridBackground } from "./backgrounds/horizontalGridBackground.js";
 import { FlatColor } from "./color.js";
 import controls from "./controls.js";
@@ -46,7 +46,7 @@ const controller = {
 
     nextFrame(dt) {
         fillScreen("black");
-        timeStepBackgrounds(dt);
+        timestepBackgrounds(dt);
 
         if (this.state == STATE_TITLE) {
             backgrounds.title.draw();

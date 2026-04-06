@@ -44,7 +44,7 @@ export default class SnakeSpawnerParticle {
         this.enemyRef = { enemy: null };
     }
 
-    timeStep(dt) {
+    timestep(dt) {
         this.rot += dt * ROT_SPEED;
         this.stateProgress += dt;
         let spawnTimerDecreased = false;
@@ -53,7 +53,7 @@ export default class SnakeSpawnerParticle {
                 if (this.spawnTimer > 0) {
                     if (!spawnTimerDecreased) this.spawnTimer -= dt;
                     if (this.spawnTimer <= 0) {
-                        this.storedSnake.timeStep(-this.spawnTimer);
+                        this.storedSnake.timestep(-this.spawnTimer);
                         playField.addEnemy(this.storedSnake);
                         this.enemyRef.enemy = this.storedSnake;
                     }

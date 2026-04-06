@@ -147,8 +147,8 @@ export default class Snake extends AbstractEnemy {
         return false;
     }
 
-    timeStep(dt) {
-        super.timeStep(dt);
+    timestep(dt) {
+        super.timestep(dt);
 
         let head = null;
         let timeOffset = 0;

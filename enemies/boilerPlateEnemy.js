@@ -22,8 +22,8 @@ export default class BoilerPlateEnemy extends AbstractEnemy {
         this.area = new CircleArea(this.x, this.y, BoilerPlateEnemy.RAD);
     }
 
-    timeStep(dt) {
-        super.timeStep(dt);
+    timestep(dt) {
+        super.timestep(dt);
         this.hitFlash -= dt;
         if (this.hitFlash < 0) this.hitFlash = 0;
 

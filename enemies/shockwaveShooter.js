@@ -95,8 +95,8 @@ export default class ShockwaveShooter extends AbstractEnemy {
         this.lastTargetAngle = 0;
     }
 
-    timeStep(dt) {
-        super.timeStep(dt);
+    timestep(dt) {
+        super.timestep(dt);
         this.hitFlash -= dt;
         if (this.hitFlash < 0) this.hitFlash = 0;
 
@@ -123,7 +123,7 @@ export default class ShockwaveShooter extends AbstractEnemy {
                 this.arrowIndicator.retired = true;
                 this.indicator = null;
                 const proj = new ShockwaveBallEProj(this.x, this.y, this.bodyAngle, PROJ_SPEED, PROJ_RAD, SHOCK_ANGLE, SHOCK_SPEED, SHOCK_RAD, SHOCK_PERIOD, PROJ_THICK, this.dangerColor);
-                proj.timeStep(this.stateProgress);
+                proj.timestep(this.stateProgress);
                 playField.addEnemyProjectile(proj);
 
                 this.restStartAngle = this.bodyAngle;
@@ -148,7 +148,7 @@ export default class ShockwaveShooter extends AbstractEnemy {
             } else if (this.state == STATE_SPEEDING) {
                 speedMult = (this.stateProgress / this.stateDuration);
             }
-            rangerMovementPattern.timeStep(speedMult * dt, this, this.rangerState, RANGER_PARAMS);
+            rangerMovementPattern.timestep(speedMult * dt, this, this.rangerState, RANGER_PARAMS);
         }
 
         this.area.x = this.x;

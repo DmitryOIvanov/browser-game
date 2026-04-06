@@ -80,8 +80,8 @@ export default class RingShooter extends AbstractEnemy {
         this.pupilLerp = 1;
     }
 
-    timeStep(dt) {
-        super.timeStep(dt);
+    timestep(dt) {
+        super.timestep(dt);
         this.hitFlash -= dt;
         if (this.hitFlash < 0) this.hitFlash = 0;
 

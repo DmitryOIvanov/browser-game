@@ -51,8 +51,8 @@ export default class IcosaBoss extends AbstractEnemy {
         this.rotMatrix = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
     }
 
-    timeStep(amount) {
-        super.timeStep(amount);
+    timestep(amount) {
+        super.timestep(amount);
         this.hitFlash = decToZero(this.hitFlash, amount);
         this.rot = normalizeAngle(this.rot + ROT_SPEED * amount);
         this.highlightTimer -= amount;

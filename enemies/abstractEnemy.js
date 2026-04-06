@@ -35,5 +35,5 @@ export default class AbstractEnemy {
         return this;
     }
 
-    timeStep(amount) { }
+    timestep(amount) { }
 }

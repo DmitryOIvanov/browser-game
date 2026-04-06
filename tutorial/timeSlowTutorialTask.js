@@ -30,7 +30,7 @@ class Gear {
         this.rot = initRot;
     }
 
-    timeStep(dt) {
+    timestep(dt) {
         this.rot = normalizeAngle(this.rot + this.rotSpeed * dt);
     }
 
@@ -213,9 +213,9 @@ class TutorialGearBackground {
         this.gears[6].mesh(this.gears[5], 22, 0);
     }
 
-    timeStep(dt) {
+    timestep(dt) {
         for (const gear of this.gears) {
-            gear.timeStep(dt);
+            gear.timestep(dt);
         }
     }
 
@@ -233,15 +233,15 @@ export default class TimeSlowTutorialTask extends TutorialTask {
         this.spaceHeldTime = 0;
     }
 
-    timeStep(dt) {
+    timestep(dt) {
         if (controls.held["Space"]) {
             this.spaceHeldTime += dt;
             if (this.spaceHeldTime >= 6) {
                 this.satisfy();
             }
         }
-        this.gears.timeStep(dt);
-        super.timeStep(dt);
+        this.gears.timestep(dt);
+        super.timestep(dt);
     }
 
     drawRaw() {

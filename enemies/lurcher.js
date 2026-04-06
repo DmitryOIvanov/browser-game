@@ -61,8 +61,8 @@ export default class Lurcher extends AbstractEnemy {
         this.y = bounceBoundify(this.y, playField.y, MIN_RAD);
     }
 
-    timeStep(dt) {
-        super.timeStep(dt);
+    timestep(dt) {
+        super.timestep(dt);
         this.hitFlash -= dt;
         if (this.hitFlash < 0) this.hitFlash = 0;
 

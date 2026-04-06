@@ -13,54 +13,54 @@ const ROT_SPEED = 0.014;
 //3.88322207745 / NUM_SHOTS / FIRE_RATE;
 const PROJ_SPEED = 7;
 
-export default class FlowerTower extends TowerBase{
-    constructor(x,y){
-        super(x,y,MAX_HP);
-        this.shootTimer = (0.5+Math.random())*FIRE_RATE;
-        this.rot = 2*Math.PI*Math.random();
+export default class FlowerTower extends TowerBase {
+    constructor(x, y) {
+        super(x, y, MAX_HP);
+        this.shootTimer = (0.5 + Math.random()) * FIRE_RATE;
+        this.rot = 2 * Math.PI * Math.random();
     }
 
-    timeStep(amount){
-        super.timeStep(amount);
-        this.rot = normalizeAngle(this.rot+ROT_SPEED*amount);
+    timestep(amount) {
+        super.timestep(amount);
+        this.rot = normalizeAngle(this.rot + ROT_SPEED * amount);
         this.shootTimer -= amount;
-        if(this.shootTimer <= 0){
-            for(let i=0; i<NUM_SHOTS; i++){
+        if (this.shootTimer <= 0) {
+            for (let i = 0; i < NUM_SHOTS; i++) {
                 const rad = HEAD_RAD - IRIS_RAD;
-                const angle = this.rot + 2*Math.PI*i/NUM_SHOTS;
+                const angle = this.rot + 2 * Math.PI * i / NUM_SHOTS;
                 const newProj = new BallEProj(
-                    this.x+rad*Math.cos(angle),
-                    this.y+rad*Math.sin(angle),
-                    PROJ_SPEED*Math.cos(angle),
-                    PROJ_SPEED*Math.sin(angle),
-                    6,6,this.dangerColor);
-                newProj.timeStep(-this.shootTimer);
+                    this.x + rad * Math.cos(angle),
+                    this.y + rad * Math.sin(angle),
+                    PROJ_SPEED * Math.cos(angle),
+                    PROJ_SPEED * Math.sin(angle),
+                    6, 6, this.dangerColor);
+                newProj.timestep(-this.shootTimer);
                 playField.addEnemyProjectile(newProj);
-                
+
             }
             this.shootTimer += FIRE_RATE;
         }
     }
 
-    draw(){
+    draw() {
         super.draw();
         ctx.beginPath();
-        ctx.arc(this.x,this.y,HEAD_RAD,0,2*Math.PI);
+        ctx.arc(this.x, this.y, HEAD_RAD, 0, 2 * Math.PI);
         ctx.closePath();
         ctx.stroke();
         ctx.beginPath();
-        ctx.arc(this.x,this.y,15,0,2*Math.PI);
+        ctx.arc(this.x, this.y, 15, 0, 2 * Math.PI);
         ctx.closePath();
         ctx.stroke();
-        ctx.strokeStyle = (this.hitFlash>0)?'#fff':this.dangerColor.getStr();
-        for(let i=0; i<NUM_SHOTS; i++){
+        ctx.strokeStyle = (this.hitFlash > 0) ? '#fff' : this.dangerColor.getStr();
+        for (let i = 0; i < NUM_SHOTS; i++) {
             const rad = HEAD_RAD - IRIS_RAD;
-            const angle = this.rot + 2*Math.PI*i/NUM_SHOTS;
+            const angle = this.rot + 2 * Math.PI * i / NUM_SHOTS;
             ctx.beginPath();
             ctx.arc(
-                this.x+rad*Math.cos(angle),
-                this.y+rad*Math.sin(angle),
-                IRIS_RAD,0,2*Math.PI);
+                this.x + rad * Math.cos(angle),
+                this.y + rad * Math.sin(angle),
+                IRIS_RAD, 0, 2 * Math.PI);
             ctx.closePath();
             ctx.stroke();
         }

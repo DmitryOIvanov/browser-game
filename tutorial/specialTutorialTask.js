@@ -12,11 +12,11 @@ export class SpecialTutorialTask extends TutorialTask {
         playField.player.weapon.hasFinishedAHeavyAttack = false;
     }
 
-    timeStep(dt) {
+    timestep(dt) {
         if (playField.player.weapon.hasFinishedAHeavyAttack) {
             this.satisfy();
         }
-        super.timeStep(dt);
+        super.timestep(dt);
     }
 
     drawRaw() {

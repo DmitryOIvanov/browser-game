@@ -59,8 +59,8 @@ export default class LaserShooter extends AbstractEnemy {
         this.retired = true;
     }
 
-    timeStep(amount) {
-        super.timeStep(amount);
+    timestep(amount) {
+        super.timestep(amount);
         this.hitFlash = decToZero(this.hitFlash, amount);
 
         this.stateCooldown -= amount;

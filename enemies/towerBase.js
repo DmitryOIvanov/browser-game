@@ -26,8 +26,8 @@ export default class TowerBase extends AbstractEnemy {
         this.defenseProfile = createDefenseProfile(hp);
     }
 
-    timeStep(amount) {
-        super.timeStep(amount);
+    timestep(amount) {
+        super.timestep(amount);
         this.hitFlash = decToZero(this.hitFlash, amount);
     }
 

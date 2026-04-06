@@ -33,8 +33,8 @@ export default class BombEnemy extends AbstractEnemy {
         this.defenseProfile = createDefenseProfile(MAX_HP);
     }
 
-    timeStep(amount) {
-        super.timeStep(amount);
+    timestep(amount) {
+        super.timestep(amount);
         this.hitFlash = decToZero(this.hitFlash, amount);
         this.rot = normalizeAngle(this.rot + amount * this.rotAmount);
 

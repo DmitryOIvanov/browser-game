@@ -69,12 +69,12 @@ export default class ProceduralModeManager {
 
     onPlayerHit() { }
 
-    timeStep(dt) {
+    timestep(dt) {
         if (this.concluded) return;
 
         const player = playField.player;
         if (player.hp > 0) {
-            this.performer.timeStep(dt);
+            this.performer.timestep(dt);
             if (this.performer.concluded) {
                 this.level++;
                 this.lastMilestoneRng = this.rng.clone();

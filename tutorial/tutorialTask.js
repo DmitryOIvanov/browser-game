@@ -21,7 +21,7 @@ export class TutorialTask {
         this.retired = false;
     }
 
-    timeStep(dt) {
+    timestep(dt) {
         if (this.retired) return;
 
         if (this.state == STATE_APPEAR) {

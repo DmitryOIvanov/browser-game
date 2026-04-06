@@ -29,7 +29,7 @@ export default class BgMessage {
         this.doesWait = false;
     }
 
-    timeStep(dt) {
+    timestep(dt) {
         this.stateProgress += dt;
         if (this.state == STATE_FADE_IN) {
             if (this.stateProgress >= this.fadeInTime) {

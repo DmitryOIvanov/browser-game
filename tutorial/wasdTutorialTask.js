@@ -11,14 +11,14 @@ export class WasdTutorialTask extends TutorialTask {
         this.keyHeldTime = 0;
     }
 
-    timeStep(dt) {
+    timestep(dt) {
         if (controls.held["KeyW"] || controls.held["KeyA"] || controls.held["KeyS"] || controls.held["KeyD"]) {
             this.keyHeldTime += dt;
             if (this.keyHeldTime >= 30) {
                 this.satisfy();
             }
         }
-        super.timeStep(dt);
+        super.timestep(dt);
     }
 
     drawRaw() {

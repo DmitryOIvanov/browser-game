@@ -11,7 +11,7 @@ export class AbstractWeightedSpawnTask {
         this.concluded = false;
     }
 
-    timeStep(amount) {
+    timestep(amount) {
         if (this.concluded) return;
         this.timePassed += amount;
         let timeToNext = this.getTimeToNext();
@@ -89,7 +89,7 @@ export class WaitForConditionTask {
         this.concluded = false;
     }
 
-    timeStep(amount) { this.concluded = this.condition(); }
+    timestep(amount) { this.concluded = this.condition(); }
 }
 
 export class WaitTimeTask {
@@ -99,7 +99,7 @@ export class WaitTimeTask {
         this.concluded = false;
     }
 
-    timeStep(amount) {
+    timestep(amount) {
         this.timePassed += amount;
         this.concluded = this.timePassed >= this.targetTime;
     }
@@ -125,7 +125,7 @@ export class CreateMessageAndWaitTask {
         this.msgAdded = false;
         this.concluded = false;
     }
-    timeStep(dt) {
+    timestep(dt) {
         if (!this.msgAdded) {
             playField.addBackgroundParticle(this.messageObject);
             this.msgAdded = true;
@@ -158,7 +158,7 @@ export class CreateBgParticleAndWaitForRetirementTask {
         this.concluded = false;
     }
 
-    timeStep(amount) {
+    timestep(amount) {
         if (!this.particleAdded) {
             playField.addBackgroundParticle(this.particle);
             this.particleAdded = true;
@@ -182,7 +182,7 @@ export class WaitForBgParticleRetirementTask {
         this.concluded = this.particle.retired;
     }
 
-    timeStep(amount) {
+    timestep(amount) {
         this.concluded = this.particle.retired;
     }
 }
@@ -193,9 +193,9 @@ export class PerformTasksTask {
         this.concluded = false;
     }
 
-    timeStep(dt) {
+    timestep(dt) {
         if (this.concluded) return;
-        this.performer.timeStep(dt);
+        this.performer.timestep(dt);
         if (this.performer.concluded) this.concluded = true;
     }
 }

@@ -44,7 +44,7 @@ class SubExplosion {
         }
     }
 
-    timeStep(dt) {
+    timestep(dt) {
         const params = this.params;
         const splitInfo = params.splitInfo[this.splitNum];
         const isLastSplit = (this.splitNum == params.splitInfo.length - 1);
@@ -94,7 +94,7 @@ class SubExplosion {
                     const splitVY = this.vy + splitSpeed * Math.sin(splitAngle);
                     const splitParticle = new SubExplosion(this.x, this.y, splitVX, splitVY, this.radius, this.growthRate - splitSpeed, this.splitNum + 1, params, this.color);
                     playField.addParticle(splitParticle);
-                    splitParticle.timeStep(-this.timeToNextSplit);
+                    splitParticle.timestep(-this.timeToNextSplit);
                 }
                 this.retired = true;
             }
