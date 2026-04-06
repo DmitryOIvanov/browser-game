@@ -1,3 +1,4 @@
+import { backgrounds, timeStepBackgrounds } from "./backgrounds/backgrounds.js";
 import { HorizontalGridBackground } from "./backgrounds/horizontalGridBackground.js";
 import { FlatColor } from "./color.js";
 import controls from "./controls.js";
@@ -36,8 +37,6 @@ function clearKeys(keys) {
     }
 }
 
-const bgGrid = new HorizontalGridBackground(480, 300, 5, 0.01, 200, 400);
-
 const controller = {
     initialize() {
         this.state = STATE_TITLE;
@@ -47,9 +46,10 @@ const controller = {
 
     nextFrame(dt) {
         fillScreen("black");
+        timeStepBackgrounds(dt);
+
         if (this.state == STATE_TITLE) {
-            bgGrid.timeStep(dt);
-            bgGrid.draw();
+            backgrounds.title.draw();
 
             ctx.textAlign = "center";
             ctx.font = "100px arial";
