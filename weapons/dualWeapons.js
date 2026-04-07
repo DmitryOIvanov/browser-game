@@ -285,7 +285,7 @@ export const stockLightComponents = {
     Spread: class extends BasicDualWeaponComponent {
         constructor() {
             super(
-                22, // Delay
+                23, // Delay
                 7, // # Bullets
                 0.1, // Spread
                 0, // Variance
@@ -312,6 +312,7 @@ export const stockLightComponents = {
                     new BallPProj(x, y, dx, dy,
                         10, // Radius
                         -1, // Duration
+                        false, // duration is soft? (ball exits screen instead of disappearing instantly)
                         0, // # Bounces
                         PRIMARY_COLOR, () => (createAttackProfile(
                             10, // Damage
@@ -335,7 +336,7 @@ export const stockLightComponents = {
             explode: (x, y, angle) => {
                 shootSpread(
                     x, y,
-                    7, // # Sub bullets
+                    5, // # Sub bullets
                     angle,
                     0.2, // Spread
                     0, // Variance
@@ -370,6 +371,30 @@ export const stockLightComponents = {
 
         return Splitter;
     })(),
+    Ricochet: class extends BasicDualWeaponComponent {
+        constructor() {
+            super(
+                12, // Delay
+                1, // # Bullets
+                0, // Spread
+                0, // Variance
+                20, // Speed
+                (x, y, dx, dy) => (
+                    new BallPProj(x, y, dx, dy,
+                        10, // Radius
+                        -1, // Duration
+                        false, // duration is soft? (ball exits screen instead of disappearing instantly)
+                        2, // # Bounces
+                        PRIMARY_COLOR, () => (createAttackProfile(
+                            1, // Damage
+                            3, // Overflow deduction coefficient
+                            3, // Free hits (pierce-1)
+                        ))
+                    )
+                )
+            );
+        }
+    },
 };
 
 export const stockHeavyComponents = {
@@ -377,7 +402,7 @@ export const stockHeavyComponents = {
     Volley: class extends VolleyDualWeaponComponent {
         constructor() {
             super(
-                10, // # Rounds
+                8, // # Rounds
                 600, // Main delay
                 5, // Time between shots
                 7, // Bullets from center excluding center
@@ -429,6 +454,7 @@ export const stockHeavyComponents = {
                     new BallPProj(x, y, dx, dy,
                         20, // Radius
                         -1, // Duration
+                        false, // duration is soft? (ball exits screen instead of disappearing instantly)
                         0, // # Bounces
                         SECONDARY_COLOR, () => (createAttackProfile(
                             100, // Damage
@@ -452,7 +478,7 @@ export const stockHeavyComponents = {
                     new FireworkProj(x, y, dx, dy,
                         12, // Radius
                         40, // Duration
-                        120, // Projectiles in 1 of 2 rings
+                        140, // Projectiles in 1 of 2 rings
                         30, // Speed 1
                         25, // Speed 2
                         SECONDARY_COLOR,
@@ -465,6 +491,30 @@ export const stockHeavyComponents = {
                             1, // Damage
                             3, // Overflow deduction coefficient
                             0, // Free hits (pierce-1)
+                        ))
+                    )
+                )
+            );
+        }
+    },
+    bounceMayhem: class extends BasicDualWeaponComponent {
+        constructor() {
+            super(
+                600, // Delay
+                7, // # Bullets
+                0.2, // Spread
+                0, // Variance
+                25, // Speed
+                (x, y, dx, dy) => (
+                    new BallPProj(x, y, dx, dy,
+                        16, // Radius
+                        300, // Duration
+                        true, // duration is soft? (ball exits screen instead of disappearing instantly)
+                        -1, // # Bounces
+                        PRIMARY_COLOR, () => (createAttackProfile(
+                            1, // Damage
+                            3, // Overflow deduction coefficient
+                            24, // Free hits (pierce-1)
                         ))
                     )
                 )

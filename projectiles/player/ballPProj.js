@@ -6,12 +6,13 @@ import playField from "../../playField.js";
 const NUM_COL_SAMPLES = 5;
 
 export default class BallPProj {
-    constructor(x, y, vx, vy, rad, dur, numBounces, color, attackProfileGenerator) {
+    constructor(x, y, vx, vy, rad, dur, durationIsSoft, numBounces, color, attackProfileGenerator) {
         this.x = x; this.y = y; this.vx = vx; this.vy = vy;
         this.radius = rad;
         this.boundingRad = 0.5 * Math.sqrt(this.vx * this.vx + this.vy * this.vy) + this.radius;
         this.color = color;
         this.attackProfile = attackProfileGenerator();
+        this.durationIsSoft = durationIsSoft;
         this.doTimeLimit = dur >= 0;
         this.remainingTime = dur;
         this.doBounceLimit = numBounces >= 0;
@@ -28,8 +29,14 @@ export default class BallPProj {
         if (this.doTimeLimit) {
             this.remainingTime -= amount;
             if (this.remainingTime <= 0) {
-                this.retired = true;
-                return;
+                if (this.durationIsSoft) {
+                    this.doTimeLimit = false;
+                    this.doBounceLimit = true;
+                    this.bouncesLeft = 0;
+                } else {
+                    this.retired = true;
+                    return;
+                }
             }
         }
 

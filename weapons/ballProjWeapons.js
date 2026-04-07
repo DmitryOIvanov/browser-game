@@ -38,7 +38,7 @@ export class BallPProjWeapon {
                     let dy2 = coeff * (dy * Math.cos(theta) - dx * Math.sin(theta));
                     let newBullet = new BallPProj(
                         playField.player.x, playField.player.y, dx2, dy2,
-                        this.radius, this.duration, this.numBounces, this.color, this.attackProfileGenerator);
+                        this.radius, this.duration, false, this.numBounces, this.color, this.attackProfileGenerator);
                     newBullet.timestep(-this.fireTimer);
                     playField.addPlayerProjectile(newBullet);
                 }

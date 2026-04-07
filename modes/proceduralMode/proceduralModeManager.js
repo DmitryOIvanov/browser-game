@@ -11,15 +11,15 @@ import { ProceduralWeightedSpawnTask } from "./proceduralLevelGeneration.js";
 export const lightWeaponClasses = [
     stockLightComponents.MachineGun,
     stockLightComponents.Spread,
-    // stockLightComponents.Heavy,
     stockLightComponents.Splitter,
+    stockLightComponents.Ricochet,
 ];
 
 export const heavyWeaponClasses = [
     stockHeavyComponents.Volley,
     stockHeavyComponents.Wave,
-    // stockHeavyComponents.Buster,
     stockHeavyComponents.Firework,
+    stockHeavyComponents.bounceMayhem,
 ];
 
 function getLevelTaskList(level, rng) {
