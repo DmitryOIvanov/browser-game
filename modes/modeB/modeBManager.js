@@ -4,14 +4,14 @@ import { TaskPerformer } from "../../taskBasedManager.js";
 import { DualWeapon, stockHeavyComponents, stockLightComponents } from "../../weapons/dualWeapons.js";
 import modeBLevels from "./modeBLevels.js";
 
-export const lightWeaponClasses = [
+const lightWeaponClasses = [
     stockLightComponents.MachineGun,
     stockLightComponents.Spread,
     // stockLightComponents.Heavy,
     stockLightComponents.Splitter,
 ];
 
-export const heavyWeaponClasses = [
+const heavyWeaponClasses = [
     stockHeavyComponents.Volley,
     stockHeavyComponents.Wave,
     // stockHeavyComponents.Buster,

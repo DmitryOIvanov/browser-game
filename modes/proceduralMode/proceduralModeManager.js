@@ -5,22 +5,9 @@ import { TaskPerformer } from "../../taskBasedManager.js";
 import { CreateMessageTask, WaitTimeTask, WeightedSpawnTask, WaitForConditionTask } from "../../tasks.js";
 import CheckpointTask from "../../tasks/checkpointTask.js";
 import { TUTORIAL_TASK_LIST } from "../../tutorial/tutorialTaskList.js";
-import { DualWeapon, stockHeavyComponents, stockLightComponents } from "../../weapons/dualWeapons.js";
+import { DualWeapon } from "../../weapons/dualWeapons.js";
 import { ProceduralWeightedSpawnTask } from "./proceduralLevelGeneration.js";
-
-export const lightWeaponClasses = [
-    stockLightComponents.MachineGun,
-    stockLightComponents.Spread,
-    stockLightComponents.Splitter,
-    stockLightComponents.Ricochet,
-];
-
-export const heavyWeaponClasses = [
-    stockHeavyComponents.Volley,
-    stockHeavyComponents.Wave,
-    stockHeavyComponents.Firework,
-    stockHeavyComponents.bounceMayhem,
-];
+import { proceduralModeHeavyComponents, proceduralModeLightComponents } from "./proceduralModeStartScreen.js";
 
 function getLevelTaskList(level, rng) {
     if (level >= 0) {
@@ -53,14 +40,14 @@ function getLevelTaskList(level, rng) {
 }
 
 export default class ProceduralModeManager {
-    constructor(level, rng) {
+    constructor(level, rng, lightIndex, heavyIndex) {
         this.level = level;
         this.rng = rng;
         this.lastMilestoneRng = rng.clone();
         this.concluded = false;
         this.performer = new TaskPerformer(getLevelTaskList(level, rng));
-        this.lightIndex = 0;
-        this.heavyIndex = 0;
+        this.lightIndex = lightIndex;
+        this.heavyIndex = heavyIndex;
     }
 
     onPlayfieldInit() {
@@ -89,19 +76,19 @@ export default class ProceduralModeManager {
         }
 
         if (controls.pressed["KeyE"]) {
-            this.lightIndex = (this.lightIndex + 1) % lightWeaponClasses.length;
+            this.lightIndex = (this.lightIndex + 1) % proceduralModeLightComponents.length;
             this.updateWeapon();
         }
         if (controls.pressed["KeyQ"]) {
-            this.heavyIndex = (this.heavyIndex + 1) % heavyWeaponClasses.length;
+            this.heavyIndex = (this.heavyIndex + 1) % proceduralModeHeavyComponents.length;
             this.updateWeapon();
         }
     }
 
     updateWeapon() {
         playField.player.weapon = new DualWeapon(
-            new lightWeaponClasses[this.lightIndex](),
-            new heavyWeaponClasses[this.heavyIndex]()
+            new proceduralModeLightComponents[this.lightIndex].class(),
+            new proceduralModeHeavyComponents[this.heavyIndex].class()
         );
     }
 }

@@ -5,7 +5,9 @@ import SimpleOptionScreen from "../../simpleOptionScreen.js";
 import { TutorialTask } from "../../tutorial/tutorialTask.js";
 import { PseudorandomGenerator } from "../../pseudorandom.js";
 import ProceduralModeManager from "./proceduralModeManager.js";
+import { ProceduralModeStartScreen } from "./proceduralModeStartScreen.js";
 
+const STATE_STARTING = 0;
 const STATE_PLAYING = 1;
 const STATE_LOSE = 2;
 
@@ -15,13 +17,24 @@ export default class ProceduralModeController {
         this.subController = null;
 
         this.levelReached = tutorialRequested ? -2 : 0;
-        this.milestoneRng = PseudorandomGenerator.fromString("seed124");
-        this.startPlay();
+        this.milestoneRng = null;
+        this.lightIndex = 0;
+        this.heavyIndex = 0;
+        this.startStart();
     }
 
     nextFrame(dt) {
         if (this.concluded) return;
-        if (this.state == STATE_PLAYING) {
+        if (this.state == STATE_STARTING) {
+            this.subController.nextFrame(dt);
+            if (this.subController.concluded) {
+                const result = this.subController.getResult();
+                this.milestoneRng = PseudorandomGenerator.fromString(result.seed);
+                this.lightIndex = result.lightWeaponIndex;
+                this.heavyIndex = result.heavyWeaponIndex;
+                this.startPlay();
+            }
+        } else if (this.state == STATE_PLAYING) {
             playField.advanceOneFrame(dt);
             if (playField.manager.concluded) {
                 this.levelReached = playField.manager.level;
@@ -42,13 +55,20 @@ export default class ProceduralModeController {
         }
     }
 
+    startStart() {
+        controls.mouse.lPressed = false;
+        controls.mouse.leftHeld = false;
+        this.state = STATE_STARTING;
+        this.subController = new ProceduralModeStartScreen();
+    }
+
     startPlay() {
         controls.mouse.lPressed = false;
         controls.mouse.leftHeld = false;
         this.state = STATE_PLAYING;
         this.subController = null;
         playField.initialize();
-        playField.setManager(new ProceduralModeManager(this.levelReached, this.milestoneRng.clone()));
+        playField.setManager(new ProceduralModeManager(this.levelReached, this.milestoneRng.clone(), this.lightIndex, this.heavyIndex));
     }
 
     startLoseScreen() {

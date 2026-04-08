@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="160.00005"
+   height="160"
+   viewBox="0 0 42.333345 42.333333"
+   version="1.1"
+   id="svg1"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <g
+     id="layer1">
+    <g
+       id="g396"
+       transform="matrix(4,0,0,4,-365.12498,-132.29166)">
+      <path
+         style="fill:#ff6600;fill-opacity:1;stroke:#ffc800;stroke-width:0.79375;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:5;stroke-dasharray:none;stroke-opacity:1"
+         d="m 94.720821,36.512498 1.32292,1.32291"
+         id="path393" />
+      <path
+         style="fill:#ff6600;fill-opacity:1;stroke:#ffc800;stroke-width:0.79375;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:5;stroke-dasharray:none;stroke-opacity:1"
+         d="m 97.631231,35.397748 1.1e-5,1.87089"
+         id="path394" />
+      <path
+         style="fill:#ff6600;fill-opacity:1;stroke:#ffc800;stroke-width:0.79375;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:5;stroke-dasharray:none;stroke-opacity:1"
+         d="m 93.643691,39.385308 1.87088,-9e-6"
+         id="path395" />
+      <circle
+         style="fill:#ffc800;fill-opacity:1;stroke:none;stroke-width:0.396875;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:5;stroke-dasharray:none;stroke-opacity:1"
+         id="circle395"
+         cx="98.160385"
+         cy="39.952087"
+         r="1.0583333" />
+      <path
+         id="path396"
+         style="fill:#ffc800;fill-opacity:1;stroke-width:0.0264583;stroke-linejoin:round;stroke-miterlimit:5"
+         d="m 92.868744,33.072914 c -0.879473,0 -1.5875,0.708027 -1.5875,1.5875 v 7.408333 c 0,0.879473 0.708027,1.5875 1.5875,1.5875 h 7.408336 c 0.87947,0 1.5875,-0.708027 1.5875,-1.5875 v -7.408333 c 0,-0.879473 -0.70803,-1.5875 -1.5875,-1.5875 z m 0,0.79375 h 7.408336 c 0.43974,0 0.79375,0.354012 0.79375,0.79375 v 7.408333 c 0,0.439737 -0.35401,0.79375 -0.79375,0.79375 h -7.408336 c -0.439737,0 -0.79375,-0.354013 -0.79375,-0.79375 v -7.408333 c 0,-0.439738 0.354013,-0.79375 0.79375,-0.79375 z" />
+    </g>
+  </g>
+</svg>
