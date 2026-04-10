@@ -508,7 +508,7 @@ export const stockHeavyComponents = {
                 (x, y, dx, dy) => (
                     new BallPProj(x, y, dx, dy,
                         16, // Radius
-                        300, // Duration
+                        240, // Duration
                         true, // duration is soft? (ball exits screen instead of disappearing instantly)
                         -1, // # Bounces
                         PRIMARY_COLOR, () => (createAttackProfile(
