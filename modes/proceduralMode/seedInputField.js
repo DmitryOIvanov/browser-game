@@ -63,6 +63,12 @@ export class SeedInputField {
                 this.selected = this.hovering;
             }
         }
+        if (controls.pressed["Enter"] || controls.pressed["Escape"]) {
+            this.selected = false;
+            if (this.value.length <= 0) {
+                this.value = this.lastNonEmptyValue;
+            }
+        }
         if (this.selected) {
             if (controls.pressed["Backspace"] && this.value.length > 0) {
                 this.value = this.value.substring(0, this.value.length - 1);
