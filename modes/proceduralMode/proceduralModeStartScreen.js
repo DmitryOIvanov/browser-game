@@ -1,9 +1,16 @@
 import { backgrounds } from "../../backgrounds/backgrounds.js";
 import controls from "../../controls.js";
-import { drawDot } from "../../drawing.js";
+import { ctx, drawDot } from "../../drawing.js";
+import { MenuTextButton } from "../../gui/menuTextButton.js";
 import { SVG } from "../../svg.js";
 import { stockHeavyComponents, stockLightComponents } from "../../weapons/dualWeapons.js";
+import { SeedInputField } from "./seedInputField.js";
+import { SeedResetButton } from "./seedResetButton.js";
 import { WeaponButton } from "./weaponButton.js";
+
+const SEED_TEXT_FONT = "Bold 32px Arial";
+const SEED_TEXT_METRICS = ctx.measureText("SEED");
+const WEAPON_FONT = "Bold 50px Arial";
 
 export const proceduralModeLightComponents = [
     {
@@ -62,12 +69,17 @@ export const proceduralModeHeavyComponents = [
 export class ProceduralModeStartScreen {
     constructor() {
         this.concluded = false;
+
         this.lightButtons = proceduralModeLightComponents.map((entry) => (
             new WeaponButton(entry.buttonX, entry.buttonY, entry.icon)
         ));
         this.heavyButtons = proceduralModeHeavyComponents.map((entry) => (
             new WeaponButton(entry.buttonX, entry.buttonY, entry.icon)
         ));
+        this.readyButton = new MenuTextButton(950, 640, 240, "READY");
+        this.seedField = new SeedInputField(330, 640, 300);
+        this.resetButton = new SeedResetButton(600, 640);
+
         this.selectedLight = 0;
         this.selectedHeavy = 0;
         this.lightButtons[0].setSelected(true);
@@ -76,7 +88,7 @@ export class ProceduralModeStartScreen {
 
     getResult() {
         return {
-            seed: "seed124",
+            seed: this.seedField.getOutput(),
             lightWeaponIndex: this.selectedLight,
             heavyWeaponIndex: this.selectedHeavy,
         };
@@ -84,11 +96,27 @@ export class ProceduralModeStartScreen {
 
     nextFrame(dt) {
         backgrounds.title.draw();
-        if (controls.held["KeyU"]) {
+        this.readyButton.timestep(dt);
+        this.readyButton.draw();
+        this.resetButton.timestep(dt);
+        this.resetButton.draw();
+        if (this.resetButton.isPressed()) {
+            this.seedField.randomize();
+        }
+        this.seedField.timestep(dt);
+        this.seedField.draw();
+        ctx.textAlign = "center";
+        ctx.fillStyle = "#fff";
+        ctx.font = SEED_TEXT_FONT;
+        ctx.fillText("SEED", this.seedField.centerX, this.seedField.centerY - 44);
+        ctx.font = WEAPON_FONT;
+        ctx.fillText("PRIMARY ATTACK", 330, 100);
+        ctx.fillText("SPECIAL ATTACK", 950, 100);
+
+        if (this.readyButton.isPressed()) {
             this.concluded = true;
             return;
         }
-
         for (let i = 0; i < this.lightButtons.length; i++) {
             const button = this.lightButtons[i];
             button.timestep(dt);
@@ -113,6 +141,7 @@ export class ProceduralModeStartScreen {
         for (let i = 0; i < this.heavyButtons.length; i++) {
             this.heavyButtons[i].draw();
         }
+
         if (controls.mouse.inBounds) {
             drawDot(controls.mouse.x, controls.mouse.y)
         }

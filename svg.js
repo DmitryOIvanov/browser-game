@@ -16,6 +16,7 @@ export const SVG = {
         starburst: registerSvg("./resources/svg/weaponIcons/starburst.svg"),
         bounceMayhem: registerSvg("./resources/svg/weaponIcons/bounceMayhem.svg"),
     },
+    seedResetIcon: registerSvg("./resources/svg/seedResetIcon.svg"),
 };
 
 function registerSvg(path) {

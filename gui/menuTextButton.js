@@ -10,7 +10,7 @@ const PRIMARY_COLOR_STR = 'rgb(255,200,0)';
 const SECONDARY_COLOR_STR = 'rgb(255,100,0)';
 const TEXT_COLOR = 'white';
 const BACKGROUND_COLOR_STR = 'black';
-const MAX_SCALE_MULT = 1.12;
+const MAX_SCALE_MULT = 1.1;
 const HOVER_CHANGE_RATE = 1 / 3;
 
 ctx.font = getFontStr(BASE_FONT_SIZE);

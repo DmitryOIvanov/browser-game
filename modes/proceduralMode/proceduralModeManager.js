@@ -9,6 +9,8 @@ import { DualWeapon } from "../../weapons/dualWeapons.js";
 import { ProceduralWeightedSpawnTask } from "./proceduralLevelGeneration.js";
 import { proceduralModeHeavyComponents, proceduralModeLightComponents } from "./proceduralModeStartScreen.js";
 
+const DEBUG_WEAPON_SWITCH = false;
+
 function getLevelTaskList(level, rng) {
     if (level >= 0) {
         return [
@@ -75,13 +77,15 @@ export default class ProceduralModeManager {
             }
         }
 
-        if (controls.pressed["KeyE"]) {
-            this.lightIndex = (this.lightIndex + 1) % proceduralModeLightComponents.length;
-            this.updateWeapon();
-        }
-        if (controls.pressed["KeyQ"]) {
-            this.heavyIndex = (this.heavyIndex + 1) % proceduralModeHeavyComponents.length;
-            this.updateWeapon();
+        if (DEBUG_WEAPON_SWITCH) {
+            if (controls.pressed["KeyE"]) {
+                this.lightIndex = (this.lightIndex + 1) % proceduralModeLightComponents.length;
+                this.updateWeapon();
+            }
+            if (controls.pressed["KeyQ"]) {
+                this.heavyIndex = (this.heavyIndex + 1) % proceduralModeHeavyComponents.length;
+                this.updateWeapon();
+            }
         }
     }
 
