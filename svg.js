@@ -17,6 +17,7 @@ export const SVG = {
         bounceMayhem: registerSvg("./resources/svg/weaponIcons/bounceMayhem.svg"),
     },
     seedResetIcon: registerSvg("./resources/svg/seedResetIcon.svg"),
+    breakScreenWeaponDisplay: registerSvg("./resources/svg/breakScreenWeaponDisplay.svg"),
 };
 
 function registerSvg(path) {

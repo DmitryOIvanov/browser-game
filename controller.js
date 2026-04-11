@@ -84,12 +84,6 @@ const controller = {
                 this.subController = new ModeBController();
             }
         } else if (this.state == STATE_MODE_PLAY) {
-            if (controls.pressed["Escape"]) {
-                this.state = STATE_TITLE;
-                playButton.reset();
-                tutorialButton.reset();
-                return;
-            }
             this.subController.nextFrame(dt);
             if (this.subController.concluded) this.state = STATE_TITLE;
         } else if (this.state == STATE_DEBUG) {

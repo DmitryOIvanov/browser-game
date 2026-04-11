@@ -84,6 +84,7 @@ export class ProceduralModeStartScreen {
         this.selectedHeavy = 0;
         this.lightButtons[0].setSelected(true);
         this.heavyButtons[0].setSelected(true);
+        this.quit = false;
     }
 
     getResult() {
