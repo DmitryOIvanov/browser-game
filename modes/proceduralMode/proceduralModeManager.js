@@ -42,14 +42,21 @@ function getLevelTaskList(level, rng) {
 }
 
 export default class ProceduralModeManager {
-    constructor(level, rng, lightIndex, heavyIndex) {
+    constructor(isTutorial, level, lightIndex, heavyIndex, rng = null) {
+        this.isTutorial = isTutorial;
         this.level = level;
         this.rng = rng;
-        this.lastMilestoneRng = rng.clone();
+        this.lastMilestoneRng = rng ? rng.clone() : null;
         this.concluded = false;
-        this.performer = new TaskPerformer(getLevelTaskList(level, rng));
+        this.performer = null;
+        if (isTutorial) {
+            this.performer = new TaskPerformer(TUTORIAL_TASK_LIST[level]);
+        } else {
+            this.performer = new TaskPerformer(getLevelTaskList(level, rng));
+        }
         this.lightIndex = lightIndex;
         this.heavyIndex = heavyIndex;
+        this.tutorialComplete = false;
     }
 
     onPlayfieldInit() {
@@ -66,9 +73,17 @@ export default class ProceduralModeManager {
             this.performer.timestep(dt);
             if (this.performer.concluded) {
                 this.level++;
-                this.lastMilestoneRng = this.rng.clone();
-
-                this.performer = new TaskPerformer(getLevelTaskList(this.level, this.rng));
+                if (this.isTutorial) {
+                    if (this.level >= TUTORIAL_TASK_LIST.length) {
+                        this.tutorialComplete = true;
+                        this.concluded = true;
+                    } else {
+                        this.performer = new TaskPerformer(TUTORIAL_TASK_LIST[this.level]);
+                    }
+                } else {
+                    this.lastMilestoneRng = this.rng.clone();
+                    this.performer = new TaskPerformer(getLevelTaskList(this.level, this.rng));
+                }
             }
         } else {
             if (player.deathFinished) {

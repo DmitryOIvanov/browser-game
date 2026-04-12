@@ -20,16 +20,21 @@ export default class ProceduralModeController {
         this.concluded = false;
         this.subController = null;
 
+        this.isTutorial = tutorialRequested;
         this.milestoneRng = null;
         this.gameInfo = {
-            level: tutorialRequested ? -2 : 0,
+            level: 0,
             seed: "FAKESEED",
             lightIndex: 0,
             heavyIndex: 0,
             deaths: 0,
         }
         this.pauseCooldown = 0;
-        this.startStart();
+        if (this.isTutorial) {
+            this.startPlay();
+        } else {
+            this.startStart();
+        }
     }
 
     nextFrame(dt) {
@@ -49,6 +54,10 @@ export default class ProceduralModeController {
         } else if (this.state == STATE_PLAYING) {
             playField.advanceOneFrame(dt);
             if (playField.manager.concluded) {
+                if (playField.manager.tutorialComplete) {
+                    this.concluded = true;
+                    return;
+                }
                 this.gameInfo.level = playField.manager.level;
                 this.milestoneRng = playField.manager.lastMilestoneRng;
                 this.gameInfo.deaths++;
@@ -91,7 +100,11 @@ export default class ProceduralModeController {
         this.state = STATE_PLAYING;
         this.subController = null;
         playField.initialize();
-        playField.setManager(new ProceduralModeManager(this.gameInfo.level, this.milestoneRng.clone(), this.gameInfo.lightIndex, this.gameInfo.heavyIndex));
+        if (this.isTutorial) {
+            playField.setManager(new ProceduralModeManager(true, this.gameInfo.level, 0, 0));
+        } else {
+            playField.setManager(new ProceduralModeManager(false, this.gameInfo.level, this.gameInfo.lightIndex, this.gameInfo.heavyIndex, this.milestoneRng.clone()));
+        }
     }
 
     resumePlay() {
@@ -103,13 +116,13 @@ export default class ProceduralModeController {
         controls.mouse.lPressed = false;
         controls.mouse.leftHeld = false;
         this.state = STATE_LOSE;
-        this.subController = new BreakScreen(false, this.gameInfo);
+        this.subController = new BreakScreen(this.gameInfo, false, this.isTutorial);
     }
 
     startPauseScreen() {
         controls.mouse.lPressed = false;
         controls.mouse.leftHeld = false;
         this.state = STATE_PAUSE;
-        this.subController = new BreakScreen(true, this.gameInfo);
+        this.subController = new BreakScreen(this.gameInfo, true, this.isTutorial);
     }
 }
