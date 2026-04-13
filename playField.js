@@ -1,5 +1,6 @@
 import { Area } from "./areas.js";
 import { attackAndDefend } from "./attackAndDefense.js";
+import { backgrounds } from "./backgrounds/backgrounds.js";
 import { FlatColor, RainbowColor } from "./color.js";
 import controls from "./controls.js";
 import { canv, ctx } from "./drawing.js";
@@ -211,6 +212,7 @@ const playField = {
     },
 
     redraw() {
+        backgrounds.simple.draw();
         for (let i = 0; i < this.bgParticles.length; i++) {
             this.bgParticles[i].draw();
         }
