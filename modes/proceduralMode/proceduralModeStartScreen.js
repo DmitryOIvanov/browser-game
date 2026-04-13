@@ -1,6 +1,7 @@
 import { backgrounds } from "../../backgrounds/backgrounds.js";
 import controls from "../../controls.js";
 import { ctx, drawDot } from "../../drawing.js";
+import { drawMouseIfInBounds } from "../../drawMouse.js";
 import { MenuTextButton } from "../../gui/menuTextButton.js";
 import { SVG } from "../../svg.js";
 import { stockHeavyComponents, stockLightComponents } from "../../weapons/dualWeapons.js";
@@ -143,8 +144,6 @@ export class ProceduralModeStartScreen {
             this.heavyButtons[i].draw();
         }
 
-        if (controls.mouse.inBounds) {
-            drawDot(controls.mouse.x, controls.mouse.y)
-        }
+        drawMouseIfInBounds();
     }
 }

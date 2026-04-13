@@ -1,6 +1,7 @@
 import { FlatColor, RainbowColor } from "../../color.js";
 import controls from "../../controls.js";
 import { canv, ctx, drawDot } from "../../drawing.js";
+import { drawMouseIfInBounds } from "../../drawMouse.js";
 import { MinimalTextButton } from "../../gui/minimalTextButton.js";
 import { modeALevelList } from "./modeAGame.js";
 
@@ -21,9 +22,7 @@ export default class ModeAWeaponSelectController {
         }
         if (this.concluded) return;
 
-        if (controls.mouse.inBounds) {
-            drawDot(controls.mouse.x, controls.mouse.y)
-        }
+        drawMouseIfInBounds();
         for (const button of this.buttons) {
             button.update();
             button.draw();

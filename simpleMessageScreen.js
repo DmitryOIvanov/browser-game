@@ -1,6 +1,7 @@
 import { FlatColor, RainbowColor } from "./color.js";
 import controls from "./controls.js";
 import { canv, ctx, drawDot } from "./drawing.js";
+import { drawMouseIfInBounds } from "./drawMouse.js";
 import { MinimalTextButton } from "./gui/minimalTextButton.js";
 
 export default class SimpleMessageScreen {
@@ -13,9 +14,7 @@ export default class SimpleMessageScreen {
     nextFrame() {
         if (this.concluded) return;
 
-        if (controls.mouse.inBounds) {
-            drawDot(controls.mouse.x, controls.mouse.y)
-        }
+        drawMouseIfInBounds();
         this.continueButton.update();
         this.continueButton.draw();
         if (this.continueButton.isPressed()) {

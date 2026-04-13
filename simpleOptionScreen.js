@@ -1,6 +1,7 @@
 import { FlatColor, RainbowColor } from "./color.js";
 import controls from "./controls.js";
 import { canv, ctx, drawDot } from "./drawing.js";
+import { drawMouseIfInBounds } from "./drawMouse.js";
 import { MinimalTextButton } from "./gui/minimalTextButton.js";
 
 export default class SimpleOptionScreen {
@@ -27,9 +28,7 @@ export default class SimpleOptionScreen {
             }
         }
 
-        if (controls.mouse.inBounds) {
-            drawDot(controls.mouse.x, controls.mouse.y)
-        }
+        drawMouseIfInBounds();
         ctx.textAlign = "center";
         ctx.font = "80px arial";
         ctx.fillStyle = '#fff';

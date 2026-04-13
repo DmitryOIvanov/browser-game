@@ -3,6 +3,7 @@ import { HorizontalGridBackground } from "./backgrounds/horizontalGridBackground
 import { FlatColor } from "./color.js";
 import controls from "./controls.js";
 import { canv, ctx, drawDot, fillScreen } from "./drawing.js";
+import { drawMouseIfInBounds } from "./drawMouse.js";
 import { MenuTextButton } from "./gui/menuTextButton.js";
 import { MinimalTextButton } from "./gui/minimalTextButton.js";
 import DebugManager from "./modes/debug/debugEnemySpawning.js";
@@ -59,9 +60,7 @@ const controller = {
             playButton.draw();
             tutorialButton.timestep(dt);
             tutorialButton.draw();
-            if (controls.mouse.inBounds) {
-                drawDot(controls.mouse.x, controls.mouse.y)
-            }
+            drawMouseIfInBounds();
 
             if (tutorialButton.isPressed() || playButton.isPressed()) {
                 controls.mouse.lPressed = false;

@@ -1,6 +1,7 @@
 import { backgrounds } from "../../backgrounds/backgrounds.js";
 import controls from "../../controls.js";
 import { ctx, drawDot } from "../../drawing.js";
+import { drawMouseIfInBounds } from "../../drawMouse.js";
 import { MenuTextButton } from "../../gui/menuTextButton.js";
 import { SVG } from "../../svg.js";
 import { proceduralModeHeavyComponents, proceduralModeLightComponents } from "./proceduralModeStartScreen.js";
@@ -53,9 +54,7 @@ export class BreakScreen {
             ctx.fillText(`Deaths: ${this.gameInfo.deaths}`, 640, 520);
         }
 
-        if (controls.mouse.inBounds) {
-            drawDot(controls.mouse.x, controls.mouse.y)
-        }
+        drawMouseIfInBounds();
 
         const unpause = this.isPause && (controls.pressed["KeyP"] || controls.pressed["Escape"]);
         if (this.continueButton.isPressed() || unpause) {
