@@ -18,7 +18,8 @@ export class BreakScreen {
         this.unpauseTimer = UNPAUSE_COOLDOWN;
 
         this.quitButton = new MenuTextButton(320, 600, 280, "QUIT");
-        this.continueButton = new MenuTextButton(960, 600, 280, isPause ? "RESUME" : "RETRY LEVEL");
+        const continueText = isPause ? "RESUME" : isTutorial ? "RETRY" : "RETRY LEVEL";
+        this.continueButton = new MenuTextButton(960, 600, 280, continueText);
     }
 
     quitRequested() {
