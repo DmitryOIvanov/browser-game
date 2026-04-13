@@ -206,3 +206,9 @@ export class ExecuteFunctionTask {
         this.concluded = true;
     }
 }
+
+export class UncompletableTask {
+    constructor(readonlyParams) {
+        this.concluded = false;
+    }
+}

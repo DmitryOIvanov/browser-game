@@ -1,6 +1,6 @@
 import { canv } from "../drawing.js";
 import playField from "../playField.js";
-import { CreateBgParticleAndWaitForRetirementTask, CreateMessageTask, ExecuteFunctionTask, WaitTimeTask, WeightedSpawnTask } from "../tasks.js";
+import { CreateBgParticleAndWaitForRetirementTask, CreateMessageTask, ExecuteFunctionTask, UncompletableTask, WaitTimeTask, WeightedSpawnTask } from "../tasks.js";
 import CheckpointTask from "../tasks/checkpointTask.js";
 import { ShootTutorialTask } from "./shootTutorialTask.js";
 import { SpecialTutorialTask } from "./specialTutorialTask.js";
@@ -83,7 +83,37 @@ const tutorialPart2 = [
         class: CreateMessageTask,
         centerX: canv.width / 2,
         centerY: canv.height / 2 - 200,
-        text: "Try out Your New Abilities",
+        text: "Both abilities recharge over time",
+        fontSizePx: 50,
+        fadeInTime: 30,
+        showTime: 240,
+        fadeOutTime: 60,
+        opacity: 0.6,
+    },
+    {
+        class: WaitTimeTask,
+        time: 60
+    },
+    {
+        class: CreateMessageTask,
+        centerX: canv.width / 2,
+        centerY: canv.height / 2 + 200,
+        text: "Mind the indicators",
+        fontSizePx: 50,
+        fadeInTime: 30,
+        showTime: 180,
+        fadeOutTime: 60,
+        opacity: 0.6,
+    },
+    {
+        class: WaitTimeTask,
+        time: 270
+    },
+    {
+        class: CreateMessageTask,
+        centerX: canv.width / 2,
+        centerY: canv.height / 2 - 200,
+        text: "Try out your new abilities!",
         fontSizePx: 60,
         fadeInTime: 30,
         showTime: 120,
@@ -122,11 +152,26 @@ const tutorialPart2 = [
         class: CreateMessageTask,
         centerX: canv.width / 2,
         centerY: canv.height / 2 - 200,
-        text: "Tutorial Complete",
-        fontSizePx: 60,
+        text: "Tutorial Complete!",
+        fontSizePx: 80,
         fadeInTime: 30,
-        showTime: 210,
-        fadeOutTime: 45,
+        showTime: 180,
+        fadeOutTime: 30,
+        opacity: 0.6,
+    },
+    {
+        class: WaitTimeTask,
+        time: 240
+    },
+    {
+        class: CreateMessageTask,
+        centerX: canv.width / 2,
+        centerY: canv.height / 2 - 200,
+        text: "[Esc] or [P] open the pause menu",
+        fontSizePx: 50,
+        fadeInTime: 30,
+        showTime: Infinity,
+        fadeOutTime: 0,
         opacity: 0.6,
     },
     {
@@ -137,16 +182,15 @@ const tutorialPart2 = [
         class: CreateMessageTask,
         centerX: canv.width / 2,
         centerY: canv.height / 2 + 200,
-        text: "Good Luck",
+        text: "Use the \"Quit\" option to exit",
         fontSizePx: 50,
         fadeInTime: 30,
-        showTime: 120,
-        fadeOutTime: 45,
+        showTime: Infinity,
+        fadeOutTime: 0,
         opacity: 0.6,
     },
     {
-        class: WaitTimeTask,
-        time: 195
+        class: UncompletableTask,
     },
 ];
 

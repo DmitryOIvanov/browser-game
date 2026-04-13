@@ -236,7 +236,7 @@ export default class TimeSlowTutorialTask extends TutorialTask {
     timestep(dt) {
         if (controls.held["Space"]) {
             this.spaceHeldTime += dt;
-            if (this.spaceHeldTime >= 6) {
+            if (this.spaceHeldTime >= 12) {
                 this.satisfy();
             }
         }
@@ -247,6 +247,7 @@ export default class TimeSlowTutorialTask extends TutorialTask {
     drawRaw() {
         ctx.strokeStyle = "#FFF";
         ctx.fillStyle = "#FFF";
+        fillTextCenteredXY("Hold", 40, canv.width / 2, canv.height / 2 - 180);
         this.drawSpacebar();
         fillTextCenteredXY("Slow Time", 60, canv.width / 2, canv.height / 2 + 100);
 
