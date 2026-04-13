@@ -67,6 +67,7 @@ export default class ProceduralModeController {
             }
             if (controls.held["Escape"] || controls.held["KeyP"]) {
                 if (this.pauseCooldown <= 0) {
+                    this.gameInfo.level = playField.manager.level;
                     this.startPauseScreen();
                 }
             }
