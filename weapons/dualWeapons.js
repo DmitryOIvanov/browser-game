@@ -428,8 +428,8 @@ export const stockHeavyComponents = {
                 5, // # Rounds
                 600, // Main Delay
                 0, // Sub delay
-                [31, 30, 31, 30, 31], // # Bullets
-                0.05, // Spread
+                [37, 36, 37, 36, 37], // # Bullets
+                0.048, // Spread
                 0, // Variance
                 [27, 26, 25, 24, 23], // Speed
                 (x, y, dx, dy) => (
