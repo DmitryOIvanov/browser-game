@@ -19,7 +19,7 @@ function getLevelTaskList(level, rng) {
                 centerX: canv.width / 2,
                 centerY: canv.height / 2,
                 text: `Level ${level + 1}`,
-                fontSizePx: 320,
+                fontSizePx: 280,
                 fadeInTime: 20,
                 showTime: 60,
                 fadeOutTime: 20,

@@ -19,7 +19,7 @@ export default class BgMessage {
         this.showTime = params.showTime || 0;
         this.fadeOutTime = params.fadeOutTime || 0;
 
-        this.fontStr = `${this.fontSizePx}px Arial`;
+        this.fontStr = `Bold ${this.fontSizePx}px Arial`;
         this.retired = false;
         this.state = STATE_FADE_IN;
         this.stateProgress = 0;

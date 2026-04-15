@@ -38,13 +38,13 @@ export function popFromGlobalStack() {
 
 export function fillTextCenteredXY(text, fontSizePx, x, y) {
     ctx.textAlign = "center";
-    ctx.font = `${fontSizePx}px Arial`;
+    ctx.font = `Bold ${fontSizePx}px Arial`;
     ctx.fillText(text, x, y + fontSizePx * 0.25);
 }
 
 export function fillTextFromCorner(text, fontSizePx, x, y) {
     ctx.textAlign = "left";
-    ctx.font = `${fontSizePx}px Arial`;
+    ctx.font = `Bold ${fontSizePx}px Arial`;
     ctx.fillText(text, x, y);
 }
 
