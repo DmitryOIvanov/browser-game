@@ -84,7 +84,11 @@ const controller = {
             }
         } else if (this.state == STATE_MODE_PLAY) {
             this.subController.nextFrame(dt);
-            if (this.subController.concluded) this.state = STATE_TITLE;
+            if (this.subController.concluded) {
+                this.state = STATE_TITLE;
+                playButton.reset();
+                tutorialButton.reset();
+            }
         } else if (this.state == STATE_DEBUG) {
             if (controls.pressed["Escape"]) {
                 this.state = STATE_TITLE;
@@ -92,7 +96,9 @@ const controller = {
             }
             playField.advanceOneFrame(dt);
             playField.redraw();
-            if (playField.manager.concluded) this.state = STATE_TITLE;
+            if (playField.manager.concluded) {
+                this.state = STATE_TITLE;
+            }
         }
     }
 }
