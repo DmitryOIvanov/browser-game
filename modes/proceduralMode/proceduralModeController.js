@@ -44,6 +44,10 @@ export default class ProceduralModeController {
         if (this.state == STATE_STARTING) {
             this.subController.nextFrame(dt);
             if (this.subController.concluded) {
+                if (this.subController.quit) {
+                    this.concluded = true;
+                    return;
+                }
                 const result = this.subController.getResult();
                 this.milestoneRng = PseudorandomGenerator.fromString(result.seed);
                 this.gameInfo.lightIndex = result.lightWeaponIndex;

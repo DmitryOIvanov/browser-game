@@ -115,6 +115,11 @@ export class ProceduralModeStartScreen {
         ctx.fillText("PRIMARY ATTACK", 330, 100);
         ctx.fillText("SPECIAL ATTACK", 950, 100);
 
+        if (controls.pressed["Escape"]) {
+            this.concluded = true;
+            this.quit = true;
+            return;
+        }
         if (this.readyButton.isPressed()) {
             this.concluded = true;
             return;
