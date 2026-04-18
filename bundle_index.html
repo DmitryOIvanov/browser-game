@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Attack Vector</title>
+        <link rel="icon" href="./resources/svg/icon.svg">
+        <base href=".">
+        <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+        <style>
+            body{
+                margin: 0%;
+            }
+            canvas{
+                height: 720px;
+                width: 1280px;
+                cursor: none;
+                touch-action: none;
+                user-select: none;
+            }
+            #canv_div{
+                height: 100vh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background-color: rgb(35, 35, 35);
+            }
+        </style>
+    </head>
+    <body>
+        <div id="canv_div">
+            <canvas id="main_canvas"></canvas>
+        </div>
+    </body>
+
+    <script src="./src.js"></script>
+</html>
