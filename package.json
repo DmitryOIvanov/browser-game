@@ -1,0 +1,24 @@
+{
+  "name": "attack-vector-game",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DmitryOIvanov/browser-game.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DmitryOIvanov/browser-game/issues"
+  },
+  "homepage": "https://github.com/DmitryOIvanov/browser-game#readme",
+  "devDependencies": {
+    "@rollup/plugin-terser": "^1.0.0",
+    "rollup": "^4.60.1"
+  }
+}
