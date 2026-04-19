@@ -4,14 +4,14 @@ A keyboard & mouse 2D shooter game for the browser.
 Defeat swarms of enemies with various weapons and a time-slow ability.
 As of writing: 15 unique enemies, 4 primary weapons, and 4 secondary weapons to choose from.
 
-### Setup (There is None!)
+## Setup (There is None!)
 
 To run this game, download the zip file in the "pre_bundled" directory,
 extract its contents,
 find the "attack_vector.html" file,
 and drag it into your browser.
 
-##### More specifics
+### More specifics
 
 This game is vanilla JS and HTML with no external libraries.
 The only thing preventing the source code from running directly is
